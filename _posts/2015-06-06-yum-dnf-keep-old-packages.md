@@ -2,7 +2,7 @@
 layout: post
 title:  "yum/dnf keep old packages"
 date:   2015-06-04 06:06
-excerpt: "When you upgrade packages on RedHat based systems, the newer package replaces the older one except for _install only_ packages e.g. kernel packages.
+excerpt: "When you upgrade packages on RedHat based systems, the newer package replaces the older one except for <i>install only</i> packages e.g. kernel packages.
 Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions - by default - of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version."
 category: Linux
 tags: dnf,yum
