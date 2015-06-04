@@ -2,7 +2,7 @@
 layout: post
 title:  "Ansible 'Prompt' handlers"
 date:   2014-12-17 18:30:45
-excerpt: "An awesome feature in Chef that is not available in Ansible is immediate notification i.e. `notifies :immediately`.
+excerpt: "An awesome feature in Chef that is not available in Ansible is immediate notification i.e. <code>notifies :immediately</code>.
 Ansible has notification handlers but they are only triggered at the end of the current playbook unlike Chef's which
 can be triggered immediately! This blogpost describes an easier way of having immediate handlers."
 category: Linux
