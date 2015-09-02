@@ -39,7 +39,7 @@ Options=defaults
 ![I Got This!]({{site.url}}/assets/2015-09-01-systemd-mount-partition/i-got-this.gif)
 
 
-So I wrote a simple systemd mount unit file -- `/etc/systemd/system/mnt-backups.mount` -- which didn't work at first because I fell victim to one of the `systemd.mount` pitfalls -- _"Mount units must be named after the mount point directories they control. Example: the mount point /home/lennart must be configured in a unit file home-lennart.mount..."_. Huh?? Yes that's right! The unit filename should match the mount point path.
+So I wrote a simple systemd mount unit file — `/etc/systemd/system/mnt-backups.mount` — which didn't work at first because I fell victim to one of the `systemd.mount` pitfalls — _"Mount units must be named after the mount point directories they control. Example: the mount point /home/lennart must be configured in a unit file home-lennart.mount..."_. Huh?? Yes that's right! The unit filename should match the mount point path.
 
 `mnt-backups.mount` mount unit file:
 
@@ -64,14 +64,14 @@ And just like any other unit, you can view its status using `systemctl status mn
 {% highlight text %}
 root@vast ~ # systemctl status mnt-backups.mount
 ● mnt-backups.mount - Mount System Backups Directory
-   Loaded: loaded (/etc/systemd/system/mnt-backups.mount; static; vendor preset: disabled)
-   Active: active (mounted) since Wed 2015-08-26 11:36:57 EAT; 4s ago
+   Loaded: loaded (/etc/systemd/system/mnt-backups.mount; enabled; vendor preset: disabled)
+   Active: active (mounted) since Mon 2015-08-31 08:09:15 EAT; 2 days ago
     Where: /mnt/backups
      What: /dev/sdc
-  Process: 19494 ExecMount=/bin/mount /dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups -n -t ext4 -o defaults (code=exited, status=0/SUCCESS)
+  Process: 744 ExecMount=/bin/mount /dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups -n -t ext4 -o defaults (code=exited, status=0/SUCCESS)
 
-Aug 26 11:36:57 vast systemd[1]: Mounting Mount System Backups Directory...
-Aug 26 11:36:57 vast systemd[1]: Mounted Mount System Backups Directory.
+Aug 31 08:09:15 vast systemd[1]: Mounting Mount System Backups Directory...
+Aug 31 08:09:15 vast systemd[1]: Mounted Mount System Backups Directory.
 {% endhighlight %}
 
 
