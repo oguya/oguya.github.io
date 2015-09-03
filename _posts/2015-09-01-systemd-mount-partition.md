@@ -16,10 +16,10 @@ tags: systemd
 
 After _RTFM'ing_, I realized, under the hood, systemd just runs [mount command](http://linux.die.net/man/8/mount) to mount the specified partition with the specified mount options listed in the mount unit file. Basically, you need to specify the following options in your unit file:
 
-- `What=` a partition name, path or UUID to mount.
-- `Where=` an absolute path of a directory i.e. path to a mount point. If the mount point is non-existent, it will be created.
-- `Type=` file system type. In most cases [mount command](http://linux.die.net/man/8/mount) auto-detects the file system.
-- `Options=` Mount options to use when mounting.
+- `What=` a partition name, path or UUID to mount
+- `Where=` an absolute path of a directory i.e. path to a mount point. If the mount point is non-existent, it will be created
+- `Type=` file system type. In most cases [mount command](http://linux.die.net/man/8/mount) auto-detects the file system
+- `Options=` Mount options to use when mounting
 
 In the end, you can convert your typical fstab entry such as this:
 {% highlight bash %}
@@ -39,7 +39,11 @@ Options=defaults
 ![I Got This!]({{site.url}}/assets/2015-09-01-systemd-mount-partition/i-got-this.gif)
 
 
-So I wrote a simple systemd mount unit file — `/etc/systemd/system/mnt-backups.mount` — which didn't work at first because I fell victim to one of the `systemd.mount` pitfalls — _"Mount units must be named after the mount point directories they control. Example: the mount point /home/lennart must be configured in a unit file home-lennart.mount..."_. Huh?? Yes that's right! The unit filename should match the mount point path.
+So I wrote a simple systemd mount unit file — `/etc/systemd/system/mnt-backups.mount` — which didn't work at first because I fell victim to one of the `systemd.mount` pitfalls:
+
+> Mount units must be named after the mount point directories they control. Example: the mount point /home/lennart must be configured in a unit file home-lennart.mount.
+
+Huh? Yes that's right! The unit filename should match the mount point path.
 
 `mnt-backups.mount` mount unit file:
 
@@ -77,7 +81,7 @@ Aug 31 08:09:15 vast systemd[1]: Mounted Mount System Backups Directory.
 
 ### Gotchas!!
 
-After a reboot, I noticed the unit wasn't started & as result the mount point dir. was empty. The unit file was missing an `[Install]` section which contains installation information such as unit dependencies(`WantedBy=, RequiredBy=`), aliases(`Alias=`), additional units(`Also=`), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a `multi-user.target`. Oh, did you know you can change runlevel using `systemctl isolate $RUN_LEVEL.target`? [Read more ](https://fedoraproject.org/wiki/SysVinit_to_Systemd_Cheatsheet)about systemd runlevels/targets.
+After a reboot, I noticed the unit wasn't started & as result the mount point dir. was empty. The unit file was missing an `[Install]` section which contains installation information such as unit dependencies(`WantedBy=, RequiredBy=`), aliases(`Alias=`), additional units(`Also=`), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a `multi-user.target`. Oh, did you know you can change runlevel using `systemctl isolate $RUN_LEVEL.target`? [Read more](https://wiki.archlinux.org/index.php/Systemd#Targets_table) about systemd runlevels/targets.
 
 Here's the complete `/etc/systemd/system/mnt-backups.mount` unit file with an `[Install]` section:
 {% highlight ini %}
