@@ -45,7 +45,7 @@ To indicated compliance with a given recommendation, a benchmark score of either
 
 ## Putting it all together with Ansible
 
-After carefully reading the [CIS Ubuntu 14.04 LTS Server Benchmark documentation](https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100), I created an [Ansible playbook](https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook) that would allow users to audit & configure their systems to meet at most all of the CIS Security benchmarks.
+After carefully reading the [CIS Ubuntu 14.04 LTS Server Benchmark documentation](https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100), I created an Ansible playbook on [GitHub](https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook) & [GitLab](https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook) that would allow users to audit & configure their systems to meet at most all of the CIS Security benchmarks.
 
 Please, please, please have at the [CIS Ubuntu 14.04 LTS Server Benchmark documentation](https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100) before running this playbook & always do a dry run first using [Ansible's Check Mode](http://docs.ansible.com/playbooks_checkmode.html) so as to see what to expect.
 
@@ -55,4 +55,4 @@ As always, [Pull requests](https://github.com/oguya/cis-ubuntu-14-ansible/pulls)
 ### Links
 1. [About CIS Security Benchmarks](https://benchmarks.cisecurity.org/about/)
 2. [CIS-CAT Benchmark Assessment Tool](https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat)
-3. [CIS Ubuntu 14.04 Benchmarks Ansible Playbook](https://github.com/oguya/cis-ubuntu-14-ansible)
+3. CIS Ubuntu 14.04 Benchmarks Ansible Playbook on [GitHub](https://github.com/oguya/cis-ubuntu-14-ansible) & [GitLab](https://gitlab.com/oguya/cis-ubuntu-14-ansible)
