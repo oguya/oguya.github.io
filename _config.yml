@@ -9,9 +9,9 @@ permalink:           pretty
 relative_permalinks: true
 
 # Setup
-title:               R0ok_
-tagline:             'leh amateur sysadmin'
-description:         '<em>for category in ${categories[*]}; do echo $category; done</em>'
+title:               James Oguya
+tagline:             leh amateur sysadmin
+description:         <em>for category in ${categories[*]}; do echo $category; done</em>
 url:                 https://oguya.github.io
 #url:                 http://0.0.0.0:4000
 baseurl:             /
