@@ -12,7 +12,7 @@ relative_permalinks: true
 title:               James Oguya
 tagline:             leh amateur sysadmin
 description:         <em>for category in ${categories[*]}; do echo $category; done</em>
-url:                 https://oguya.github.io
+url:                 https://oguya.ch
 #url:                 http://0.0.0.0:4000
 baseurl:             /
 paginate:            5
