@@ -2,7 +2,7 @@
 layout: post
 title:  "Recovering ZFS Pool"
 date:   2015-12-04 08:10
-excerpt: "Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unkown circumstances. In this post I'll talk about how you can easily recover your pool.
+excerpt: "Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I'll talk about how you can easily recover your pool.
 Your / partition should NOT be on ZFS pool."
 category: Linux
 tags: zfs
