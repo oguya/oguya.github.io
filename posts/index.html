@@ -3,17 +3,17 @@
 <head prefix="og: http://ogp.me/ns#">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <meta property="og:title" content=" James Oguya" />
+  <meta property="og:title" content=" Posts &middot;  James Oguya" />
   
   <meta property="og:site_name" content="James Oguya" />
-  <meta property="og:url" content="https://oguya.ch/" />
+  <meta property="og:url" content="https://oguya.ch/posts/" />
   
   
   <meta property="og:type" content="website" />
   
 
   <title>
-     James Oguya
+     Posts &middot;  James Oguya
   </title>
 
   <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
@@ -23,8 +23,6 @@
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css">
   <link rel="shortcut icon" href="https://oguya.ch/images/favicon.ico" />
   <link rel="apple-touch-icon" href="https://oguya.ch/images/apple-touch-icon.png" />
-  
-  <link href="https://oguya.ch/index.xml" rel="alternate" type="application/rss+xml" title="James Oguya" />
   
 </head>
 <body>
@@ -65,8 +63,13 @@
 </div>
 
       
+      <a href="https://oguya.ch/" class="btn-header btn-back hidden-xs">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        &nbsp;Home
+      </a>
       
-      <a href="https://oguya.ch/index.xml" class="btn-header btn-subscribe hidden-xs">
+      
+      <a href="https://oguya.ch/posts/index.xml" class="btn-header btn-subscribe hidden-xs">
         <i class="fa fa-rss" aria-hidden="true"></i>
         &nbsp;Subscribe
       </a>
@@ -75,9 +78,10 @@
   </header>
   <main class="container">
 
-<div class="article-list">
+<section class="article-list">
+  <h1>Posts</h1>
   
-  
+  <hr/>
   <article>
   <header>
     <h2><a href="https://oguya.ch/linux/2015/12/03/recover-zfs-pool">Recovering ZFS Pool</a></h2>
@@ -104,9 +108,7 @@
 </article>
 
   
-  
   <hr/>
-  
   <article>
   <header>
     <h2><a href="https://oguya.ch/linux/2015/12/02/upgrading-fedora">Upgrading Fedora 22 to 23 using DNF</a></h2>
@@ -133,9 +135,7 @@
 </article>
 
   
-  
   <hr/>
-  
   <article>
   <header>
     <h2><a href="https://oguya.ch/linux/2015/09/01/systemd-mount-partition">Mounting Partitions Using Systemd</a></h2>
@@ -162,9 +162,7 @@
 </article>
 
   
-  
   <hr/>
-  
   <article>
   <header>
     <h2><a href="https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu">Deploying CIS Benchmarks on Ubuntu 14.04 hosts using Ansible</a></h2>
@@ -191,9 +189,7 @@
 </article>
 
   
-  
   <hr/>
-  
   <article>
   <header>
     <h2><a href="https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap">Clear RAM Memory Cache, Buffer &amp; Swap Space</a></h2>
@@ -220,18 +216,145 @@
 </article>
 
   
-</div>
-<nav class="pagination" role="navigation">
+  <hr/>
+  <article>
+  <header>
+    <h2><a href="https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages">Yum/DNF Keep Old Packages</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2015-06-06T00:00:00Z">
+          Jun 6, 2015
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>When you upgrade packages on RedHat based systems, the newer package replaces the older one except for <em>install only</em> packages e.g. kernel packages.
+Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.</p>
 
-  <hr />
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
 
+  
+  <hr/>
+  <article>
+  <header>
+    <h2><a href="https://oguya.ch/linux/2015/02/22/ansible-reboot-servers">Rebooting server(s) using Ansible</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2015-02-22T00:00:00Z">
+          Feb 22, 2015
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>Ansible provides useful tools which we can use to for various purposes. In this blog post, we&rsquo;ll talk about rebooting servers using ansible &amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.</p>
 
-  <span class="page-number">Page 1 of 2</span>
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/linux/2015/02/22/ansible-reboot-servers">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
 
-<a class="older-posts" href="/page/2/">Older Posts <span aria-hidden="true">&raquo;</span></a>
+  
+  <hr/>
+  <article>
+  <header>
+    <h2><a href="https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers">Ansible &#39;Prompt&#39; handlers</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2014-12-18T00:00:00Z">
+          Dec 18, 2014
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>An awesome feature in  that is not available in <a href="http://ansible.com">Ansible</a> is immediate notification i.e. <code>notifies :immediately</code>.
+Ansible has notification handlers<sup><a href="http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change">[1]</a></sup> but they are only triggered at the end of the current playbook unlike Chef&rsquo;s<sup><a href="https://docs.chef.io/resource_common.html#notifies-syntax">[2]</a></sup> which can be  triggered immediately! Moreover, you can configure Chef&rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. <code>:delayed</code> or immediately i.e. <code>:immediately</code>.</p>
 
-</nav>
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
 
+  
+  <hr/>
+  <article>
+  <header>
+    <h2><a href="https://oguya.ch/linux/2014/11/18/check-ssl-certs">Validity of SSL Certificates</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2014-11-18T00:00:00Z">
+          Nov 18, 2014
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>OpenSSL provides several options for implementing SSL &amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&rsquo;ll turn our attention to SSL certificates &amp; the priceless information they contain.</p>
+
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/linux/2014/11/18/check-ssl-certs">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
+
+  
+  <hr/>
+  <article>
+  <header>
+    <h2><a href="https://oguya.ch/linux/2014/10/13/hello-blogging-world">Hello blogging world :)</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2014-10-13T00:00:00Z">
+          Oct 13, 2014
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>so after several months—if not years—of procrastinating whether I should or should not blog, I&rsquo;ve finally decided to leave my comfort zone and face
+my greatest fear—blogging!!</p>
+
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/linux/2014/10/13/hello-blogging-world">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
+
+  
+</section>
   </main>
   <footer class="container global-footer">
     <div class="copyright-note pull-left">

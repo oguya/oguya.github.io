@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta property="og:title" content=" Recovering ZFS Pool &middot;  James Oguya" />
+  
+  <meta property="og:site_name" content="James Oguya" />
+  <meta property="og:url" content="https://oguya.ch/linux/2015/12/03/recover-zfs-pool" />
+  
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:article:published_time" content="2015-12-03T00:00:00Z" />
+  
+  <meta property="og:article:tag" content="zfs" />
+  
+  <meta property="og:article:tag" content="linux" />
+  
+  
+
+  <title>
+     Recovering ZFS Pool &middot;  James Oguya
+  </title>
+
+  <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/main.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/github.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css">
+  <link rel="shortcut icon" href="https://oguya.ch/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://oguya.ch/images/apple-touch-icon.png" />
+  
+</head>
+<body>
+    <header class="global-header"  style="background-image:url( /images/bg.jpg )">
+    <section class="header-text">
+      <h1><a href="https://oguya.ch/">James Oguya</a></h1>
+      
+      <div class="tag-line">
+        Linux nuggets
+      </div>
+      
+      <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+      
+      <a href="https://oguya.ch/" class="btn-header btn-back hidden-xs">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        &nbsp;Home
+      </a>
+      
+      
+    </section>
+  </header>
+  <main class="container">
+
+
+<article>
+  <header>
+    <h1 class="text-primary">Recovering ZFS Pool</h1>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2015-12-03T00:00:00Z">
+          Dec 3, 2015
+        </time>
+      </div>
+      <div class="pull-right">
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/zfs">#zfs</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
+        
+      </div>
+    </div>
+  </header>
+  <section>
+    
+
+<p>Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.</p>
+
+<p>So the other day I was upgrading my workstation from <a href="/linux/2015/12/02/upgrading-fedora/">Fedora 22 to Fedora 23</a> and after the upgrade my ZFS pool disappeared! Oh BTW, I&rsquo;m using <a href="http://zfsonlinux.org/">ZoL(ZFS on Linux)</a>.</p>
+
+<h2 id="troubleshooting:b5b68720ff71dd30d4c990d98e9a02b9">Troubleshooting</h2>
+
+<p>Normally the command <code>zpool status</code> would display detailed health status for the specified pool. But, if your pool is missing then you&rsquo;ll get something like:</p>
+
+<pre><code class="language-sh">root@localhost ~ # zpool list
+no pools available
+root@localhost ~ # zpool status
+no pools available
+</code></pre>
+
+<p>Scary, right??</p>
+
+<h2 id="quick-fix:b5b68720ff71dd30d4c990d98e9a02b9">Quick Fix</h2>
+
+<p>Using <code>zpool import</code> we&rsquo;ll list all pools available &amp; then import them.</p>
+
+<blockquote>
+<p>zpool import [-d dir | -c cachefile] [-D]</br>
+Lists  pools available to import. If the -d option is not specified, this command searches for devices in &ldquo;/dev&rdquo;.</p>
+</blockquote>
+
+<ul>
+<li><p>List all pools</p>
+
+<pre><code class="language-sh">root@localhost ~ # zpool import
+pool: tank
+ id: 11742341043733316809
+state: ONLINE
+action: The pool can be imported using its name or numeric identifier.
+config:
+
+
+    tank                                                ONLINE
+      raidz1-0                                          ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE
+        11742341043733316809                            ONLINE
+</code></pre></li>
+
+<li><p>Finally, import your pool, in this case, tank</p>
+
+<pre><code class="language-sh">root@localhost ~ # zpool import tank
+</code></pre></li>
+
+<li><p>All is well after all! No data lost :)</p>
+
+<pre><code>root@localhost ~ # zpool status
+  pool: tank
+ state: ONLINE
+  scan: scrub canceled on Tue Oct 27 08:15:07 2015
+config:
+
+
+        NAME                                                STATE     READ WRITE CKSUM
+        tank                                                ONLINE       0     0     0
+          raidz1-0                                          ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE       0     0     0
+            11742341043733316809                            ONLINE       0     0     0
+errors: No known data errors
+
+
+root@localhost ~ # zpool list
+NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
+
+
+root@localhost ~ # zfs list
+NAME             USED  AVAIL  REFER  MOUNTPOINT
+tank             123G  1.77T   166K  /mnt/zpool/tank
+tank/backups     117G   383G   117G  /mnt/zpool/tank/backups
+tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
+</code></pre></li>
+</ul>
+
+  </section>
+  <footer>
+    
+    <hr/>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = 'oguya';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+    <section class="author-info row">
+      <div class="author-avatar col-md-2">
+        
+      </div>
+      <div class="author-meta col-md-6">
+        
+        
+      </div>
+      
+      <div class="author-contact col-md-4">
+        <a href="mailto:oguyajames@gmail.com">
+          <i class="fa fa-envelope-o" aria-hidden="true"></i>
+          &nbsp;Contact me
+        </a>
+      </div>
+      
+    </section>
+    <ul class="pager">
+      
+      <li class="previous"><a href="https://oguya.ch/linux/2015/12/02/upgrading-fedora"><span aria-hidden="true">&larr;</span> Older</a></li>
+      
+      
+      <li class="next disabled"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+  </main>
+  <footer class="container global-footer">
+    <div class="copyright-note pull-left">
+      
+    </div>
+    <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <script src="https://oguya.ch/js/highlight.pack.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+  
+</body>
+</html>
+

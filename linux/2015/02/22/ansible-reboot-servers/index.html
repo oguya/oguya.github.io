@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta property="og:title" content=" Rebooting server(s) using Ansible &middot;  James Oguya" />
+  
+  <meta property="og:site_name" content="James Oguya" />
+  <meta property="og:url" content="https://oguya.ch/linux/2015/02/22/ansible-reboot-servers" />
+  
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:article:published_time" content="2015-02-22T00:00:00Z" />
+  
+  <meta property="og:article:tag" content="ansible" />
+  
+  <meta property="og:article:tag" content="linux" />
+  
+  
+
+  <title>
+     Rebooting server(s) using Ansible &middot;  James Oguya
+  </title>
+
+  <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/main.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/github.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css">
+  <link rel="shortcut icon" href="https://oguya.ch/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://oguya.ch/images/apple-touch-icon.png" />
+  
+</head>
+<body>
+    <header class="global-header"  style="background-image:url( /images/bg.jpg )">
+    <section class="header-text">
+      <h1><a href="https://oguya.ch/">James Oguya</a></h1>
+      
+      <div class="tag-line">
+        Linux nuggets
+      </div>
+      
+      <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+      
+      <a href="https://oguya.ch/" class="btn-header btn-back hidden-xs">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        &nbsp;Home
+      </a>
+      
+      
+    </section>
+  </header>
+  <main class="container">
+
+
+<article>
+  <header>
+    <h1 class="text-primary">Rebooting server(s) using Ansible</h1>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2015-02-22T00:00:00Z">
+          Feb 22, 2015
+        </time>
+      </div>
+      <div class="pull-right">
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/ansible">#ansible</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
+        
+      </div>
+    </div>
+  </header>
+  <section>
+    
+
+<p>Ansible provides useful tools which we can use to for various purposes. In this blog post, we&rsquo;ll talk about rebooting servers using ansible &amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.</p>
+
+<p>Of late, I&rsquo;ve seen a lot of guys asking questions about rebooting nodes/servers &amp; temporarily pausing the playbook for a given amount of time before continuing with the execution of the playbook. In some cases, you&rsquo;d want to set some kernel parameters which take effect at boot time or perform major upgrades which might require a reboot before configuring the server/node.</p>
+
+<p>Using ansible&rsquo;s <code>wait_for</code> module<a href="http://docs.ansible.com/wait_for_module.html"><sup>[1]</sup></a>, we can temporarily stop running the playbook while we wait for the server to finish rebooting or for a service to start &amp; bind to a port. We can also use the same module to wait for a port to become available which can be useful in situations where services are not immediately available after their <code>init</code> scripts finish running - as is the case with Java application server e.g. Tomcat.</p>
+
+<h3 id="getting-started:099698e1018d4abe67645cf353ce941b">Getting Started</h3>
+
+<p>Basically, we can break our problem into 4 sections for easier conceptualization:</p>
+
+<ul>
+<li><p>Section 1: <strong>Pre-reboot</strong>: Run your pre-reboot task, it can be performing major upgrades and/or performing some configuration which only take effect at boot time.<br/>
+For example: upgrade all packages using <code>yum</code> module<a href="http://docs.ansible.com/yum_module.html"><sup>[2]</sup></a></p>
+
+<pre><code>- name: upgrade all packages
+  yum: name=* state=latest
+</code></pre></li>
+
+<li><p>Section 2: <strong>Reboot</strong>: In this stage we&rsquo;ll use the <code>command</code> module<a href="http://docs.ansible.com/command_module.html"><sup>[3]</sup></a>
+to reboot the remote machine/server by running the <code>reboot</code> command—nothing fancy—you can also use <code>shutdown --reboot</code>.</p>
+
+<pre><code>- name: reboot server
+  command: /sbin/reboot
+</code></pre></li>
+
+<li><p>Section 3: <strong>Pause the playbook</strong>: We&rsquo;ll use the <code>wait_for</code> module to wait for 300 seconds for port 22 to become available before resuming the playbook. I&rsquo;m using port 22 because most servers run openssh-server on port 22 &amp; if we were to telnet to that port we&rsquo;d probably see something like :<code>SSH-2.0-OpenSSH_6.6.1</code>, so we can use regex to check whether the output matches &ldquo;OpenSSH&rdquo;. I&rsquo;m using a <code>timeout</code> value of 300 seconds because most physical servers take 3 - 5 minutes to finish reboot due to hardware checks e.t.c. but you can use any value that suites you.
+For example: - wait for 300 seconds for port 22 to become available &amp; contain
+<code>OpenSSH</code>
+    - name: wait for the server to finish rebooting
+      local_action: wait_for host=&ldquo;web01&rdquo; search_regex=OpenSSH port=22 timeout=300</p></li>
+
+<li><p>Section 4: <strong>Resume the playbook</strong>: After we&rsquo;ve got a response from port 22, we can resume running the playbook. This step can be optional depending on your needs.</p></li>
+</ul>
+
+<h3 id="putting-it-all-together:099698e1018d4abe67645cf353ce941b">Putting it all together</h3>
+
+<ul>
+<li><p>We can merge all the above sections into one playbook as shown below:</p>
+
+<pre><code>- hosts: all
+  sudo: yes
+  tasks:
+    - name: Upgrade all packages in RedHat-based machines
+      when: ansible_os_family == &quot;Redhat&quot;
+      yum: name=* state=latest
+
+
+    - name: Upgrade all packages in Debian-based machines
+      when: ansible_os_family == &quot;Debian&quot;
+      apt: upgrade=dist update_cache=yes
+
+
+    - name: Reboot server
+      command: /sbin/reboot
+
+
+    - name: Wait for the server to finish rebooting
+      sudo: no
+      local_action: wait_for host=&quot;{{ inventory_hostname }}&quot; search_regex=OpenSSH port=22 timeout=300
+</code></pre></li>
+</ul>
+
+<h3 id="stuff-to-note:099698e1018d4abe67645cf353ce941b">Stuff to note</h3>
+
+<ul>
+<li>I know you might be wondering why we didn&rsquo;t use handlers. Well, <code>notify</code> tasks<a href="http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change"><sup>[4]</sup></a> are only executed at the end of the playbook regardless of their location in the
+playbook - remember we&rsquo;re interested in rebooting the server &amp; waiting for a given amount of time for the server to finish rebooting.</li>
+<li><code>inventory_hostname</code> variable<a href="http://docs.ansible.com/playbooks_variables.html#magic-variables-and-how-to-access-information-about-other-hosts"><sup>[5]</sup></a> is the name of the remote server as stated in the ansible hosts file</li>
+<li><code>local_action</code> directive<a href="http://docs.ansible.com/glossary.html#local-action"><sup>[6]</sup></a> runs the given step on the local machine, for example, it would run the <code>wait_for</code> task on your local machine.</li>
+<li><code>yum</code> module only works on RedHat based OS e.g. Fedora, CentOS &amp; RHEL,and so we&rsquo;ll also use the <code>apt</code> module for Debian based OS e.g. Ubuntu, Debian e.t.c.</li>
+</ul>
+
+<h3 id="further-reading:099698e1018d4abe67645cf353ce941b">Further Reading</h3>
+
+<ol>
+<li><a href="http://docs.ansible.com/wait_for_module.html">Ansible wait_for module</a></li>
+<li><a href="http://docs.ansible.com/command_module.html">Ansible command module</a></li>
+<li><a href="http://docs.ansible.com/yum_module.html">Ansible yum module</a></li>
+<li><a href="http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change">Ansible Handlers: Running operations on change</a></li>
+<li><a href="http://docs.ansible.com/playbooks_variables.html#magic-variables-and-how-to-access-information-about-other-hosts">Playbook built-in variables</a></li>
+<li><a href="http://docs.ansible.com/glossary.html#local-action">Ansible local_action directives</a></li>
+</ol>
+
+  </section>
+  <footer>
+    
+    <hr/>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = 'oguya';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+    <section class="author-info row">
+      <div class="author-avatar col-md-2">
+        
+      </div>
+      <div class="author-meta col-md-6">
+        
+        
+      </div>
+      
+      <div class="author-contact col-md-4">
+        <a href="mailto:oguyajames@gmail.com">
+          <i class="fa fa-envelope-o" aria-hidden="true"></i>
+          &nbsp;Contact me
+        </a>
+      </div>
+      
+    </section>
+    <ul class="pager">
+      
+      <li class="previous"><a href="https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers"><span aria-hidden="true">&larr;</span> Older</a></li>
+      
+      
+      <li class="next"><a href="https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+  </main>
+  <footer class="container global-footer">
+    <div class="copyright-note pull-left">
+      
+    </div>
+    <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <script src="https://oguya.ch/js/highlight.pack.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+  
+</body>
+</html>
+

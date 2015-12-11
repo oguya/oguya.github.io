@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta property="og:title" content=" Ansible &#39;Prompt&#39; handlers &middot;  James Oguya" />
+  
+  <meta property="og:site_name" content="James Oguya" />
+  <meta property="og:url" content="https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers" />
+  
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:article:published_time" content="2014-12-18T00:00:00Z" />
+  
+  <meta property="og:article:tag" content="ansible" />
+  
+  
+
+  <title>
+     Ansible &#39;Prompt&#39; handlers &middot;  James Oguya
+  </title>
+
+  <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/main.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/github.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css">
+  <link rel="shortcut icon" href="https://oguya.ch/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://oguya.ch/images/apple-touch-icon.png" />
+  
+</head>
+<body>
+    <header class="global-header"  style="background-image:url( /images/bg.jpg )">
+    <section class="header-text">
+      <h1><a href="https://oguya.ch/">James Oguya</a></h1>
+      
+      <div class="tag-line">
+        Linux nuggets
+      </div>
+      
+      <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+      
+      <a href="https://oguya.ch/" class="btn-header btn-back hidden-xs">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        &nbsp;Home
+      </a>
+      
+      
+    </section>
+  </header>
+  <main class="container">
+
+
+<article>
+  <header>
+    <h1 class="text-primary">Ansible &#39;Prompt&#39; handlers</h1>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2014-12-18T00:00:00Z">
+          Dec 18, 2014
+        </time>
+      </div>
+      <div class="pull-right">
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/ansible">#ansible</a></span>
+        
+      </div>
+    </div>
+  </header>
+  <section>
+    
+
+<p>An awesome feature in  that is not available in <a href="http://ansible.com">Ansible</a> is immediate notification i.e. <code>notifies :immediately</code>.
+Ansible has notification handlers<sup><a href="http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change">[1]</a></sup> but they are only triggered at the end of the current playbook unlike Chef&rsquo;s<sup><a href="https://docs.chef.io/resource_common.html#notifies-syntax">[2]</a></sup> which can be  triggered immediately! Moreover, you can configure Chef&rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. <code>:delayed</code> or immediately i.e. <code>:immediately</code>.</p>
+
+<p>Now, why I&rsquo;m going into all these boring theories?? Well, when installing tomcat on Ubuntu, dpkg starts it automatically
+once the process is complete. I wanted to stop tomcat7 service, configure it, deploy its webapps &amp; finally start it. So
+after installing tomcat7 I added a notification action to call a task that stops tomcat7 service.</p>
+
+<pre><code class="language-yml">tasks:
+    - name: Install tomcat7
+      apt: name={{ item }} install_recommends=no update_cache=yes state=present
+      with_items:
+        - tomcat7
+        - tomcat7-admin
+      notify:
+        - Temporarily stop tomcat7
+
+handlers:
+    - name: Temporarily stop tomcat7
+    service: name=tomcat7 state=stopped
+</code></pre>
+
+<p>Unfortunately, this didn&rsquo;t work because notifications trigger tasks in handlers to run at the end of a playbook.
+So I had to come up with a quick fix for this issue.</p>
+
+<h2 id="quick-fix:9ae4ed9efeca6e2a238465d7fa3caf24">Quick Fix</h2>
+
+<p>This involved registering a variable in task that installs tomcat packages i.e. <code>register: tomcat_installed</code>,
+then I would run the next task only if the registered variable has changed i.e. <code>when: tomcat_installed|changed</code>.
+Basically, handlers use a similar concept to this.</p>
+
+<p>Here&rsquo;s a snippet from the playbook showing my quick fix:</p>
+
+<pre><code class="language-yaml">tasks:
+    - name: Install tomcat7
+      apt: name={{ item }} install_recommends=no update_cache=yes state=present
+      with_items:
+        - tomcat7
+        - tomcat7-admin
+      register: tomcat_installed
+
+    - name: Temporarily stop tomcat7
+      service: name=tomcat7 state=stopped
+      when: tomcat_installed|changed
+</code></pre>
+
+<p>As you can see from the snippet, I&rsquo;ve not used a handler. Yes that&rsquo;s right, inorder to achieve the &lsquo;effect&rsquo; of an immediate handler,
+I moved the task that stops tomcat7 service from the handler section to the tasks section.</p>
+
+<p>As always, these are my opinions that I don&rsquo;t mind sharing with anyone. Though I&rsquo;m sure there are better solutions to my original
+problem, I think this solution could be useful for other ansible-related problems.</p>
+
+<h2 id="further-reading:9ae4ed9efeca6e2a238465d7fa3caf24">Further Reading</h2>
+
+<ol>
+<li><a href="http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change">Ansible Handlers: Running Operations On Change</a></li>
+<li><a href="https://docs.chef.io/resource_common.html#notifies-syntax">Chef Notifications</a></li>
+</ol>
+
+  </section>
+  <footer>
+    
+    <hr/>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = 'oguya';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+    <section class="author-info row">
+      <div class="author-avatar col-md-2">
+        
+      </div>
+      <div class="author-meta col-md-6">
+        
+        
+      </div>
+      
+      <div class="author-contact col-md-4">
+        <a href="mailto:oguyajames@gmail.com">
+          <i class="fa fa-envelope-o" aria-hidden="true"></i>
+          &nbsp;Contact me
+        </a>
+      </div>
+      
+    </section>
+    <ul class="pager">
+      
+      <li class="previous"><a href="https://oguya.ch/linux/2014/11/18/check-ssl-certs"><span aria-hidden="true">&larr;</span> Older</a></li>
+      
+      
+      <li class="next"><a href="https://oguya.ch/linux/2015/02/22/ansible-reboot-servers">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+  </main>
+  <footer class="container global-footer">
+    <div class="copyright-note pull-left">
+      
+    </div>
+    <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <script src="https://oguya.ch/js/highlight.pack.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+  
+</body>
+</html>
+

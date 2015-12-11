@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Fedora on James Oguya</title>
+    <link>https://oguya.ch/tags/fedora/</link>
+    <description>Recent content in Fedora on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 02 Dec 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/fedora/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Upgrading Fedora 22 to 23 using DNF</title>
+      <link>https://oguya.ch/linux/2015/12/02/upgrading-fedora</link>
+      <pubDate>Wed, 02 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/12/02/upgrading-fedora</guid>
+      <description>
+
+&lt;p&gt;This is a short &amp;amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF&lt;/p&gt;
+
+&lt;p&gt;Live Fedora upgrades using &lt;a href=&#34;https://fedoraproject.org/wiki/Dnf&#34;&gt;dnf&lt;/a&gt; or &lt;a href=&#34;https://fedoraproject.org/wiki/Yum&#34;&gt;yum&lt;/a&gt; usually works well with typical installations but that doesn&amp;rsquo;t mean you won&amp;rsquo;t experience errors during the process.
+In this guide, I&amp;rsquo;ll break the entire process into 3 stages:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pre-upgrade&lt;/li&gt;
+&lt;li&gt;Upgrade&lt;/li&gt;
+&lt;li&gt;Post-upgrade&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;pre-upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Pre-upgrade&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Backup your Data:&lt;/strong&gt;&lt;/br&gt;
+Backup all your important data before doing anything. It&amp;rsquo;s always a good idea to have backups which you can fallback to incase something goes utterly wrong the upgrade.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Run updates &amp;amp; reboot:&lt;/strong&gt;&lt;/br&gt;
+Upgrade your Fedora 22 packages &amp;amp; reboot before you can start the upgrade, just to make sure you&amp;rsquo;re running the latest kernel &amp;amp; other packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# dnf upgrade
+# systemctl reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Upgrade&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Import Fedora 23 GPG Key, clean dnf local cache &amp;amp; finally start the upgrade.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-23-$(uname -i)
+# dnf upgrade
+# dnf clean all
+# dnf --releasever=23 --setopt=deltarpm=false distro-sync
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;post-upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Post-Upgrade&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;After the upgrade, invoke SELinux to autorelabel all files/dirs and finally reboot. Autorelabling will occur during the next boot process.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# touch /.autorelabel
+# systemctl reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;gotchas:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Gotchas!!!&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;During the upgrade I bumped into a couple of errors related to missing dependencies.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# dnf --releasever=23 --setopt=deltarpm=false distro-sync
+Last metadata expiration check performed 0:27:00 ago on Wed Dec  2 10:19:02 2015.
+Error: package rubygem-celluloid-0.15.2-2.fc22.noarch requires rubygem(timers) &amp;lt; 1.2, but none of the providers can be installed
+package libxml2-python-2.9.3-1.fc22.x86_64 requires libxml2 = 2.9.3-1.fc22, but none of the providers can be installed
+(try to add &#39;--allowerasing&#39; to command line to replace conflicting packages)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Since both package dependencies were available on Fedora 23 repo, I switched to that repo &amp;amp; upgraded them before running the upgrade process again. I think this is not the recommended way of fixing such issues, but it worked!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# dnf --releasever=23 install --best --allowerasing rubygem-timers libxml2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Another thing to note is that DNF upgrades are heavily dependent on your network. So it&amp;rsquo;s always a good idea to use local mirrors to speed up the upgrade process.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Yum/DNF Keep Old Packages</title>
+      <link>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</link>
+      <pubDate>Sat, 06 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</guid>
+      <description>&lt;p&gt;When you upgrade packages on RedHat based systems, the newer package replaces the older one except for &lt;em&gt;install only&lt;/em&gt; packages e.g. kernel packages.
+Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.&lt;/p&gt;
+
+&lt;p&gt;Once you have more than 3 versions, yum &amp;amp; dnf will clean the older versions of the &lt;em&gt;install only&lt;/em&gt; package(s). To retain more than 3 versions, set &lt;code&gt;installonly_limit&lt;/code&gt;  in &lt;code&gt;/etc/yum.conf&lt;/code&gt; or &lt;code&gt;/etc/dnf/dnf.conf&lt;/code&gt; to a number that you want, e.g. keep 5 versions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;installonly_limit=5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To keep all older kernel packages forever, set &lt;code&gt;installonly_limit&lt;/code&gt; to &lt;strong&gt;0&lt;/strong&gt; i.e. never remove older versions of &lt;em&gt;install only&lt;/em&gt; packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;installonly_limit=0
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

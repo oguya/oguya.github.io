@@ -1,0 +1,838 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>James Oguya</title>
+    <link>https://oguya.ch/</link>
+    <description>Recent content on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 03 Dec 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Recovering ZFS Pool</title>
+      <link>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</link>
+      <pubDate>Thu, 03 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</guid>
+      <description>
+
+&lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.&lt;/p&gt;
+
+&lt;p&gt;So the other day I was upgrading my workstation from &lt;a href=&#34;https://oguya.ch/linux/2015/12/02/upgrading-fedora/&#34;&gt;Fedora 22 to Fedora 23&lt;/a&gt; and after the upgrade my ZFS pool disappeared! Oh BTW, I&amp;rsquo;m using &lt;a href=&#34;http://zfsonlinux.org/&#34;&gt;ZoL(ZFS on Linux)&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;troubleshooting:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Troubleshooting&lt;/h2&gt;
+
+&lt;p&gt;Normally the command &lt;code&gt;zpool status&lt;/code&gt; would display detailed health status for the specified pool. But, if your pool is missing then you&amp;rsquo;ll get something like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;root@localhost ~ # zpool list
+no pools available
+root@localhost ~ # zpool status
+no pools available
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Scary, right??&lt;/p&gt;
+
+&lt;h2 id=&#34;quick-fix:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Quick Fix&lt;/h2&gt;
+
+&lt;p&gt;Using &lt;code&gt;zpool import&lt;/code&gt; we&amp;rsquo;ll list all pools available &amp;amp; then import them.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;zpool import [-d dir | -c cachefile] [-D]&lt;/br&gt;
+Lists  pools available to import. If the -d option is not specified, this command searches for devices in &amp;ldquo;/dev&amp;rdquo;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;List all pools&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;root@localhost ~ # zpool import
+pool: tank
+ id: 11742341043733316809
+state: ONLINE
+action: The pool can be imported using its name or numeric identifier.
+config:
+
+
+    tank                                                ONLINE
+      raidz1-0                                          ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE
+        11742341043733316809                            ONLINE
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Finally, import your pool, in this case, tank&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;root@localhost ~ # zpool import tank
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;All is well after all! No data lost :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@localhost ~ # zpool status
+  pool: tank
+ state: ONLINE
+  scan: scrub canceled on Tue Oct 27 08:15:07 2015
+config:
+
+
+        NAME                                                STATE     READ WRITE CKSUM
+        tank                                                ONLINE       0     0     0
+          raidz1-0                                          ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE       0     0     0
+            11742341043733316809                            ONLINE       0     0     0
+errors: No known data errors
+
+
+root@localhost ~ # zpool list
+NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
+
+
+root@localhost ~ # zfs list
+NAME             USED  AVAIL  REFER  MOUNTPOINT
+tank             123G  1.77T   166K  /mnt/zpool/tank
+tank/backups     117G   383G   117G  /mnt/zpool/tank/backups
+tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Upgrading Fedora 22 to 23 using DNF</title>
+      <link>https://oguya.ch/linux/2015/12/02/upgrading-fedora</link>
+      <pubDate>Wed, 02 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/12/02/upgrading-fedora</guid>
+      <description>
+
+&lt;p&gt;This is a short &amp;amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF&lt;/p&gt;
+
+&lt;p&gt;Live Fedora upgrades using &lt;a href=&#34;https://fedoraproject.org/wiki/Dnf&#34;&gt;dnf&lt;/a&gt; or &lt;a href=&#34;https://fedoraproject.org/wiki/Yum&#34;&gt;yum&lt;/a&gt; usually works well with typical installations but that doesn&amp;rsquo;t mean you won&amp;rsquo;t experience errors during the process.
+In this guide, I&amp;rsquo;ll break the entire process into 3 stages:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pre-upgrade&lt;/li&gt;
+&lt;li&gt;Upgrade&lt;/li&gt;
+&lt;li&gt;Post-upgrade&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;pre-upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Pre-upgrade&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Backup your Data:&lt;/strong&gt;&lt;/br&gt;
+Backup all your important data before doing anything. It&amp;rsquo;s always a good idea to have backups which you can fallback to incase something goes utterly wrong the upgrade.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Run updates &amp;amp; reboot:&lt;/strong&gt;&lt;/br&gt;
+Upgrade your Fedora 22 packages &amp;amp; reboot before you can start the upgrade, just to make sure you&amp;rsquo;re running the latest kernel &amp;amp; other packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# dnf upgrade
+# systemctl reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Upgrade&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Import Fedora 23 GPG Key, clean dnf local cache &amp;amp; finally start the upgrade.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-23-$(uname -i)
+# dnf upgrade
+# dnf clean all
+# dnf --releasever=23 --setopt=deltarpm=false distro-sync
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;post-upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Post-Upgrade&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;After the upgrade, invoke SELinux to autorelabel all files/dirs and finally reboot. Autorelabling will occur during the next boot process.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# touch /.autorelabel
+# systemctl reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;gotchas:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Gotchas!!!&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;During the upgrade I bumped into a couple of errors related to missing dependencies.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# dnf --releasever=23 --setopt=deltarpm=false distro-sync
+Last metadata expiration check performed 0:27:00 ago on Wed Dec  2 10:19:02 2015.
+Error: package rubygem-celluloid-0.15.2-2.fc22.noarch requires rubygem(timers) &amp;lt; 1.2, but none of the providers can be installed
+package libxml2-python-2.9.3-1.fc22.x86_64 requires libxml2 = 2.9.3-1.fc22, but none of the providers can be installed
+(try to add &#39;--allowerasing&#39; to command line to replace conflicting packages)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Since both package dependencies were available on Fedora 23 repo, I switched to that repo &amp;amp; upgraded them before running the upgrade process again. I think this is not the recommended way of fixing such issues, but it worked!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# dnf --releasever=23 install --best --allowerasing rubygem-timers libxml2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Another thing to note is that DNF upgrades are heavily dependent on your network. So it&amp;rsquo;s always a good idea to use local mirrors to speed up the upgrade process.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Mounting Partitions Using Systemd</title>
+      <link>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</link>
+      <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</guid>
+      <description>
+
+&lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.freedesktop.org/wiki/Software/systemd&#34;&gt;Systemd&lt;/a&gt; is gradually becoming the de facto init system &amp;amp; service manager replacing the old sysV init scripts &amp;amp; upstart. Recently, I discovered you can mount partitions using &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.mount.html&#34;&gt;systemd.mount&lt;/a&gt; by writing your own &lt;code&gt;.mount&lt;/code&gt; &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.unit.html&#34;&gt;systemd unit file&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://oguya.ch/images/2015-09-01-systemd-mount-partition/suprised-cat.jpg&#34; alt=&#34;super suprised&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;After &lt;em&gt;RTFM&amp;rsquo;ing&lt;/em&gt;, I realized, under the hood, systemd just runs &lt;a href=&#34;http://linux.die.net/man/8/mount&#34;&gt;mount command&lt;/a&gt; to mount the specified partition with the specified mount options listed in the mount unit file. Basically, you need to specify the following options in your unit file:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;What=&lt;/code&gt; a partition name, path or UUID to mount&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Where=&lt;/code&gt; an absolute path of a directory i.e. path to a mount point. If the mount point is non-existent, it will be created&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Type=&lt;/code&gt; file system type. In most cases &lt;a href=&#34;http://linux.die.net/man/8/mount&#34;&gt;mount command&lt;/a&gt; auto-detects the file system&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Options=&lt;/code&gt; Mount options to use when mounting&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the end, you can convert your typical fstab entry such as this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;UUID=86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups    ext4    defaults      0 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://oguya.ch/images/2015-09-01-systemd-mount-partition/i-got-this.gif&#34; alt=&#34;I Got This!&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So I wrote a simple systemd mount unit file — &lt;code&gt;/etc/systemd/system/mnt-backups.mount&lt;/code&gt; — which didn&amp;rsquo;t work at first because I fell victim to one of the &lt;code&gt;systemd.mount&lt;/code&gt; pitfalls:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Mount units must be named after the mount point directories they control. Example: the mount point /home/lennart must be configured in a unit file home-lennart.mount.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Huh? Yes that&amp;rsquo;s right! The unit filename should match the mount point path.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;mnt-backups.mount&lt;/code&gt; mount unit file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[Unit]
+Description=Mount System Backups Directory
+
+[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Reload systemd daemon &amp;amp; start the unit.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# systemctl daemon-reload
+# systemctl start mnt-backups.mount
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And just like any other unit, you can view its status using &lt;code&gt;systemctl status mnt-backups.mount&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# systemctl status mnt-backups.mount
+● mnt-backups.mount - Mount System Backups Directory
+   Loaded: loaded (/etc/systemd/system/mnt-backups.mount; enabled; vendor preset: disabled)
+   Active: active (mounted) since Mon 2015-08-31 08:09:15 EAT; 2 days ago
+    Where: /mnt/backups
+     What: /dev/sdc
+  Process: 744 ExecMount=/bin/mount /dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups -n -t ext4 -o defaults (code=exited, status=0/SUCCESS)
+
+Aug 31 08:09:15 localhost systemd[1]: Mounting Mount System Backups Directory...
+Aug 31 08:09:15 localhost systemd[1]: Mounted Mount System Backups Directory.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;gotchas:f752833558d6cf2c1eaf1c52459bee7c&#34;&gt;Gotchas!!&lt;/h3&gt;
+
+&lt;p&gt;After a reboot, I noticed the unit wasn&amp;rsquo;t started &amp;amp; as result the mount point dir. was empty. The unit file was missing an &lt;code&gt;[Install]&lt;/code&gt; section which contains installation information such as unit dependencies(&lt;code&gt;WantedBy=, RequiredBy=&lt;/code&gt;), aliases(&lt;code&gt;Alias=&lt;/code&gt;), additional units(&lt;code&gt;Also=&lt;/code&gt;), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a &lt;code&gt;multi-user.target&lt;/code&gt;. Oh, did you know you can change runlevel using &lt;code&gt;systemctl isolate $RUN_LEVEL.target&lt;/code&gt;? &lt;a href=&#34;https://wiki.archlinux.org/index.php/Systemd#Targets_table&#34;&gt;Read more&lt;/a&gt; about systemd runlevels/targets.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the complete &lt;code&gt;/etc/systemd/system/mnt-backups.mount&lt;/code&gt; unit file with an &lt;code&gt;[Install]&lt;/code&gt; section:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[Unit]
+Description=Mount System Backups Directory
+
+[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+
+[Install]
+WantedBy=multi-user.target
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As always, enable the unit to start automatically during boot.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;systemctl enable mnt-backups.mount
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deploying CIS Benchmarks on Ubuntu 14.04 hosts using Ansible</title>
+      <link>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</link>
+      <pubDate>Sun, 16 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</guid>
+      <description>
+
+&lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.&lt;/p&gt;
+
+&lt;h2 id=&#34;cis-security-benchmarks:1d544af00710297388d9db1e73b06b16&#34;&gt;CIS Security Benchmarks&lt;/h2&gt;
+
+&lt;p&gt;The CIS(Center for Internet Security)&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; Security Benchmarks program provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. Resources include secure configuration benchmarks, automated configuration assessment tools and content, security metrics and security software product certifications.
+CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; for analyzing &amp;amp; monitoring security benchmarks.&lt;/p&gt;
+
+&lt;p&gt;CIS Security benchmarks &amp;amp; recommendations are grouped into two(2) level—Level 1 &amp;amp; Level 2.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Level 1&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Items in this profile intend to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;be practical and prudent&lt;/li&gt;
+&lt;li&gt;provide a clear security benefit&lt;/li&gt;
+&lt;li&gt;have minimum effect on production workload&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Level 2&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This is an extension of Level 1 but with the following characteristics:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;intended for environments or use cases where security is paramount&lt;/li&gt;
+&lt;li&gt;acts as a defense in depth measure&lt;/li&gt;
+&lt;li&gt;have great effect on production workload&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To indicated compliance with a given recommendation, a benchmark score of either &lt;em&gt;Scored&lt;/em&gt; or &lt;em&gt;Not Scored&lt;/em&gt; is awarded:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Scored&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Failure to comply with &lt;em&gt;Scored&lt;/em&gt; recommendations will decrease the final benchmark score&lt;/li&gt;
+&lt;li&gt;Compliance with &lt;em&gt;Scored&lt;/em&gt; recommendations will increase the final benchmark score&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Not Scored&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Failure to comply with &lt;em&gt;Not Scored&lt;/em&gt; recommendations will not decrease the final benchmark score&lt;/li&gt;
+&lt;li&gt;Compliance with &lt;em&gt;Not Scored&lt;/em&gt; recommendations will not increase the final benchmark score&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;putting-it-all-together-with-ansible:1d544af00710297388d9db1e73b06b16&#34;&gt;Putting it all together with Ansible&lt;/h2&gt;
+
+&lt;p&gt;After carefully reading the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt;, I created an Ansible playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitLab&lt;/a&gt; that would allow users to audit &amp;amp; configure their systems to meet at most all of the CIS Security benchmarks.&lt;/p&gt;
+
+&lt;p&gt;Please, please, please have at the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt; before running this playbook &amp;amp; always do a dry run first using &lt;a href=&#34;http://docs.ansible.com/playbooks_checkmode.html&#34;&gt;Ansible&amp;rsquo;s Check Mode&lt;/a&gt; so as to see what to expect.&lt;/p&gt;
+
+&lt;h2 id=&#34;contribution:1d544af00710297388d9db1e73b06b16&#34;&gt;Contribution&lt;/h2&gt;
+
+&lt;p&gt;As always, &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/pulls&#34;&gt;Pull requests&lt;/a&gt; and &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/issues&#34;&gt;Github issues&lt;/a&gt; are all welcome!&lt;/p&gt;
+
+&lt;h3 id=&#34;further-reading:1d544af00710297388d9db1e73b06b16&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;About CIS Security Benchmarks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;CIS-CAT Benchmark Assessment Tool&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;CIS Ubuntu 14.04 Benchmarks Ansible Playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://gitlab.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitLab&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Clear RAM Memory Cache, Buffer &amp; Swap Space</title>
+      <link>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</link>
+      <pubDate>Tue, 09 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</guid>
+      <description>
+
+&lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.&lt;/p&gt;
+
+&lt;h3 id=&#34;clear-cache:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Cache&lt;/h3&gt;
+
+&lt;p&gt;There are 3 options to clear cache without interrupting any processes or services:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Clear page cache:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# echo 1 &amp;gt; /proc/sys/vm/drop_cache
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clear &lt;a href=&#34;http://unix.stackexchange.com/a/4403&#34;&gt;dentries&lt;/a&gt; and &lt;a href=&#34;http://unix.stackexchange.com/a/4403&#34;&gt;inodes&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# echo 2 &amp;gt; /proc/sys/vm/drop_cache
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clear PageCache, dentries and inodes&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# echo 3 &amp;gt; /proc/sys/vm/drop_cache
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;clear-swap-space:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Swap Space&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Clearing swap space is as easy as disabling &amp;amp; re-enabling the devices/files used for swaping.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# swapoff -a &amp;amp;&amp;amp; swapon -a
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;further-reading:c91088b87599ce10b0f880403bdac834&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://unix.stackexchange.com/questions/4402/what-is-a-superblock-inode-dentry-and-a-file/4403#4403&#34;&gt;What is a Superblock, Inode, Dentry and a File?&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Yum/DNF Keep Old Packages</title>
+      <link>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</link>
+      <pubDate>Sat, 06 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</guid>
+      <description>&lt;p&gt;When you upgrade packages on RedHat based systems, the newer package replaces the older one except for &lt;em&gt;install only&lt;/em&gt; packages e.g. kernel packages.
+Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.&lt;/p&gt;
+
+&lt;p&gt;Once you have more than 3 versions, yum &amp;amp; dnf will clean the older versions of the &lt;em&gt;install only&lt;/em&gt; package(s). To retain more than 3 versions, set &lt;code&gt;installonly_limit&lt;/code&gt;  in &lt;code&gt;/etc/yum.conf&lt;/code&gt; or &lt;code&gt;/etc/dnf/dnf.conf&lt;/code&gt; to a number that you want, e.g. keep 5 versions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;installonly_limit=5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To keep all older kernel packages forever, set &lt;code&gt;installonly_limit&lt;/code&gt; to &lt;strong&gt;0&lt;/strong&gt; i.e. never remove older versions of &lt;em&gt;install only&lt;/em&gt; packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;installonly_limit=0
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Rebooting server(s) using Ansible</title>
+      <link>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</link>
+      <pubDate>Sun, 22 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</guid>
+      <description>
+
+&lt;p&gt;Ansible provides useful tools which we can use to for various purposes. In this blog post, we&amp;rsquo;ll talk about rebooting servers using ansible &amp;amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.&lt;/p&gt;
+
+&lt;p&gt;Of late, I&amp;rsquo;ve seen a lot of guys asking questions about rebooting nodes/servers &amp;amp; temporarily pausing the playbook for a given amount of time before continuing with the execution of the playbook. In some cases, you&amp;rsquo;d want to set some kernel parameters which take effect at boot time or perform major upgrades which might require a reboot before configuring the server/node.&lt;/p&gt;
+
+&lt;p&gt;Using ansible&amp;rsquo;s &lt;code&gt;wait_for&lt;/code&gt; module&lt;a href=&#34;http://docs.ansible.com/wait_for_module.html&#34;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt;, we can temporarily stop running the playbook while we wait for the server to finish rebooting or for a service to start &amp;amp; bind to a port. We can also use the same module to wait for a port to become available which can be useful in situations where services are not immediately available after their &lt;code&gt;init&lt;/code&gt; scripts finish running - as is the case with Java application server e.g. Tomcat.&lt;/p&gt;
+
+&lt;h3 id=&#34;getting-started:099698e1018d4abe67645cf353ce941b&#34;&gt;Getting Started&lt;/h3&gt;
+
+&lt;p&gt;Basically, we can break our problem into 4 sections for easier conceptualization:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Section 1: &lt;strong&gt;Pre-reboot&lt;/strong&gt;: Run your pre-reboot task, it can be performing major upgrades and/or performing some configuration which only take effect at boot time.&lt;br/&gt;
+For example: upgrade all packages using &lt;code&gt;yum&lt;/code&gt; module&lt;a href=&#34;http://docs.ansible.com/yum_module.html&#34;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: upgrade all packages
+  yum: name=* state=latest
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Section 2: &lt;strong&gt;Reboot&lt;/strong&gt;: In this stage we&amp;rsquo;ll use the &lt;code&gt;command&lt;/code&gt; module&lt;a href=&#34;http://docs.ansible.com/command_module.html&#34;&gt;&lt;sup&gt;[3]&lt;/sup&gt;&lt;/a&gt;
+to reboot the remote machine/server by running the &lt;code&gt;reboot&lt;/code&gt; command—nothing fancy—you can also use &lt;code&gt;shutdown --reboot&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: reboot server
+  command: /sbin/reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Section 3: &lt;strong&gt;Pause the playbook&lt;/strong&gt;: We&amp;rsquo;ll use the &lt;code&gt;wait_for&lt;/code&gt; module to wait for 300 seconds for port 22 to become available before resuming the playbook. I&amp;rsquo;m using port 22 because most servers run openssh-server on port 22 &amp;amp; if we were to telnet to that port we&amp;rsquo;d probably see something like :&lt;code&gt;SSH-2.0-OpenSSH_6.6.1&lt;/code&gt;, so we can use regex to check whether the output matches &amp;ldquo;OpenSSH&amp;rdquo;. I&amp;rsquo;m using a &lt;code&gt;timeout&lt;/code&gt; value of 300 seconds because most physical servers take 3 - 5 minutes to finish reboot due to hardware checks e.t.c. but you can use any value that suites you.
+For example: - wait for 300 seconds for port 22 to become available &amp;amp; contain
+&lt;code&gt;OpenSSH&lt;/code&gt;
+    - name: wait for the server to finish rebooting
+      local_action: wait_for host=&amp;ldquo;web01&amp;rdquo; search_regex=OpenSSH port=22 timeout=300&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Section 4: &lt;strong&gt;Resume the playbook&lt;/strong&gt;: After we&amp;rsquo;ve got a response from port 22, we can resume running the playbook. This step can be optional depending on your needs.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;putting-it-all-together:099698e1018d4abe67645cf353ce941b&#34;&gt;Putting it all together&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We can merge all the above sections into one playbook as shown below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- hosts: all
+  sudo: yes
+  tasks:
+    - name: Upgrade all packages in RedHat-based machines
+      when: ansible_os_family == &amp;quot;Redhat&amp;quot;
+      yum: name=* state=latest
+
+
+    - name: Upgrade all packages in Debian-based machines
+      when: ansible_os_family == &amp;quot;Debian&amp;quot;
+      apt: upgrade=dist update_cache=yes
+
+
+    - name: Reboot server
+      command: /sbin/reboot
+
+
+    - name: Wait for the server to finish rebooting
+      sudo: no
+      local_action: wait_for host=&amp;quot;{{ inventory_hostname }}&amp;quot; search_regex=OpenSSH port=22 timeout=300
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;stuff-to-note:099698e1018d4abe67645cf353ce941b&#34;&gt;Stuff to note&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;I know you might be wondering why we didn&amp;rsquo;t use handlers. Well, &lt;code&gt;notify&lt;/code&gt; tasks&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; are only executed at the end of the playbook regardless of their location in the
+playbook - remember we&amp;rsquo;re interested in rebooting the server &amp;amp; waiting for a given amount of time for the server to finish rebooting.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;inventory_hostname&lt;/code&gt; variable&lt;a href=&#34;http://docs.ansible.com/playbooks_variables.html#magic-variables-and-how-to-access-information-about-other-hosts&#34;&gt;&lt;sup&gt;[5]&lt;/sup&gt;&lt;/a&gt; is the name of the remote server as stated in the ansible hosts file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;local_action&lt;/code&gt; directive&lt;a href=&#34;http://docs.ansible.com/glossary.html#local-action&#34;&gt;&lt;sup&gt;[6]&lt;/sup&gt;&lt;/a&gt; runs the given step on the local machine, for example, it would run the &lt;code&gt;wait_for&lt;/code&gt; task on your local machine.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;yum&lt;/code&gt; module only works on RedHat based OS e.g. Fedora, CentOS &amp;amp; RHEL,and so we&amp;rsquo;ll also use the &lt;code&gt;apt&lt;/code&gt; module for Debian based OS e.g. Ubuntu, Debian e.t.c.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;further-reading:099698e1018d4abe67645cf353ce941b&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/wait_for_module.html&#34;&gt;Ansible wait_for module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/command_module.html&#34;&gt;Ansible command module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/yum_module.html&#34;&gt;Ansible yum module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;Ansible Handlers: Running operations on change&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_variables.html#magic-variables-and-how-to-access-information-about-other-hosts&#34;&gt;Playbook built-in variables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/glossary.html#local-action&#34;&gt;Ansible local_action directives&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ansible &#39;Prompt&#39; handlers</title>
+      <link>https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers</link>
+      <pubDate>Thu, 18 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers</guid>
+      <description>
+
+&lt;p&gt;An awesome feature in  that is not available in &lt;a href=&#34;http://ansible.com&#34;&gt;Ansible&lt;/a&gt; is immediate notification i.e. &lt;code&gt;notifies :immediately&lt;/code&gt;.
+Ansible has notification handlers&lt;sup&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;[1]&lt;/a&gt;&lt;/sup&gt; but they are only triggered at the end of the current playbook unlike Chef&amp;rsquo;s&lt;sup&gt;&lt;a href=&#34;https://docs.chef.io/resource_common.html#notifies-syntax&#34;&gt;[2]&lt;/a&gt;&lt;/sup&gt; which can be  triggered immediately! Moreover, you can configure Chef&amp;rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. &lt;code&gt;:delayed&lt;/code&gt; or immediately i.e. &lt;code&gt;:immediately&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now, why I&amp;rsquo;m going into all these boring theories?? Well, when installing tomcat on Ubuntu, dpkg starts it automatically
+once the process is complete. I wanted to stop tomcat7 service, configure it, deploy its webapps &amp;amp; finally start it. So
+after installing tomcat7 I added a notification action to call a task that stops tomcat7 service.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yml&#34;&gt;tasks:
+    - name: Install tomcat7
+      apt: name={{ item }} install_recommends=no update_cache=yes state=present
+      with_items:
+        - tomcat7
+        - tomcat7-admin
+      notify:
+        - Temporarily stop tomcat7
+
+handlers:
+    - name: Temporarily stop tomcat7
+    service: name=tomcat7 state=stopped
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Unfortunately, this didn&amp;rsquo;t work because notifications trigger tasks in handlers to run at the end of a playbook.
+So I had to come up with a quick fix for this issue.&lt;/p&gt;
+
+&lt;h2 id=&#34;quick-fix:9ae4ed9efeca6e2a238465d7fa3caf24&#34;&gt;Quick Fix&lt;/h2&gt;
+
+&lt;p&gt;This involved registering a variable in task that installs tomcat packages i.e. &lt;code&gt;register: tomcat_installed&lt;/code&gt;,
+then I would run the next task only if the registered variable has changed i.e. &lt;code&gt;when: tomcat_installed|changed&lt;/code&gt;.
+Basically, handlers use a similar concept to this.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a snippet from the playbook showing my quick fix:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;tasks:
+    - name: Install tomcat7
+      apt: name={{ item }} install_recommends=no update_cache=yes state=present
+      with_items:
+        - tomcat7
+        - tomcat7-admin
+      register: tomcat_installed
+
+    - name: Temporarily stop tomcat7
+      service: name=tomcat7 state=stopped
+      when: tomcat_installed|changed
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see from the snippet, I&amp;rsquo;ve not used a handler. Yes that&amp;rsquo;s right, inorder to achieve the &amp;lsquo;effect&amp;rsquo; of an immediate handler,
+I moved the task that stops tomcat7 service from the handler section to the tasks section.&lt;/p&gt;
+
+&lt;p&gt;As always, these are my opinions that I don&amp;rsquo;t mind sharing with anyone. Though I&amp;rsquo;m sure there are better solutions to my original
+problem, I think this solution could be useful for other ansible-related problems.&lt;/p&gt;
+
+&lt;h2 id=&#34;further-reading:9ae4ed9efeca6e2a238465d7fa3caf24&#34;&gt;Further Reading&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;Ansible Handlers: Running Operations On Change&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.chef.io/resource_common.html#notifies-syntax&#34;&gt;Chef Notifications&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Validity of SSL Certificates</title>
+      <link>https://oguya.ch/linux/2014/11/18/check-ssl-certs</link>
+      <pubDate>Tue, 18 Nov 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2014/11/18/check-ssl-certs</guid>
+      <description>
+
+&lt;p&gt;OpenSSL provides several options for implementing SSL &amp;amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&amp;rsquo;ll turn our attention to SSL certificates &amp;amp; the priceless information they contain.&lt;/p&gt;
+
+&lt;p&gt;An SSL certificate&lt;sup&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/X.509&#34;&gt;[1]&lt;/a&gt;&lt;/sup&gt; contains a lot of information such as:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Issuer&lt;/li&gt;
+&lt;li&gt;Subject i.e. the owner&lt;/li&gt;
+&lt;li&gt;Validity dates/period&lt;/li&gt;
+&lt;li&gt;Fingerprints&lt;/li&gt;
+&lt;li&gt;Certificate chain, e.t.c&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;openssl&lt;/code&gt; is a powerful cryptography &amp;amp; SSL/TLS toolkit that is readily available on most linux distros. It provides several options such as &lt;code&gt;s_client&lt;/code&gt;&lt;sup&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/s_client.html&#34;&gt;[2]&lt;/a&gt;&lt;/sup&gt; which allows you to connect to a remote host using SSL/TLS protocols, and &lt;code&gt;x509&lt;/code&gt;&lt;sup&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/x509.html&#34;&gt;[3]&lt;/a&gt;&lt;/sup&gt; which can be used to display certificate information, convert certificates to various forms, sign certificate requests like a &amp;lsquo;mini CA&amp;rsquo; or even edit certificate trust settings. Using &lt;code&gt;openssl&lt;/code&gt;, we&amp;rsquo;ll obtain all the above information from an ssl certificate.&lt;/p&gt;
+
+&lt;h2 id=&#34;show-validity:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show validity&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;show the expiry date of an ssl certificate. Both before(&lt;code&gt;-enddate&lt;/code&gt;) and after(&lt;code&gt;-startdate&lt;/code&gt;) dates would give you the validity period of a certificate.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect site:port 2&amp;gt; /dev/null | openssl x509 -noout -dates
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect google.com:443 2&amp;gt; /dev/null | openssl x509 -noout -dates
+notBefore=Sep 10 14:03:47 2014 GMT
+notAfter=Dec  9 00:00:00 2014 GMT
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;show-issuer:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show issuer&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;show who issued the certificate i.e. Certificate Authority(CA):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect site:port 2&amp;gt; /dev/null | openssl x509 -noout -issuer
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect google.com:443 2&amp;gt; /dev/null | openssl x509 -noout -issuer
+issuer= /C=US/O=Google Inc/CN=Google Internet Authority G2
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;show-subject:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show subject&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;show the owner/subject of the certificate:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect site:port 2&amp;gt; /dev/null | openssl x509 -noout -subject
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect google.com:443 2&amp;gt; /dev/null | openssl x509 -noout -subject
+subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;all-the-above:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;All the above&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;You can combine &lt;code&gt;-dates&lt;/code&gt;, &lt;code&gt;-issuer&lt;/code&gt; and &lt;code&gt;-subject&lt;/code&gt; options in one command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect site:port 2&amp;gt; /dev/null | openssl x509 -noout -dates -issuer -subject
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect google.com:443 2&amp;gt; /dev/null | openssl x509 -noout -dates -issuer -subject
+notBefore=Sep 10 14:03:47 2014 GMT
+notAfter=Dec  9 00:00:00 2014 GMT
+issuer= /C=US/O=Google Inc/CN=Google Internet Authority G2
+subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;show-certificate-hash:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show certificate hash&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;show cert&amp;rsquo;s hash:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;echo | openssl s_client -connect site:port 2&amp;gt; /dev/null | openssl x509 -noout -hash
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;for example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect google.com:443 2&amp;gt; /dev/null | openssl x509 -noout -hash
+a18bd28a
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;show-md5-fingerprint:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show MD5 fingerprint&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;print the certificate fingerprint:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect site:port 2&amp;gt; /dev/null | openssl x509 -noout -fingerprint
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;for example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ echo | openssl s_client -connect google.com:443 2&amp;gt; /dev/null | openssl x509 -noout -fingerprint
+SHA1 Fingerprint=8D:92:BB:69:54:E2:57:43:F3:4A:08:EC:35:96:0D:97:74:F5:66:6A
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;show-all-information-in-an-ssl-certificate:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show all information in an SSL certificate&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Lets print all the information stored in a certificate:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;echo | openssl s_client -connect  site:port 2&amp;gt; /dev/null | openssl x509 -noout -text
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;for example&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ echo | openssl s_client -connect google.com:443 2&amp;gt; /dev/null | openssl x509 -noout -text
+Certificate:
+Data:
+    Version: 3 (0x2)
+    Serial Number: 2725601525394095740 (0x25d348258060be7c)
+Signature Algorithm: sha1WithRSAEncryption
+    Issuer: C=US, O=Google Inc, CN=Google Internet Authority G2
+    Validity
+        Not Before: Sep 10 14:03:47 2014 GMT
+        Not After : Dec  9 00:00:00 2014 GMT
+    Subject: C=US, ST=California, L=Mountain View, O=Google Inc, CN=*.google.com
+    Subject Public Key Info:
+        Public Key Algorithm: rsaEncryption
+            Public-Key: (2048 bit)
+            Modulus:
+                00:88:86:aa:db:2d:af:b3:7a:b6:20:99:79:b2:63:
+                a4:1a:0b:9f:18:40:3d:0f:bb:d3:df:f0:1c:97:dd:
+                84:8a:bf:1c:a1:f4:ac:36:9e:2b:f3:64:6f:8f:4e:
+                ca:5c:de:09:b4:31:5a:21:47:21:37:c8:86:c8:0a:
+                ae:5d:90:43:13:5a:ad:18:f0:e8:fa:2c:a3:d0:d4:
+                9a:68:d6:41:dc:c8:d3:3c:27:2e:4b:30:25:a3:12:
+                b4:36:b5:70:98:e2:f5:02:a2:dc:e8:bf:a2:06:02:
+                3e:bd:0a:71:69:52:04:37:d4:dc:af:64:11:af:ed:
+                d5:8c:4f:75:17:5d:04:5f:a4:d6:d0:ad:6a:da:45:
+                23:d0:3e:14:3a:3a:96:a5:e4:3d:1c:52:45:55:a3:
+                43:21:5c:41:71:9d:17:20:19:c9:f3:2c:18:f2:57:
+                45:87:2b:c8:0d:86:02:aa:79:3d:15:ed:b0:1b:37:
+                cf:5c:cd:4e:7c:75:50:63:d2:4b:8b:6b:d1:a4:e4:
+                23:90:d3:6f:c6:4d:b5:d2:3b:8b:3e:9c:eb:21:38:
+                ef:21:bb:13:00:db:09:f4:9e:91:ef:96:1f:78:f4:
+                b4:b6:b7:65:1c:90:12:75:8b:0d:12:90:c5:dd:55:
+                b5:77:a0:96:27:0f:a2:88:b5:71:b7:f2:21:7b:9e:
+                97:07
+            Exponent: 65537 (0x10001)
+    X509v3 extensions:
+        X509v3 Extended Key Usage:
+            TLS Web Server Authentication, TLS Web Client Authentication
+        X509v3 Subject Alternative Name:
+            DNS:*.google.com, DNS:*.android.com, DNS:*.appengine.google.com, DNS:*.cloud.google.com, DNS:*.google-analytics.com, DNS:*.google.ca, DNS:*.google.cl, DNS:*.google.co.in, DNS:*.google.co.jp, DNS:*.google.co.uk, DNS:*.google.com.ar, DNS:*.google.com.au, DNS:*.google.com.br, DNS:*.google.com.co, DNS:*.google.com.mx, DNS:*.google.com.tr, DNS:*.google.com.vn, DNS:*.google.de, DNS:*.google.es, DNS:*.google.fr, DNS:*.google.hu, DNS:*.google.it, DNS:*.google.nl, DNS:*.google.pl, DNS:*.google.pt, DNS:*.googleadapis.com, DNS:*.googleapis.cn, DNS:*.googlecommerce.com, DNS:*.googlevideo.com, DNS:*.gstatic.cn, DNS:*.gstatic.com, DNS:*.gvt1.com, DNS:*.gvt2.com, DNS:*.urchin.com, DNS:*.url.google.com, DNS:*.youtube-nocookie.com, DNS:*.youtube.com, DNS:*.youtubeeducation.com, DNS:*.ytimg.com, DNS:android.com, DNS:g.co, DNS:goo.gl, DNS:google-analytics.com, DNS:google.com, DNS:googlecommerce.com, DNS:urchin.com, DNS:youtu.be, DNS:youtube.com, DNS:youtubeeducation.com
+        Authority Information Access:
+            CA Issuers - URI:http://pki.google.com/GIAG2.crt
+            OCSP - URI:http://clients1.google.com/ocsp
+
+
+        X509v3 Subject Key Identifier:
+            A3:9E:4E:88:E8:51:57:6C:96:02:04:AD:C7:C8:9C:06:7C:BF:BF:41
+        X509v3 Basic Constraints: critical
+            CA:FALSE
+        X509v3 Authority Key Identifier:
+            keyid:4A:DD:06:16:1B:BC:F6:68:B5:76:F5:81:B6:BB:62:1A:BA:5A:81:2F
+
+
+        X509v3 Certificate Policies:
+            Policy: 1.3.6.1.4.1.11129.2.5.1
+
+
+        X509v3 CRL Distribution Points:
+
+
+            Full Name:
+              URI:http://pki.google.com/GIAG2.crl
+
+
+Signature Algorithm: sha1WithRSAEncryption
+     39:25:0e:01:8c:a3:5e:14:37:82:c4:a3:dc:d4:16:d7:c3:6b:
+     fd:e9:1c:20:93:6a:f6:91:47:8b:5c:15:73:3a:a1:71:27:68:
+     76:56:b7:02:eb:fc:e7:9d:3c:8c:5a:69:a4:0b:75:ad:79:7e:
+     0e:34:35:68:8f:7b:51:45:69:99:90:a2:f7:33:0c:54:37:d4:
+     04:e9:4c:d9:d5:96:cb:b7:00:56:61:ec:27:ab:4a:21:54:15:
+     10:f3:cc:6b:90:20:cd:ec:70:3a:f3:bc:fc:a0:be:c6:79:9a:
+     f9:3c:1f:e0:cc:25:fa:ab:a2:8f:2f:06:36:26:16:c4:c4:41:
+     64:cd:e3:c7:8a:7c:f6:d6:f0:25:bf:a7:94:76:66:4f:b0:56:
+     5c:5f:c5:c9:86:4d:9b:49:07:8f:e3:4b:91:5c:c4:0d:e5:b3:
+     6c:4d:1e:63:1f:94:4b:10:3c:df:8f:9c:d8:7f:19:56:6a:a7:
+     b4:af:c1:69:81:ee:2f:f3:b7:fc:82:36:ce:72:2d:97:6f:9a:
+     8f:d3:a7:6b:80:82:8b:59:ce:83:81:26:02:76:96:68:92:ac:
+     36:93:01:4c:a4:55:91:89:65:6e:fc:b2:6d:90:c2:b3:63:75:
+     8e:1e:ad:45:8a:d7:98:85:e2:b2:bf:c1:ca:e8:83:e8:98:82:
+     be:3b:ba:19
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;conclusion:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;As a sysadmin, or an owner of a certificate, it&amp;rsquo;s a good practice to check the expiry date on your certificate(s) once every 2weeks so that you can plan in advance &amp;amp; renew them before they expire. This helps you avoid situations whereby your clients can&amp;rsquo;t securely connect to your servers because of an expired certificate.&lt;/p&gt;
+
+&lt;p&gt;For me, a simple cron job does the trick, every 2weeks it checks the validity of my certificates &amp;amp; emails me the results.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;0   9   */14   *   1   echo | openssl s_client -connect $SITE:$PORTt 2&amp;gt; /dev/null | openssl x509 -noout -dates -issuer -subject|  mail -s &amp;quot;Certificate Validity for $SITE&amp;quot; $YOUR_EMAIL
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;further-reading:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/X.509&#34;&gt;A bit of history on X.509&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/s_client.html&#34;&gt;openssl s_client man pages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/x509.html&#34;&gt;openssl x.509 man pages&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hello blogging world :)</title>
+      <link>https://oguya.ch/linux/2014/10/13/hello-blogging-world</link>
+      <pubDate>Mon, 13 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2014/10/13/hello-blogging-world</guid>
+      <description>&lt;p&gt;so after several months—if not years—of procrastinating whether I should or should not blog, I&amp;rsquo;ve finally decided to leave my comfort zone and face
+my greatest fear—blogging!!&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve been &amp;lsquo;blogging&amp;rsquo; locally on my laptop &amp;amp; workstation just taking simple notes of problems I&amp;rsquo;ve faced &amp;amp; how I tackled them.
+On few cases, I would place these notes on a private gist on &lt;a href=&#34;https://gist.github.com/oguya&#34;&gt;gist.github.com&lt;/a&gt;, then I would share them with my colleagues.&lt;/p&gt;
+
+&lt;p&gt;I guess it&amp;rsquo;s time to go public &amp;amp; share everything with everyone out there, after all I&amp;rsquo;m a big fan on Free &amp;amp; Open Source Software(FOSS).&lt;/p&gt;
+
+&lt;p&gt;Watch this space for more to come!&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Adios&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

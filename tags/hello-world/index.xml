@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hello World on James Oguya</title>
+    <link>https://oguya.ch/tags/hello-world/</link>
+    <description>Recent content in Hello World on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 13 Oct 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/hello-world/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Hello blogging world :)</title>
+      <link>https://oguya.ch/linux/2014/10/13/hello-blogging-world</link>
+      <pubDate>Mon, 13 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2014/10/13/hello-blogging-world</guid>
+      <description>&lt;p&gt;so after several months—if not years—of procrastinating whether I should or should not blog, I&amp;rsquo;ve finally decided to leave my comfort zone and face
+my greatest fear—blogging!!&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve been &amp;lsquo;blogging&amp;rsquo; locally on my laptop &amp;amp; workstation just taking simple notes of problems I&amp;rsquo;ve faced &amp;amp; how I tackled them.
+On few cases, I would place these notes on a private gist on &lt;a href=&#34;https://gist.github.com/oguya&#34;&gt;gist.github.com&lt;/a&gt;, then I would share them with my colleagues.&lt;/p&gt;
+
+&lt;p&gt;I guess it&amp;rsquo;s time to go public &amp;amp; share everything with everyone out there, after all I&amp;rsquo;m a big fan on Free &amp;amp; Open Source Software(FOSS).&lt;/p&gt;
+
+&lt;p&gt;Watch this space for more to come!&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Adios&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ansible on James Oguya</title>
+    <link>https://oguya.ch/tags/ansible/</link>
+    <description>Recent content in Ansible on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 16 Aug 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/ansible/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Deploying CIS Benchmarks on Ubuntu 14.04 hosts using Ansible</title>
+      <link>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</link>
+      <pubDate>Sun, 16 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</guid>
+      <description>
+
+&lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.&lt;/p&gt;
+
+&lt;h2 id=&#34;cis-security-benchmarks:1d544af00710297388d9db1e73b06b16&#34;&gt;CIS Security Benchmarks&lt;/h2&gt;
+
+&lt;p&gt;The CIS(Center for Internet Security)&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; Security Benchmarks program provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. Resources include secure configuration benchmarks, automated configuration assessment tools and content, security metrics and security software product certifications.
+CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; for analyzing &amp;amp; monitoring security benchmarks.&lt;/p&gt;
+
+&lt;p&gt;CIS Security benchmarks &amp;amp; recommendations are grouped into two(2) level—Level 1 &amp;amp; Level 2.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Level 1&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Items in this profile intend to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;be practical and prudent&lt;/li&gt;
+&lt;li&gt;provide a clear security benefit&lt;/li&gt;
+&lt;li&gt;have minimum effect on production workload&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Level 2&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This is an extension of Level 1 but with the following characteristics:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;intended for environments or use cases where security is paramount&lt;/li&gt;
+&lt;li&gt;acts as a defense in depth measure&lt;/li&gt;
+&lt;li&gt;have great effect on production workload&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To indicated compliance with a given recommendation, a benchmark score of either &lt;em&gt;Scored&lt;/em&gt; or &lt;em&gt;Not Scored&lt;/em&gt; is awarded:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Scored&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Failure to comply with &lt;em&gt;Scored&lt;/em&gt; recommendations will decrease the final benchmark score&lt;/li&gt;
+&lt;li&gt;Compliance with &lt;em&gt;Scored&lt;/em&gt; recommendations will increase the final benchmark score&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Not Scored&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Failure to comply with &lt;em&gt;Not Scored&lt;/em&gt; recommendations will not decrease the final benchmark score&lt;/li&gt;
+&lt;li&gt;Compliance with &lt;em&gt;Not Scored&lt;/em&gt; recommendations will not increase the final benchmark score&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;putting-it-all-together-with-ansible:1d544af00710297388d9db1e73b06b16&#34;&gt;Putting it all together with Ansible&lt;/h2&gt;
+
+&lt;p&gt;After carefully reading the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt;, I created an Ansible playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitLab&lt;/a&gt; that would allow users to audit &amp;amp; configure their systems to meet at most all of the CIS Security benchmarks.&lt;/p&gt;
+
+&lt;p&gt;Please, please, please have at the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt; before running this playbook &amp;amp; always do a dry run first using &lt;a href=&#34;http://docs.ansible.com/playbooks_checkmode.html&#34;&gt;Ansible&amp;rsquo;s Check Mode&lt;/a&gt; so as to see what to expect.&lt;/p&gt;
+
+&lt;h2 id=&#34;contribution:1d544af00710297388d9db1e73b06b16&#34;&gt;Contribution&lt;/h2&gt;
+
+&lt;p&gt;As always, &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/pulls&#34;&gt;Pull requests&lt;/a&gt; and &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/issues&#34;&gt;Github issues&lt;/a&gt; are all welcome!&lt;/p&gt;
+
+&lt;h3 id=&#34;further-reading:1d544af00710297388d9db1e73b06b16&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;About CIS Security Benchmarks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;CIS-CAT Benchmark Assessment Tool&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;CIS Ubuntu 14.04 Benchmarks Ansible Playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://gitlab.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitLab&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Rebooting server(s) using Ansible</title>
+      <link>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</link>
+      <pubDate>Sun, 22 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</guid>
+      <description>
+
+&lt;p&gt;Ansible provides useful tools which we can use to for various purposes. In this blog post, we&amp;rsquo;ll talk about rebooting servers using ansible &amp;amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.&lt;/p&gt;
+
+&lt;p&gt;Of late, I&amp;rsquo;ve seen a lot of guys asking questions about rebooting nodes/servers &amp;amp; temporarily pausing the playbook for a given amount of time before continuing with the execution of the playbook. In some cases, you&amp;rsquo;d want to set some kernel parameters which take effect at boot time or perform major upgrades which might require a reboot before configuring the server/node.&lt;/p&gt;
+
+&lt;p&gt;Using ansible&amp;rsquo;s &lt;code&gt;wait_for&lt;/code&gt; module&lt;a href=&#34;http://docs.ansible.com/wait_for_module.html&#34;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt;, we can temporarily stop running the playbook while we wait for the server to finish rebooting or for a service to start &amp;amp; bind to a port. We can also use the same module to wait for a port to become available which can be useful in situations where services are not immediately available after their &lt;code&gt;init&lt;/code&gt; scripts finish running - as is the case with Java application server e.g. Tomcat.&lt;/p&gt;
+
+&lt;h3 id=&#34;getting-started:099698e1018d4abe67645cf353ce941b&#34;&gt;Getting Started&lt;/h3&gt;
+
+&lt;p&gt;Basically, we can break our problem into 4 sections for easier conceptualization:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Section 1: &lt;strong&gt;Pre-reboot&lt;/strong&gt;: Run your pre-reboot task, it can be performing major upgrades and/or performing some configuration which only take effect at boot time.&lt;br/&gt;
+For example: upgrade all packages using &lt;code&gt;yum&lt;/code&gt; module&lt;a href=&#34;http://docs.ansible.com/yum_module.html&#34;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: upgrade all packages
+  yum: name=* state=latest
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Section 2: &lt;strong&gt;Reboot&lt;/strong&gt;: In this stage we&amp;rsquo;ll use the &lt;code&gt;command&lt;/code&gt; module&lt;a href=&#34;http://docs.ansible.com/command_module.html&#34;&gt;&lt;sup&gt;[3]&lt;/sup&gt;&lt;/a&gt;
+to reboot the remote machine/server by running the &lt;code&gt;reboot&lt;/code&gt; command—nothing fancy—you can also use &lt;code&gt;shutdown --reboot&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- name: reboot server
+  command: /sbin/reboot
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Section 3: &lt;strong&gt;Pause the playbook&lt;/strong&gt;: We&amp;rsquo;ll use the &lt;code&gt;wait_for&lt;/code&gt; module to wait for 300 seconds for port 22 to become available before resuming the playbook. I&amp;rsquo;m using port 22 because most servers run openssh-server on port 22 &amp;amp; if we were to telnet to that port we&amp;rsquo;d probably see something like :&lt;code&gt;SSH-2.0-OpenSSH_6.6.1&lt;/code&gt;, so we can use regex to check whether the output matches &amp;ldquo;OpenSSH&amp;rdquo;. I&amp;rsquo;m using a &lt;code&gt;timeout&lt;/code&gt; value of 300 seconds because most physical servers take 3 - 5 minutes to finish reboot due to hardware checks e.t.c. but you can use any value that suites you.
+For example: - wait for 300 seconds for port 22 to become available &amp;amp; contain
+&lt;code&gt;OpenSSH&lt;/code&gt;
+    - name: wait for the server to finish rebooting
+      local_action: wait_for host=&amp;ldquo;web01&amp;rdquo; search_regex=OpenSSH port=22 timeout=300&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Section 4: &lt;strong&gt;Resume the playbook&lt;/strong&gt;: After we&amp;rsquo;ve got a response from port 22, we can resume running the playbook. This step can be optional depending on your needs.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;putting-it-all-together:099698e1018d4abe67645cf353ce941b&#34;&gt;Putting it all together&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We can merge all the above sections into one playbook as shown below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;- hosts: all
+  sudo: yes
+  tasks:
+    - name: Upgrade all packages in RedHat-based machines
+      when: ansible_os_family == &amp;quot;Redhat&amp;quot;
+      yum: name=* state=latest
+
+
+    - name: Upgrade all packages in Debian-based machines
+      when: ansible_os_family == &amp;quot;Debian&amp;quot;
+      apt: upgrade=dist update_cache=yes
+
+
+    - name: Reboot server
+      command: /sbin/reboot
+
+
+    - name: Wait for the server to finish rebooting
+      sudo: no
+      local_action: wait_for host=&amp;quot;{{ inventory_hostname }}&amp;quot; search_regex=OpenSSH port=22 timeout=300
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;stuff-to-note:099698e1018d4abe67645cf353ce941b&#34;&gt;Stuff to note&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;I know you might be wondering why we didn&amp;rsquo;t use handlers. Well, &lt;code&gt;notify&lt;/code&gt; tasks&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; are only executed at the end of the playbook regardless of their location in the
+playbook - remember we&amp;rsquo;re interested in rebooting the server &amp;amp; waiting for a given amount of time for the server to finish rebooting.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;inventory_hostname&lt;/code&gt; variable&lt;a href=&#34;http://docs.ansible.com/playbooks_variables.html#magic-variables-and-how-to-access-information-about-other-hosts&#34;&gt;&lt;sup&gt;[5]&lt;/sup&gt;&lt;/a&gt; is the name of the remote server as stated in the ansible hosts file&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;local_action&lt;/code&gt; directive&lt;a href=&#34;http://docs.ansible.com/glossary.html#local-action&#34;&gt;&lt;sup&gt;[6]&lt;/sup&gt;&lt;/a&gt; runs the given step on the local machine, for example, it would run the &lt;code&gt;wait_for&lt;/code&gt; task on your local machine.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;yum&lt;/code&gt; module only works on RedHat based OS e.g. Fedora, CentOS &amp;amp; RHEL,and so we&amp;rsquo;ll also use the &lt;code&gt;apt&lt;/code&gt; module for Debian based OS e.g. Ubuntu, Debian e.t.c.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;further-reading:099698e1018d4abe67645cf353ce941b&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/wait_for_module.html&#34;&gt;Ansible wait_for module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/command_module.html&#34;&gt;Ansible command module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/yum_module.html&#34;&gt;Ansible yum module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;Ansible Handlers: Running operations on change&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_variables.html#magic-variables-and-how-to-access-information-about-other-hosts&#34;&gt;Playbook built-in variables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/glossary.html#local-action&#34;&gt;Ansible local_action directives&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ansible &#39;Prompt&#39; handlers</title>
+      <link>https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers</link>
+      <pubDate>Thu, 18 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers</guid>
+      <description>
+
+&lt;p&gt;An awesome feature in  that is not available in &lt;a href=&#34;http://ansible.com&#34;&gt;Ansible&lt;/a&gt; is immediate notification i.e. &lt;code&gt;notifies :immediately&lt;/code&gt;.
+Ansible has notification handlers&lt;sup&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;[1]&lt;/a&gt;&lt;/sup&gt; but they are only triggered at the end of the current playbook unlike Chef&amp;rsquo;s&lt;sup&gt;&lt;a href=&#34;https://docs.chef.io/resource_common.html#notifies-syntax&#34;&gt;[2]&lt;/a&gt;&lt;/sup&gt; which can be  triggered immediately! Moreover, you can configure Chef&amp;rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. &lt;code&gt;:delayed&lt;/code&gt; or immediately i.e. &lt;code&gt;:immediately&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now, why I&amp;rsquo;m going into all these boring theories?? Well, when installing tomcat on Ubuntu, dpkg starts it automatically
+once the process is complete. I wanted to stop tomcat7 service, configure it, deploy its webapps &amp;amp; finally start it. So
+after installing tomcat7 I added a notification action to call a task that stops tomcat7 service.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yml&#34;&gt;tasks:
+    - name: Install tomcat7
+      apt: name={{ item }} install_recommends=no update_cache=yes state=present
+      with_items:
+        - tomcat7
+        - tomcat7-admin
+      notify:
+        - Temporarily stop tomcat7
+
+handlers:
+    - name: Temporarily stop tomcat7
+    service: name=tomcat7 state=stopped
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Unfortunately, this didn&amp;rsquo;t work because notifications trigger tasks in handlers to run at the end of a playbook.
+So I had to come up with a quick fix for this issue.&lt;/p&gt;
+
+&lt;h2 id=&#34;quick-fix:9ae4ed9efeca6e2a238465d7fa3caf24&#34;&gt;Quick Fix&lt;/h2&gt;
+
+&lt;p&gt;This involved registering a variable in task that installs tomcat packages i.e. &lt;code&gt;register: tomcat_installed&lt;/code&gt;,
+then I would run the next task only if the registered variable has changed i.e. &lt;code&gt;when: tomcat_installed|changed&lt;/code&gt;.
+Basically, handlers use a similar concept to this.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a snippet from the playbook showing my quick fix:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;tasks:
+    - name: Install tomcat7
+      apt: name={{ item }} install_recommends=no update_cache=yes state=present
+      with_items:
+        - tomcat7
+        - tomcat7-admin
+      register: tomcat_installed
+
+    - name: Temporarily stop tomcat7
+      service: name=tomcat7 state=stopped
+      when: tomcat_installed|changed
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see from the snippet, I&amp;rsquo;ve not used a handler. Yes that&amp;rsquo;s right, inorder to achieve the &amp;lsquo;effect&amp;rsquo; of an immediate handler,
+I moved the task that stops tomcat7 service from the handler section to the tasks section.&lt;/p&gt;
+
+&lt;p&gt;As always, these are my opinions that I don&amp;rsquo;t mind sharing with anyone. Though I&amp;rsquo;m sure there are better solutions to my original
+problem, I think this solution could be useful for other ansible-related problems.&lt;/p&gt;
+
+&lt;h2 id=&#34;further-reading:9ae4ed9efeca6e2a238465d7fa3caf24&#34;&gt;Further Reading&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;Ansible Handlers: Running Operations On Change&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.chef.io/resource_common.html#notifies-syntax&#34;&gt;Chef Notifications&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

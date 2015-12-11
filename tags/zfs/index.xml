@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Zfs on James Oguya</title>
+    <link>https://oguya.ch/tags/zfs/</link>
+    <description>Recent content in Zfs on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 03 Dec 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/zfs/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Recovering ZFS Pool</title>
+      <link>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</link>
+      <pubDate>Thu, 03 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</guid>
+      <description>
+
+&lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.&lt;/p&gt;
+
+&lt;p&gt;So the other day I was upgrading my workstation from &lt;a href=&#34;https://oguya.ch/linux/2015/12/02/upgrading-fedora/&#34;&gt;Fedora 22 to Fedora 23&lt;/a&gt; and after the upgrade my ZFS pool disappeared! Oh BTW, I&amp;rsquo;m using &lt;a href=&#34;http://zfsonlinux.org/&#34;&gt;ZoL(ZFS on Linux)&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;troubleshooting:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Troubleshooting&lt;/h2&gt;
+
+&lt;p&gt;Normally the command &lt;code&gt;zpool status&lt;/code&gt; would display detailed health status for the specified pool. But, if your pool is missing then you&amp;rsquo;ll get something like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;root@localhost ~ # zpool list
+no pools available
+root@localhost ~ # zpool status
+no pools available
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Scary, right??&lt;/p&gt;
+
+&lt;h2 id=&#34;quick-fix:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Quick Fix&lt;/h2&gt;
+
+&lt;p&gt;Using &lt;code&gt;zpool import&lt;/code&gt; we&amp;rsquo;ll list all pools available &amp;amp; then import them.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;zpool import [-d dir | -c cachefile] [-D]&lt;/br&gt;
+Lists  pools available to import. If the -d option is not specified, this command searches for devices in &amp;ldquo;/dev&amp;rdquo;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;List all pools&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;root@localhost ~ # zpool import
+pool: tank
+ id: 11742341043733316809
+state: ONLINE
+action: The pool can be imported using its name or numeric identifier.
+config:
+
+
+    tank                                                ONLINE
+      raidz1-0                                          ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE
+        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE
+        11742341043733316809                            ONLINE
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Finally, import your pool, in this case, tank&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;root@localhost ~ # zpool import tank
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;All is well after all! No data lost :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@localhost ~ # zpool status
+  pool: tank
+ state: ONLINE
+  scan: scrub canceled on Tue Oct 27 08:15:07 2015
+config:
+
+
+        NAME                                                STATE     READ WRITE CKSUM
+        tank                                                ONLINE       0     0     0
+          raidz1-0                                          ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE       0     0     0
+            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE       0     0     0
+            11742341043733316809                            ONLINE       0     0     0
+errors: No known data errors
+
+
+root@localhost ~ # zpool list
+NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
+
+
+root@localhost ~ # zfs list
+NAME             USED  AVAIL  REFER  MOUNTPOINT
+tank             123G  1.77T   166K  /mnt/zpool/tank
+tank/backups     117G   383G   117G  /mnt/zpool/tank/backups
+tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

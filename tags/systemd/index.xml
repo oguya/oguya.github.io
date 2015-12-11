@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Systemd on James Oguya</title>
+    <link>https://oguya.ch/tags/systemd/</link>
+    <description>Recent content in Systemd on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 01 Sep 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/systemd/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Mounting Partitions Using Systemd</title>
+      <link>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</link>
+      <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</guid>
+      <description>
+
+&lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.freedesktop.org/wiki/Software/systemd&#34;&gt;Systemd&lt;/a&gt; is gradually becoming the de facto init system &amp;amp; service manager replacing the old sysV init scripts &amp;amp; upstart. Recently, I discovered you can mount partitions using &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.mount.html&#34;&gt;systemd.mount&lt;/a&gt; by writing your own &lt;code&gt;.mount&lt;/code&gt; &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.unit.html&#34;&gt;systemd unit file&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://oguya.ch/images/2015-09-01-systemd-mount-partition/suprised-cat.jpg&#34; alt=&#34;super suprised&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;After &lt;em&gt;RTFM&amp;rsquo;ing&lt;/em&gt;, I realized, under the hood, systemd just runs &lt;a href=&#34;http://linux.die.net/man/8/mount&#34;&gt;mount command&lt;/a&gt; to mount the specified partition with the specified mount options listed in the mount unit file. Basically, you need to specify the following options in your unit file:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;What=&lt;/code&gt; a partition name, path or UUID to mount&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Where=&lt;/code&gt; an absolute path of a directory i.e. path to a mount point. If the mount point is non-existent, it will be created&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Type=&lt;/code&gt; file system type. In most cases &lt;a href=&#34;http://linux.die.net/man/8/mount&#34;&gt;mount command&lt;/a&gt; auto-detects the file system&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Options=&lt;/code&gt; Mount options to use when mounting&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the end, you can convert your typical fstab entry such as this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;UUID=86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups    ext4    defaults      0 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://oguya.ch/images/2015-09-01-systemd-mount-partition/i-got-this.gif&#34; alt=&#34;I Got This!&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So I wrote a simple systemd mount unit file — &lt;code&gt;/etc/systemd/system/mnt-backups.mount&lt;/code&gt; — which didn&amp;rsquo;t work at first because I fell victim to one of the &lt;code&gt;systemd.mount&lt;/code&gt; pitfalls:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Mount units must be named after the mount point directories they control. Example: the mount point /home/lennart must be configured in a unit file home-lennart.mount.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Huh? Yes that&amp;rsquo;s right! The unit filename should match the mount point path.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;mnt-backups.mount&lt;/code&gt; mount unit file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[Unit]
+Description=Mount System Backups Directory
+
+[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Reload systemd daemon &amp;amp; start the unit.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# systemctl daemon-reload
+# systemctl start mnt-backups.mount
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And just like any other unit, you can view its status using &lt;code&gt;systemctl status mnt-backups.mount&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# systemctl status mnt-backups.mount
+● mnt-backups.mount - Mount System Backups Directory
+   Loaded: loaded (/etc/systemd/system/mnt-backups.mount; enabled; vendor preset: disabled)
+   Active: active (mounted) since Mon 2015-08-31 08:09:15 EAT; 2 days ago
+    Where: /mnt/backups
+     What: /dev/sdc
+  Process: 744 ExecMount=/bin/mount /dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups -n -t ext4 -o defaults (code=exited, status=0/SUCCESS)
+
+Aug 31 08:09:15 localhost systemd[1]: Mounting Mount System Backups Directory...
+Aug 31 08:09:15 localhost systemd[1]: Mounted Mount System Backups Directory.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;gotchas:f752833558d6cf2c1eaf1c52459bee7c&#34;&gt;Gotchas!!&lt;/h3&gt;
+
+&lt;p&gt;After a reboot, I noticed the unit wasn&amp;rsquo;t started &amp;amp; as result the mount point dir. was empty. The unit file was missing an &lt;code&gt;[Install]&lt;/code&gt; section which contains installation information such as unit dependencies(&lt;code&gt;WantedBy=, RequiredBy=&lt;/code&gt;), aliases(&lt;code&gt;Alias=&lt;/code&gt;), additional units(&lt;code&gt;Also=&lt;/code&gt;), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a &lt;code&gt;multi-user.target&lt;/code&gt;. Oh, did you know you can change runlevel using &lt;code&gt;systemctl isolate $RUN_LEVEL.target&lt;/code&gt;? &lt;a href=&#34;https://wiki.archlinux.org/index.php/Systemd#Targets_table&#34;&gt;Read more&lt;/a&gt; about systemd runlevels/targets.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the complete &lt;code&gt;/etc/systemd/system/mnt-backups.mount&lt;/code&gt; unit file with an &lt;code&gt;[Install]&lt;/code&gt; section:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[Unit]
+Description=Mount System Backups Directory
+
+[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+
+[Install]
+WantedBy=multi-user.target
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As always, enable the unit to start automatically during boot.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;systemctl enable mnt-backups.mount
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dnf on James Oguya</title>
+    <link>https://oguya.ch/tags/dnf/</link>
+    <description>Recent content in Dnf on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 06 Jun 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/dnf/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Yum/DNF Keep Old Packages</title>
+      <link>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</link>
+      <pubDate>Sat, 06 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</guid>
+      <description>&lt;p&gt;When you upgrade packages on RedHat based systems, the newer package replaces the older one except for &lt;em&gt;install only&lt;/em&gt; packages e.g. kernel packages.
+Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.&lt;/p&gt;
+
+&lt;p&gt;Once you have more than 3 versions, yum &amp;amp; dnf will clean the older versions of the &lt;em&gt;install only&lt;/em&gt; package(s). To retain more than 3 versions, set &lt;code&gt;installonly_limit&lt;/code&gt;  in &lt;code&gt;/etc/yum.conf&lt;/code&gt; or &lt;code&gt;/etc/dnf/dnf.conf&lt;/code&gt; to a number that you want, e.g. keep 5 versions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;installonly_limit=5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To keep all older kernel packages forever, set &lt;code&gt;installonly_limit&lt;/code&gt; to &lt;strong&gt;0&lt;/strong&gt; i.e. never remove older versions of &lt;em&gt;install only&lt;/em&gt; packages.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;installonly_limit=0
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

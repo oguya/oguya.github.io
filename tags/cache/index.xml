@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cache on James Oguya</title>
+    <link>https://oguya.ch/tags/cache/</link>
+    <description>Recent content in Cache on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 09 Jun 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/cache/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Clear RAM Memory Cache, Buffer &amp; Swap Space</title>
+      <link>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</link>
+      <pubDate>Tue, 09 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</guid>
+      <description>
+
+&lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.&lt;/p&gt;
+
+&lt;h3 id=&#34;clear-cache:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Cache&lt;/h3&gt;
+
+&lt;p&gt;There are 3 options to clear cache without interrupting any processes or services:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Clear page cache:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# echo 1 &amp;gt; /proc/sys/vm/drop_cache
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clear &lt;a href=&#34;http://unix.stackexchange.com/a/4403&#34;&gt;dentries&lt;/a&gt; and &lt;a href=&#34;http://unix.stackexchange.com/a/4403&#34;&gt;inodes&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# echo 2 &amp;gt; /proc/sys/vm/drop_cache
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clear PageCache, dentries and inodes&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# echo 3 &amp;gt; /proc/sys/vm/drop_cache
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;clear-swap-space:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Swap Space&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Clearing swap space is as easy as disabling &amp;amp; re-enabling the devices/files used for swaping.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;# swapoff -a &amp;amp;&amp;amp; swapon -a
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;further-reading:c91088b87599ce10b0f880403bdac834&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://unix.stackexchange.com/questions/4402/what-is-a-superblock-inode-dentry-and-a-file/4403#4403&#34;&gt;What is a Superblock, Inode, Dentry and a File?&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

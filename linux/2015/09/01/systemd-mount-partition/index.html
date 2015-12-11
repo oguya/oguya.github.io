@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta property="og:title" content=" Mounting Partitions Using Systemd &middot;  James Oguya" />
+  
+  <meta property="og:site_name" content="James Oguya" />
+  <meta property="og:url" content="https://oguya.ch/linux/2015/09/01/systemd-mount-partition" />
+  
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:article:published_time" content="2015-09-01T00:00:00Z" />
+  
+  <meta property="og:article:tag" content="systemd" />
+  
+  <meta property="og:article:tag" content="linux" />
+  
+  
+
+  <title>
+     Mounting Partitions Using Systemd &middot;  James Oguya
+  </title>
+
+  <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/main.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/github.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css">
+  <link rel="shortcut icon" href="https://oguya.ch/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://oguya.ch/images/apple-touch-icon.png" />
+  
+</head>
+<body>
+    <header class="global-header"  style="background-image:url( /images/bg.jpg )">
+    <section class="header-text">
+      <h1><a href="https://oguya.ch/">James Oguya</a></h1>
+      
+      <div class="tag-line">
+        Linux nuggets
+      </div>
+      
+      <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+      
+      <a href="https://oguya.ch/" class="btn-header btn-back hidden-xs">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        &nbsp;Home
+      </a>
+      
+      
+    </section>
+  </header>
+  <main class="container">
+
+
+<article>
+  <header>
+    <h1 class="text-primary">Mounting Partitions Using Systemd</h1>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2015-09-01T00:00:00Z">
+          Sep 1, 2015
+        </time>
+      </div>
+      <div class="pull-right">
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/systemd">#systemd</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
+        
+      </div>
+    </div>
+  </header>
+  <section>
+    
+
+<p>Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&rdquo;ll talk about systemd.mount &amp; how you can use it to mount partitions.</p>
+
+<p><a href="http://www.freedesktop.org/wiki/Software/systemd">Systemd</a> is gradually becoming the de facto init system &amp; service manager replacing the old sysV init scripts &amp; upstart. Recently, I discovered you can mount partitions using <a href="http://www.freedesktop.org/software/systemd/man/systemd.mount.html">systemd.mount</a> by writing your own <code>.mount</code> <a href="http://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd unit file</a>.</p>
+
+<p><img src="/images/2015-09-01-systemd-mount-partition/suprised-cat.jpg" alt="super suprised" /></p>
+
+<p>After <em>RTFM&rsquo;ing</em>, I realized, under the hood, systemd just runs <a href="http://linux.die.net/man/8/mount">mount command</a> to mount the specified partition with the specified mount options listed in the mount unit file. Basically, you need to specify the following options in your unit file:</p>
+
+<ul>
+<li><code>What=</code> a partition name, path or UUID to mount</li>
+<li><code>Where=</code> an absolute path of a directory i.e. path to a mount point. If the mount point is non-existent, it will be created</li>
+<li><code>Type=</code> file system type. In most cases <a href="http://linux.die.net/man/8/mount">mount command</a> auto-detects the file system</li>
+<li><code>Options=</code> Mount options to use when mounting</li>
+</ul>
+
+<p>In the end, you can convert your typical fstab entry such as this:</p>
+
+<pre><code class="language-ini">UUID=86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups    ext4    defaults      0 0
+</code></pre>
+
+<p>to:</p>
+
+<pre><code class="language-ini">[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+</code></pre>
+
+<p><img src="/images/2015-09-01-systemd-mount-partition/i-got-this.gif" alt="I Got This!" /></p>
+
+<p>So I wrote a simple systemd mount unit file — <code>/etc/systemd/system/mnt-backups.mount</code> — which didn&rsquo;t work at first because I fell victim to one of the <code>systemd.mount</code> pitfalls:</p>
+
+<blockquote>
+<p>Mount units must be named after the mount point directories they control. Example: the mount point /home/lennart must be configured in a unit file home-lennart.mount.</p>
+</blockquote>
+
+<p>Huh? Yes that&rsquo;s right! The unit filename should match the mount point path.</p>
+
+<p><code>mnt-backups.mount</code> mount unit file:</p>
+
+<pre><code class="language-ini">[Unit]
+Description=Mount System Backups Directory
+
+[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+</code></pre>
+
+<p>Reload systemd daemon &amp; start the unit.</p>
+
+<pre><code class="language-sh"># systemctl daemon-reload
+# systemctl start mnt-backups.mount
+</code></pre>
+
+<p>And just like any other unit, you can view its status using <code>systemctl status mnt-backups.mount</code>:</p>
+
+<pre><code class="language-sh"># systemctl status mnt-backups.mount
+● mnt-backups.mount - Mount System Backups Directory
+   Loaded: loaded (/etc/systemd/system/mnt-backups.mount; enabled; vendor preset: disabled)
+   Active: active (mounted) since Mon 2015-08-31 08:09:15 EAT; 2 days ago
+    Where: /mnt/backups
+     What: /dev/sdc
+  Process: 744 ExecMount=/bin/mount /dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222 /mnt/backups -n -t ext4 -o defaults (code=exited, status=0/SUCCESS)
+
+Aug 31 08:09:15 localhost systemd[1]: Mounting Mount System Backups Directory...
+Aug 31 08:09:15 localhost systemd[1]: Mounted Mount System Backups Directory.
+</code></pre>
+
+<h3 id="gotchas:f752833558d6cf2c1eaf1c52459bee7c">Gotchas!!</h3>
+
+<p>After a reboot, I noticed the unit wasn&rsquo;t started &amp; as result the mount point dir. was empty. The unit file was missing an <code>[Install]</code> section which contains installation information such as unit dependencies(<code>WantedBy=, RequiredBy=</code>), aliases(<code>Alias=</code>), additional units(<code>Also=</code>), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a <code>multi-user.target</code>. Oh, did you know you can change runlevel using <code>systemctl isolate $RUN_LEVEL.target</code>? <a href="https://wiki.archlinux.org/index.php/Systemd#Targets_table">Read more</a> about systemd runlevels/targets.</p>
+
+<p>Here&rsquo;s the complete <code>/etc/systemd/system/mnt-backups.mount</code> unit file with an <code>[Install]</code> section:</p>
+
+<pre><code class="language-ini">[Unit]
+Description=Mount System Backups Directory
+
+[Mount]
+What=/dev/disk/by-uuid/86fef3b2-bdc9-47fa-bbb1-4e528a89d222
+Where=/mnt/backups
+Type=ext4
+Options=defaults
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>As always, enable the unit to start automatically during boot.</p>
+
+<pre><code class="language-sh">systemctl enable mnt-backups.mount
+</code></pre>
+
+  </section>
+  <footer>
+    
+    <hr/>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = 'oguya';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+    <section class="author-info row">
+      <div class="author-avatar col-md-2">
+        
+      </div>
+      <div class="author-meta col-md-6">
+        
+        
+      </div>
+      
+      <div class="author-contact col-md-4">
+        <a href="mailto:oguyajames@gmail.com">
+          <i class="fa fa-envelope-o" aria-hidden="true"></i>
+          &nbsp;Contact me
+        </a>
+      </div>
+      
+    </section>
+    <ul class="pager">
+      
+      <li class="previous"><a href="https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu"><span aria-hidden="true">&larr;</span> Older</a></li>
+      
+      
+      <li class="next"><a href="https://oguya.ch/linux/2015/12/02/upgrading-fedora">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+  </main>
+  <footer class="container global-footer">
+    <div class="copyright-note pull-left">
+      
+    </div>
+    <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <script src="https://oguya.ch/js/highlight.pack.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+  
+</body>
+</html>
+
