@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysql on James Oguya</title>
+    <link>https://oguya.ch/tags/mysql/</link>
+    <description>Recent content in Mysql on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 07 Jan 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Enabling MySQL Binary Logs</title>
+      <link>https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/</link>
+      <pubDate>Thu, 07 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/</guid>
+      <description>
+
+&lt;p&gt;MySQL binary log contains records of all changes to a databases—both data &amp;amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp;amp; DELETE  with the exception of SELECT &amp;amp; SHOW which have no effect on the data.&lt;/p&gt;
+
+&lt;p&gt;The purpose of binary log is to allow replication whereby data is sent from a one server(master) to another one(slave) as well assisting in certain data recovery operations. Binary logs are stored in binary format, therefore, you have to use &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/mysqlbinlog.html&#34;&gt;mysqlbinlog utility&lt;/a&gt; to view its contents.&lt;/p&gt;
+
+&lt;p&gt;In most MySQL setups, binary logging is disabled by default, thus you&amp;rsquo;ll end up with the following error:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; show binary logs;
+ERROR 1381 (HY000): You are not using binary logging
+MariaDB [(none)]&amp;gt; show variables like &#39;log_bin&#39;;
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_bin       | OFF   |
++---------------+-------+
+1 row in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To fix this, you have to enable binary logs by adding &lt;code&gt;log_bin&lt;/code&gt; parameter under &lt;code&gt;[mysqld]&lt;/code&gt; section in your &lt;code&gt;my.cnf&lt;/code&gt; config. file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;log_bin = mysql-bin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;further-reading:84caf2ead6bf7a20486f54a742a06acb&#34;&gt;Further Reading&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/binary-log.html&#34;&gt;MySQL Binary Log&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

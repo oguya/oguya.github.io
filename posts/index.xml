@@ -6,8 +6,46 @@
     <description>Recent content in Posts on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Dec 2015 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 07 Jan 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Enabling MySQL Binary Logs</title>
+      <link>https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/</link>
+      <pubDate>Thu, 07 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/</guid>
+      <description>
+
+&lt;p&gt;MySQL binary log contains records of all changes to a databases—both data &amp;amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp;amp; DELETE  with the exception of SELECT &amp;amp; SHOW which have no effect on the data.&lt;/p&gt;
+
+&lt;p&gt;The purpose of binary log is to allow replication whereby data is sent from a one server(master) to another one(slave) as well assisting in certain data recovery operations. Binary logs are stored in binary format, therefore, you have to use &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/mysqlbinlog.html&#34;&gt;mysqlbinlog utility&lt;/a&gt; to view its contents.&lt;/p&gt;
+
+&lt;p&gt;In most MySQL setups, binary logging is disabled by default, thus you&amp;rsquo;ll end up with the following error:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; show binary logs;
+ERROR 1381 (HY000): You are not using binary logging
+MariaDB [(none)]&amp;gt; show variables like &#39;log_bin&#39;;
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_bin       | OFF   |
++---------------+-------+
+1 row in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To fix this, you have to enable binary logs by adding &lt;code&gt;log_bin&lt;/code&gt; parameter under &lt;code&gt;[mysqld]&lt;/code&gt; section in your &lt;code&gt;my.cnf&lt;/code&gt; config. file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;log_bin = mysql-bin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;further-reading:84caf2ead6bf7a20486f54a742a06acb&#34;&gt;Further Reading&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/binary-log.html&#34;&gt;MySQL Binary Log&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Recovering ZFS Pool</title>
@@ -52,7 +90,6 @@ state: ONLINE
 action: The pool can be imported using its name or numeric identifier.
 config:
 
-
     tank                                                ONLINE
       raidz1-0                                          ONLINE
         ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
@@ -75,7 +112,6 @@ config:
   scan: scrub canceled on Tue Oct 27 08:15:07 2015
 config:
 
-
         NAME                                                STATE     READ WRITE CKSUM
         tank                                                ONLINE       0     0     0
           raidz1-0                                          ONLINE       0     0     0
@@ -86,11 +122,9 @@ config:
             11742341043733316809                            ONLINE       0     0     0
 errors: No known data errors
 
-
 root@localhost ~ # zpool list
 NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
 tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
-
 
 root@localhost ~ # zfs list
 NAME             USED  AVAIL  REFER  MOUNTPOINT
@@ -480,15 +514,12 @@ For example: - wait for 300 seconds for port 22 to become available &amp;amp; co
       when: ansible_os_family == &amp;quot;Redhat&amp;quot;
       yum: name=* state=latest
 
-
     - name: Upgrade all packages in Debian-based machines
       when: ansible_os_family == &amp;quot;Debian&amp;quot;
       apt: upgrade=dist update_cache=yes
 
-
     - name: Reboot server
       command: /sbin/reboot
-
 
     - name: Wait for the server to finish rebooting
       sudo: no
@@ -756,7 +787,6 @@ Signature Algorithm: sha1WithRSAEncryption
             CA Issuers - URI:http://pki.google.com/GIAG2.crt
             OCSP - URI:http://clients1.google.com/ocsp
 
-
         X509v3 Subject Key Identifier:
             A3:9E:4E:88:E8:51:57:6C:96:02:04:AD:C7:C8:9C:06:7C:BF:BF:41
         X509v3 Basic Constraints: critical
@@ -764,17 +794,13 @@ Signature Algorithm: sha1WithRSAEncryption
         X509v3 Authority Key Identifier:
             keyid:4A:DD:06:16:1B:BC:F6:68:B5:76:F5:81:B6:BB:62:1A:BA:5A:81:2F
 
-
         X509v3 Certificate Policies:
             Policy: 1.3.6.1.4.1.11129.2.5.1
 
-
         X509v3 CRL Distribution Points:
-
 
             Full Name:
               URI:http://pki.google.com/GIAG2.crl
-
 
 Signature Algorithm: sha1WithRSAEncryption
      39:25:0e:01:8c:a3:5e:14:37:82:c4:a3:dc:d4:16:d7:c3:6b:
