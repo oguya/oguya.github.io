@@ -11,10 +11,10 @@
     
     <item>
       <title>Yum/DNF Keep Old Packages</title>
-      <link>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</link>
+      <link>https://oguya.ch/posts/2015-06-06-yum-dnf-keep-old-packages/</link>
       <pubDate>Sat, 06 Jun 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</guid>
+      <guid>https://oguya.ch/posts/2015-06-06-yum-dnf-keep-old-packages/</guid>
       <description>&lt;p&gt;When you upgrade packages on RedHat based systems, the newer package replaces the older one except for &lt;em&gt;install only&lt;/em&gt; packages e.g. kernel packages.
 Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.&lt;/p&gt;
 

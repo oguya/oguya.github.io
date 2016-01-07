@@ -11,10 +11,10 @@
     
     <item>
       <title>Deploying CIS Benchmarks on Ubuntu 14.04 hosts using Ansible</title>
-      <link>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</link>
+      <link>https://oguya.ch/posts/2015-08-16-ansible-cis-benchmarks-ubuntu/</link>
       <pubDate>Sun, 16 Aug 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</guid>
+      <guid>https://oguya.ch/posts/2015-08-16-ansible-cis-benchmarks-ubuntu/</guid>
       <description>
 
 &lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.&lt;/p&gt;

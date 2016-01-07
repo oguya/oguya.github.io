@@ -3,24 +3,24 @@
 <head prefix="og: http://ogp.me/ns#">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <meta property="og:title" content=" Enabling MySQL Binary Logs &middot;  James Oguya" />
+  <meta property="og:title" content=" Hello blogging world :) &middot;  James Oguya" />
   
   <meta property="og:site_name" content="James Oguya" />
-  <meta property="og:url" content="https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/" />
+  <meta property="og:url" content="https://oguya.ch/posts/2014-10-13-hello-blogging-world/" />
   
   
   <meta property="og:type" content="article" />
   
-  <meta property="og:article:published_time" content="2016-01-07T00:00:00Z" />
+  <meta property="og:article:published_time" content="2014-10-13T00:00:00Z" />
   
-  <meta property="og:article:tag" content="mysql" />
+  <meta property="og:article:tag" content="hello-world" />
   
   <meta property="og:article:tag" content="linux" />
   
   
 
   <title>
-     Enabling MySQL Binary Logs &middot;  James Oguya
+     Hello blogging world :) &middot;  James Oguya
   </title>
 
   <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
@@ -83,17 +83,17 @@
 
 <article>
   <header>
-    <h1 class="text-primary">Enabling MySQL Binary Logs</h1>
+    <h1 class="text-primary">Hello blogging world :)</h1>
     <div class="post-meta clearfix">
       <div class="post-date pull-left">
         Posted on
-        <time datetime="2016-01-07T00:00:00Z">
-          Jan 7, 2016
+        <time datetime="2014-10-13T00:00:00Z">
+          Oct 13, 2014
         </time>
       </div>
       <div class="pull-right">
         
-        <span class="post-tag small"><a href="https://oguya.ch//tags/mysql">#mysql</a></span>
+        <span class="post-tag small"><a href="https://oguya.ch//tags/hello-world">#hello-world</a></span>
         
         <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
         
@@ -101,35 +101,17 @@
     </div>
   </header>
   <section>
-    
+    <p>so after several months—if not years—of procrastinating whether I should or should not blog, I&rsquo;ve finally decided to leave my comfort zone and face
+my greatest fear—blogging!!</p>
 
-<p>MySQL binary log contains records of all changes to a databases—both data &amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp; DELETE  with the exception of SELECT &amp; SHOW which have no effect on the data.</p>
+<p>I&rsquo;ve been &lsquo;blogging&rsquo; locally on my laptop &amp; workstation just taking simple notes of problems I&rsquo;ve faced &amp; how I tackled them.
+On few cases, I would place these notes on a private gist on <a href="https://gist.github.com/oguya">gist.github.com</a>, then I would share them with my colleagues.</p>
 
-<p>The purpose of binary log is to allow replication whereby data is sent from a one server(master) to another one(slave) as well assisting in certain data recovery operations. Binary logs are stored in binary format, therefore, you have to use <a href="https://dev.mysql.com/doc/refman/5.5/en/mysqlbinlog.html">mysqlbinlog utility</a> to view its contents.</p>
+<p>I guess it&rsquo;s time to go public &amp; share everything with everyone out there, after all I&rsquo;m a big fan on Free &amp; Open Source Software(FOSS).</p>
 
-<p>In most MySQL setups, binary logging is disabled by default, thus you&rsquo;ll end up with the following error:</p>
+<p>Watch this space for more to come!</p>
 
-<pre><code>MariaDB [(none)]&gt; show binary logs;
-ERROR 1381 (HY000): You are not using binary logging
-MariaDB [(none)]&gt; show variables like 'log_bin';
-+---------------+-------+
-| Variable_name | Value |
-+---------------+-------+
-| log_bin       | OFF   |
-+---------------+-------+
-1 row in set (0.00 sec)
-</code></pre>
-
-<p>To fix this, you have to enable binary logs by adding <code>log_bin</code> parameter under <code>[mysqld]</code> section in your <code>my.cnf</code> config. file:</p>
-
-<pre><code>log_bin = mysql-bin
-</code></pre>
-
-<h2 id="further-reading:84caf2ead6bf7a20486f54a742a06acb">Further Reading</h2>
-
-<ol>
-<li><a href="https://dev.mysql.com/doc/refman/5.5/en/binary-log.html">MySQL Binary Log</a></li>
-</ol>
+<p><em>Adios</em></p>
 
   </section>
   <footer>
@@ -165,10 +147,10 @@ MariaDB [(none)]&gt; show variables like 'log_bin';
     </section>
     <ul class="pager">
       
-      <li class="previous"><a href="https://oguya.ch/posts/2015-12-03-recover-zfs-pool/"><span aria-hidden="true">&larr;</span> Older</a></li>
+      <li class="previous disabled"><a href="#"><span aria-hidden="true">&larr;</span> Older</a></li>
       
       
-      <li class="next disabled"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      <li class="next"><a href="https://oguya.ch/posts/2014-11-18-check-ssl-certs/">Newer <span aria-hidden="true">&rarr;</span></a></li>
       
     </ul>
   </footer>

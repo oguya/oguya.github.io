@@ -11,10 +11,10 @@
     
     <item>
       <title>Mounting Partitions Using Systemd</title>
-      <link>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</link>
+      <link>https://oguya.ch/posts/2015-09-01-systemd-mount-partition/</link>
       <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</guid>
+      <guid>https://oguya.ch/posts/2015-09-01-systemd-mount-partition/</guid>
       <description>
 
 &lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.&lt;/p&gt;

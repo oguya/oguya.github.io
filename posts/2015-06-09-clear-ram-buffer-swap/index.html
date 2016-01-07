@@ -3,24 +3,26 @@
 <head prefix="og: http://ogp.me/ns#">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <meta property="og:title" content=" Enabling MySQL Binary Logs &middot;  James Oguya" />
+  <meta property="og:title" content=" Clear RAM Memory Cache, Buffer &amp; Swap Space &middot;  James Oguya" />
   
   <meta property="og:site_name" content="James Oguya" />
-  <meta property="og:url" content="https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/" />
+  <meta property="og:url" content="https://oguya.ch/posts/2015-06-09-clear-ram-buffer-swap/" />
   
   
   <meta property="og:type" content="article" />
   
-  <meta property="og:article:published_time" content="2016-01-07T00:00:00Z" />
+  <meta property="og:article:published_time" content="2015-06-09T00:00:00Z" />
   
-  <meta property="og:article:tag" content="mysql" />
+  <meta property="og:article:tag" content="cache" />
+  
+  <meta property="og:article:tag" content="swap" />
   
   <meta property="og:article:tag" content="linux" />
   
   
 
   <title>
-     Enabling MySQL Binary Logs &middot;  James Oguya
+     Clear RAM Memory Cache, Buffer &amp; Swap Space &middot;  James Oguya
   </title>
 
   <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
@@ -83,17 +85,19 @@
 
 <article>
   <header>
-    <h1 class="text-primary">Enabling MySQL Binary Logs</h1>
+    <h1 class="text-primary">Clear RAM Memory Cache, Buffer &amp; Swap Space</h1>
     <div class="post-meta clearfix">
       <div class="post-date pull-left">
         Posted on
-        <time datetime="2016-01-07T00:00:00Z">
-          Jan 7, 2016
+        <time datetime="2015-06-09T00:00:00Z">
+          Jun 9, 2015
         </time>
       </div>
       <div class="pull-right">
         
-        <span class="post-tag small"><a href="https://oguya.ch//tags/mysql">#mysql</a></span>
+        <span class="post-tag small"><a href="https://oguya.ch//tags/cache">#cache</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/swap">#swap</a></span>
         
         <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
         
@@ -103,32 +107,42 @@
   <section>
     
 
-<p>MySQL binary log contains records of all changes to a databases—both data &amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp; DELETE  with the exception of SELECT &amp; SHOW which have no effect on the data.</p>
+<p>GNU Linux has implemented efficient memory management algorithms &amp; tools which gives you the power &amp; flexibility to control both the physical &amp; virtual memory on your system.</p>
 
-<p>The purpose of binary log is to allow replication whereby data is sent from a one server(master) to another one(slave) as well assisting in certain data recovery operations. Binary logs are stored in binary format, therefore, you have to use <a href="https://dev.mysql.com/doc/refman/5.5/en/mysqlbinlog.html">mysqlbinlog utility</a> to view its contents.</p>
+<h3 id="clear-cache:c91088b87599ce10b0f880403bdac834">Clear Cache</h3>
 
-<p>In most MySQL setups, binary logging is disabled by default, thus you&rsquo;ll end up with the following error:</p>
+<p>There are 3 options to clear cache without interrupting any processes or services:</p>
 
-<pre><code>MariaDB [(none)]&gt; show binary logs;
-ERROR 1381 (HY000): You are not using binary logging
-MariaDB [(none)]&gt; show variables like 'log_bin';
-+---------------+-------+
-| Variable_name | Value |
-+---------------+-------+
-| log_bin       | OFF   |
-+---------------+-------+
-1 row in set (0.00 sec)
-</code></pre>
+<ul>
+<li><p>Clear page cache:</p>
 
-<p>To fix this, you have to enable binary logs by adding <code>log_bin</code> parameter under <code>[mysqld]</code> section in your <code>my.cnf</code> config. file:</p>
+<pre><code class="language-sh"># echo 1 &gt; /proc/sys/vm/drop_cache
+</code></pre></li>
 
-<pre><code>log_bin = mysql-bin
-</code></pre>
+<li><p>Clear <a href="http://unix.stackexchange.com/a/4403">dentries</a> and <a href="http://unix.stackexchange.com/a/4403">inodes</a></p>
 
-<h2 id="further-reading:84caf2ead6bf7a20486f54a742a06acb">Further Reading</h2>
+<pre><code class="language-sh"># echo 2 &gt; /proc/sys/vm/drop_cache
+</code></pre></li>
+
+<li><p>Clear PageCache, dentries and inodes</p>
+
+<pre><code class="language-sh"># echo 3 &gt; /proc/sys/vm/drop_cache
+</code></pre></li>
+</ul>
+
+<h3 id="clear-swap-space:c91088b87599ce10b0f880403bdac834">Clear Swap Space</h3>
+
+<ul>
+<li><p>Clearing swap space is as easy as disabling &amp; re-enabling the devices/files used for swaping.</p>
+
+<pre><code class="language-sh"># swapoff -a &amp;&amp; swapon -a
+</code></pre></li>
+</ul>
+
+<h3 id="further-reading:c91088b87599ce10b0f880403bdac834">Further Reading</h3>
 
 <ol>
-<li><a href="https://dev.mysql.com/doc/refman/5.5/en/binary-log.html">MySQL Binary Log</a></li>
+<li><a href="https://unix.stackexchange.com/questions/4402/what-is-a-superblock-inode-dentry-and-a-file/4403#4403">What is a Superblock, Inode, Dentry and a File?</a></li>
 </ol>
 
   </section>
@@ -165,10 +179,10 @@ MariaDB [(none)]&gt; show variables like 'log_bin';
     </section>
     <ul class="pager">
       
-      <li class="previous"><a href="https://oguya.ch/posts/2015-12-03-recover-zfs-pool/"><span aria-hidden="true">&larr;</span> Older</a></li>
+      <li class="previous"><a href="https://oguya.ch/posts/2015-06-06-yum-dnf-keep-old-packages/"><span aria-hidden="true">&larr;</span> Older</a></li>
       
       
-      <li class="next disabled"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      <li class="next"><a href="https://oguya.ch/posts/2015-08-16-ansible-cis-benchmarks-ubuntu/">Newer <span aria-hidden="true">&rarr;</span></a></li>
       
     </ul>
   </footer>

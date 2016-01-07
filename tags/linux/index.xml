@@ -49,10 +49,10 @@ MariaDB [(none)]&amp;gt; show variables like &#39;log_bin&#39;;
     
     <item>
       <title>Recovering ZFS Pool</title>
-      <link>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</link>
+      <link>https://oguya.ch/posts/2015-12-03-recover-zfs-pool/</link>
       <pubDate>Thu, 03 Dec 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</guid>
+      <guid>https://oguya.ch/posts/2015-12-03-recover-zfs-pool/</guid>
       <description>
 
 &lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.&lt;/p&gt;
@@ -138,10 +138,10 @@ tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
     
     <item>
       <title>Upgrading Fedora 22 to 23 using DNF</title>
-      <link>https://oguya.ch/linux/2015/12/02/upgrading-fedora</link>
+      <link>https://oguya.ch/posts/2015-12-02-upgrading-fedora/</link>
       <pubDate>Wed, 02 Dec 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/12/02/upgrading-fedora</guid>
+      <guid>https://oguya.ch/posts/2015-12-02-upgrading-fedora/</guid>
       <description>
 
 &lt;p&gt;This is a short &amp;amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF&lt;/p&gt;
@@ -215,10 +215,10 @@ package libxml2-python-2.9.3-1.fc22.x86_64 requires libxml2 = 2.9.3-1.fc22, but 
     
     <item>
       <title>Mounting Partitions Using Systemd</title>
-      <link>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</link>
+      <link>https://oguya.ch/posts/2015-09-01-systemd-mount-partition/</link>
       <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/09/01/systemd-mount-partition</guid>
+      <guid>https://oguya.ch/posts/2015-09-01-systemd-mount-partition/</guid>
       <description>
 
 &lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.&lt;/p&gt;
@@ -320,10 +320,10 @@ WantedBy=multi-user.target
     
     <item>
       <title>Clear RAM Memory Cache, Buffer &amp; Swap Space</title>
-      <link>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</link>
+      <link>https://oguya.ch/posts/2015-06-09-clear-ram-buffer-swap/</link>
       <pubDate>Tue, 09 Jun 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</guid>
+      <guid>https://oguya.ch/posts/2015-06-09-clear-ram-buffer-swap/</guid>
       <description>
 
 &lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.&lt;/p&gt;
@@ -368,10 +368,10 @@ WantedBy=multi-user.target
     
     <item>
       <title>Yum/DNF Keep Old Packages</title>
-      <link>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</link>
+      <link>https://oguya.ch/posts/2015-06-06-yum-dnf-keep-old-packages/</link>
       <pubDate>Sat, 06 Jun 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/06/06/yum-dnf-keep-old-packages</guid>
+      <guid>https://oguya.ch/posts/2015-06-06-yum-dnf-keep-old-packages/</guid>
       <description>&lt;p&gt;When you upgrade packages on RedHat based systems, the newer package replaces the older one except for &lt;em&gt;install only&lt;/em&gt; packages e.g. kernel packages.
 Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.&lt;/p&gt;
 
@@ -389,10 +389,10 @@ Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions�
     
     <item>
       <title>Rebooting server(s) using Ansible</title>
-      <link>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</link>
+      <link>https://oguya.ch/posts/2015-02-22-ansible-reboot-servers/</link>
       <pubDate>Sun, 22 Feb 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</guid>
+      <guid>https://oguya.ch/posts/2015-02-22-ansible-reboot-servers/</guid>
       <description>
 
 &lt;p&gt;Ansible provides useful tools which we can use to for various purposes. In this blog post, we&amp;rsquo;ll talk about rebooting servers using ansible &amp;amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.&lt;/p&gt;
@@ -479,10 +479,10 @@ playbook - remember we&amp;rsquo;re interested in rebooting the server &amp;amp;
     
     <item>
       <title>Validity of SSL Certificates</title>
-      <link>https://oguya.ch/linux/2014/11/18/check-ssl-certs</link>
+      <link>https://oguya.ch/posts/2014-11-18-check-ssl-certs/</link>
       <pubDate>Tue, 18 Nov 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2014/11/18/check-ssl-certs</guid>
+      <guid>https://oguya.ch/posts/2014-11-18-check-ssl-certs/</guid>
       <description>
 
 &lt;p&gt;OpenSSL provides several options for implementing SSL &amp;amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&amp;rsquo;ll turn our attention to SSL certificates &amp;amp; the priceless information they contain.&lt;/p&gt;
@@ -696,6 +696,26 @@ Signature Algorithm: sha1WithRSAEncryption
 &lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/s_client.html&#34;&gt;openssl s_client man pages&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/x509.html&#34;&gt;openssl x.509 man pages&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hello blogging world :)</title>
+      <link>https://oguya.ch/posts/2014-10-13-hello-blogging-world/</link>
+      <pubDate>Mon, 13 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2014-10-13-hello-blogging-world/</guid>
+      <description>&lt;p&gt;so after several months—if not years—of procrastinating whether I should or should not blog, I&amp;rsquo;ve finally decided to leave my comfort zone and face
+my greatest fear—blogging!!&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve been &amp;lsquo;blogging&amp;rsquo; locally on my laptop &amp;amp; workstation just taking simple notes of problems I&amp;rsquo;ve faced &amp;amp; how I tackled them.
+On few cases, I would place these notes on a private gist on &lt;a href=&#34;https://gist.github.com/oguya&#34;&gt;gist.github.com&lt;/a&gt;, then I would share them with my colleagues.&lt;/p&gt;
+
+&lt;p&gt;I guess it&amp;rsquo;s time to go public &amp;amp; share everything with everyone out there, after all I&amp;rsquo;m a big fan on Free &amp;amp; Open Source Software(FOSS).&lt;/p&gt;
+
+&lt;p&gt;Watch this space for more to come!&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Adios&lt;/em&gt;&lt;/p&gt;
 </description>
     </item>
     

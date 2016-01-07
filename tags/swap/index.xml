@@ -11,10 +11,10 @@
     
     <item>
       <title>Clear RAM Memory Cache, Buffer &amp; Swap Space</title>
-      <link>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</link>
+      <link>https://oguya.ch/posts/2015-06-09-clear-ram-buffer-swap/</link>
       <pubDate>Tue, 09 Jun 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/06/09/clear-ram-buffer-swap</guid>
+      <guid>https://oguya.ch/posts/2015-06-09-clear-ram-buffer-swap/</guid>
       <description>
 
 &lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.&lt;/p&gt;

@@ -11,10 +11,10 @@
     
     <item>
       <title>Recovering ZFS Pool</title>
-      <link>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</link>
+      <link>https://oguya.ch/posts/2015-12-03-recover-zfs-pool/</link>
       <pubDate>Thu, 03 Dec 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/12/03/recover-zfs-pool</guid>
+      <guid>https://oguya.ch/posts/2015-12-03-recover-zfs-pool/</guid>
       <description>
 
 &lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.&lt;/p&gt;

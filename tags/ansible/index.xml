@@ -11,10 +11,10 @@
     
     <item>
       <title>Deploying CIS Benchmarks on Ubuntu 14.04 hosts using Ansible</title>
-      <link>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</link>
+      <link>https://oguya.ch/posts/2015-08-16-ansible-cis-benchmarks-ubuntu/</link>
       <pubDate>Sun, 16 Aug 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/08/16/ansible-cis-benchmarks-ubuntu</guid>
+      <guid>https://oguya.ch/posts/2015-08-16-ansible-cis-benchmarks-ubuntu/</guid>
       <description>
 
 &lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.&lt;/p&gt;
@@ -84,10 +84,10 @@ CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmar
     
     <item>
       <title>Rebooting server(s) using Ansible</title>
-      <link>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</link>
+      <link>https://oguya.ch/posts/2015-02-22-ansible-reboot-servers/</link>
       <pubDate>Sun, 22 Feb 2015 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2015/02/22/ansible-reboot-servers</guid>
+      <guid>https://oguya.ch/posts/2015-02-22-ansible-reboot-servers/</guid>
       <description>
 
 &lt;p&gt;Ansible provides useful tools which we can use to for various purposes. In this blog post, we&amp;rsquo;ll talk about rebooting servers using ansible &amp;amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.&lt;/p&gt;
@@ -174,10 +174,10 @@ playbook - remember we&amp;rsquo;re interested in rebooting the server &amp;amp;
     
     <item>
       <title>Ansible &#39;Prompt&#39; handlers</title>
-      <link>https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers</link>
+      <link>https://oguya.ch/posts/2014-12-18-ansible-prompt-handlers/</link>
       <pubDate>Thu, 18 Dec 2014 00:00:00 +0000</pubDate>
       
-      <guid>https://oguya.ch/linux/2014/12/18/ansible-prompt-handlers</guid>
+      <guid>https://oguya.ch/posts/2014-12-18-ansible-prompt-handlers/</guid>
       <description>
 
 &lt;p&gt;An awesome feature in  that is not available in &lt;a href=&#34;http://ansible.com&#34;&gt;Ansible&lt;/a&gt; is immediate notification i.e. &lt;code&gt;notifies :immediately&lt;/code&gt;.
