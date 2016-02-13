@@ -6,8 +6,203 @@
     <description>Recent content in Linux on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 07 Jan 2016 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 13 Feb 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>MySQL Replication: What is it? How does it work? How can I set it up?</title>
+      <link>https://oguya.ch/posts/2016-02-13-mysql-replication/</link>
+      <pubDate>Sat, 13 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2016-02-13-mysql-replication/</guid>
+      <description>
+
+&lt;h2 id=&#34;what-is-it:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;What is it?&lt;/h2&gt;
+
+&lt;p&gt;MySQL replication allows you to &amp;lsquo;mirror&amp;rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.&lt;/p&gt;
+
+&lt;h2 id=&#34;how-does-it-work:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;How does it work?&lt;/h2&gt;
+
+&lt;p&gt;Replication relies heavily on &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/binary-log.html&#34;&gt;binary logs&lt;/a&gt;. If binary logging is enabled, all updates—data manipulation &amp;amp; data definition—to a database are written to binary log as a binary log event. A slave server can then read it&amp;rsquo;s master&amp;rsquo;s binary log to access data for replication. The slave writes master&amp;rsquo;s binary log events in a &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/slave-logs-relaylog.html&#34;&gt;relay log&lt;/a&gt; file.&lt;/p&gt;
+
+&lt;p&gt;A slave server keeps track of it&amp;rsquo;s master&amp;rsquo;s binary log position that it last applied, therefore allowing it to re-connect and resume replication if it was temporarily stopped. Basically, masters &amp;amp; slaves don&amp;rsquo;t have to be in constant communication with each other.&lt;/p&gt;
+
+&lt;p&gt;Replication can come in handy in the following scenarios:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Taking backups: backups can easily be taken if a server is not being actively used. Its always recommended to take backups on a slave server instead of a production(master) server that is actively under use.&lt;/li&gt;
+&lt;li&gt;Scalability: For high-read/low-write environments, you can have one master server where all writes occur and replicated to multiple slaves which in turn handle the reads.&lt;/li&gt;
+&lt;li&gt;Load reduction: Instead of running some sort of data analysis which might increase the load on a master server, this can be done on a slave server therefore reducing load on the master.&lt;/li&gt;
+&lt;li&gt;Data distribution: replication can be used to create a local copy of data on a remote master.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;how-can-i-set-it-up:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;How can I set it up?&lt;/h2&gt;
+
+&lt;p&gt;Having 2 servers—&lt;code&gt;db01&lt;/code&gt; as the master and &lt;code&gt;db02&lt;/code&gt; as the slave—both running Ubuntu 14.04, we&amp;rsquo;ll setup replication on &lt;a href=&#34;https://mariadb.com/&#34;&gt;MariaDB&lt;/a&gt;—a fork of MySQL:&lt;/p&gt;
+
+&lt;h3 id=&#34;on-both-servers:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On both servers&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;add mariadb repo &amp;amp; install &lt;a href=&#34;https://mariadb.com/kb/en/mariadb/what-is-mariadb-100/&#34;&gt;mariadb-server-10.0&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# aptitude install software-properties-common
+# apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
+# echo &#39;deb http://ftp.wa.co.za/pub/mariadb/repo/10.0/ubuntu trusty main&#39; &amp;gt; /etc/apt/sources.list.d/mariadb.list
+# aptitude update
+# aptitude install mariadb-server-10.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;on-db01-master-server:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On db01—master server&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;set mysql to bind to a non-localhost IP address, otherwise remote slave connections will fail:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bind-address = 192.168.1.5
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Give the master a unique &lt;code&gt;server_id&lt;/code&gt;. It can be a number from 1 to 2&lt;sup&gt;32&lt;/sup&gt;-1 &amp;amp; must be unique in the replication group; &lt;code&gt;/etc/mysql/conf.d/master-replication.cnf&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server_id               = 1
+master_verify_checksum  = 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/&#34;&gt;Enable binary logging&lt;/a&gt;, if not yet enabled.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;log_bin = mysql-bin
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;General master&amp;rsquo;s mysql config file: &lt;code&gt;/etc/mysql/conf.d/master-replication.cnf&lt;/code&gt; Restart mysql service for the config changes to take effect&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[mysqld]
+log_bin                 = mysql-bin
+server_id               = 1
+bind-address            = 192.168.1.5
+master_verify_checksum  = 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Create a slave user &amp;amp; grant it replication privilege; remember this user will connect to the master from the slave(&lt;code&gt;192.168.1.6&lt;/code&gt;)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;create user &#39;slave&#39;@&#39;192.168.1.6&#39; identified by &#39;6^%ys3a^A7&amp;amp;bpQWmR=*A&#39;;
+grant replication slave on *.* to &#39;slave&#39;@&#39;192.168.1.6&#39;;
+flush privileges;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;get the binary log file name &amp;amp; position which the slave will use it as a starting point for the replication&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; show master status;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.001054 |   55117  |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;rsync mysql data dir from &lt;code&gt;db01&lt;/code&gt; to &lt;code&gt;db02&lt;/code&gt;, preferably when mysql service is stopped on both hosts to avoid inconsistencies. You can also use &lt;code&gt;mysqldump&lt;/code&gt; if you don&amp;rsquo;t have large databases&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# service mysql stop
+# rsync -aPvz --human-readable /var/lib/mysql root@db02:/var/lib/
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;on-db02-slave:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On db02—slave&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Give db02 a unique &lt;code&gt;server_id&lt;/code&gt; too. To avoid data inconsistencies between the master &amp;amp; slave, verify binlog checksums when reading events from the relay log by setting &lt;code&gt;slave_sql_verify_checksum&lt;/code&gt; to 1. Restart mysql for config changes to take effect: &lt;code&gt;/etc/mysql/conf.d/slave-replication.cnf&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[mysqld]
+server_id                   = 2
+slave_sql_verify_checksum   = 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Once data from the master has been copied you can start replication by running &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/change-master-to.html&#34;&gt;CHANGE MASTER TO&lt;/a&gt; mysql command. Ensure that &lt;code&gt;MASTER_LOG_FILE&lt;/code&gt; &amp;amp; &lt;code&gt;MASTER_LOG_POS&lt;/code&gt; matches the filename &amp;amp; position returned by &lt;code&gt;SHOW MASTER STATUS&lt;/code&gt; ran earlier on the master:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;CHANGE MASTER TO
+  MASTER_HOST=&#39;db01&#39;,
+  MASTER_USER=&#39;slave&#39;,
+  MASTER_PASSWORD=&#39;6^%ys3a^A7&amp;amp;bpQWmR=*A&#39;,
+  MASTER_PORT=3306,
+  MASTER_LOG_FILE=&#39;mysql-bin.001054&#39;,
+  MASTER_LOG_POS=55117,
+  MASTER_CONNECT_RETRY=60;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;finally, start slave using &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/start-slave.html&#34;&gt;START SLAVE&lt;/a&gt; mysql command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;START SLAVE;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;You can view slave status by running &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/show-slave-status.html&#34;&gt;SHOW SLAVE STATUS&lt;/a&gt; mysql command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; show slave status\G
+*************************** 1. row ***************************
+               Slave_IO_State: Waiting for master to send event
+                  Master_Host: db01
+                  Master_User: slave
+                  Master_Port: 3306
+                Connect_Retry: 60
+              Master_Log_File: mysql-bin.001054
+          Read_Master_Log_Pos: 55117
+               Relay_Log_File: mysqld-relay-bin.000274
+                Relay_Log_Pos: 55100
+        Relay_Master_Log_File: mysql-bin.001054
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+              Replicate_Do_DB: 
+          Replicate_Ignore_DB: 
+           Replicate_Do_Table: 
+       Replicate_Ignore_Table: 
+      Replicate_Wild_Do_Table: 
+  Replicate_Wild_Ignore_Table: 
+                   Last_Errno: 0
+                   Last_Error: 
+                 Skip_Counter: 0
+          Exec_Master_Log_Pos: 55117
+              Relay_Log_Space: 1239660
+              Until_Condition: None
+               Until_Log_File: 
+                Until_Log_Pos: 0
+           Master_SSL_Allowed: No
+           Master_SSL_CA_File: 
+           Master_SSL_CA_Path: 
+              Master_SSL_Cert: 
+            Master_SSL_Cipher: 
+               Master_SSL_Key: 
+        Seconds_Behind_Master: 0
+Master_SSL_Verify_Server_Cert: No
+                Last_IO_Errno: 0
+                Last_IO_Error: 
+               Last_SQL_Errno: 0
+               Last_SQL_Error: 
+  Replicate_Ignore_Server_Ids: 
+             Master_Server_Id: 1
+               Master_SSL_Crl: 
+           Master_SSL_Crlpath: 
+                   Using_Gtid: No
+                  Gtid_IO_Pos: 
+1 row in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;extras:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;Extras&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Don&amp;rsquo;t mix &amp;amp; match server names &amp;amp; IP addresses: I prefer adding hostnames &amp;amp; their respective IP addresses to &lt;code&gt;/etc/hosts&lt;/code&gt; which gives me some sort of flexibility in changing IP address &amp;amp; it&amp;rsquo;s more readable. To be on the safe side, either use only hostnames or IP addresses.&lt;/li&gt;
+&lt;li&gt;Replication is not a complete backup solution: Remember that all updates—data manipulation &amp;amp; definition—to a database are written as binlog events to a binary log, which is then replicated to a slave. Therefore, if you drop a database or truncate a table on master, the same will be done on the slave too! Replication, to some extent, can assist in protection against hardware failure on the master, but not against data loss—intentional or unintentional—on the master.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;further-reading:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;Further Reading&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/binary-log.html&#34;&gt;MySQL Binary Log&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/slave-logs-relaylog.html&#34;&gt;MySQL Relay Log&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://mariadb.com/kb/en/mariadb/what-is-mariadb-100/&#34;&gt;MariaDB 10.0 Server&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/change-master-to.html&#34;&gt;MySQL &lt;code&gt;CHANGE MASTER TO&lt;/code&gt; Command&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/show-slave-status.html&#34;&gt;MySQL &lt;code&gt;SHOW SLAVE STATUS&lt;/code&gt; Command&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>Enabling MySQL Binary Logs</title>
@@ -90,6 +285,7 @@ state: ONLINE
 action: The pool can be imported using its name or numeric identifier.
 config:
 
+
     tank                                                ONLINE
       raidz1-0                                          ONLINE
         ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
@@ -112,6 +308,7 @@ config:
   scan: scrub canceled on Tue Oct 27 08:15:07 2015
 config:
 
+
         NAME                                                STATE     READ WRITE CKSUM
         tank                                                ONLINE       0     0     0
           raidz1-0                                          ONLINE       0     0     0
@@ -122,9 +319,11 @@ config:
             11742341043733316809                            ONLINE       0     0     0
 errors: No known data errors
 
+
 root@localhost ~ # zpool list
 NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
 tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
+
 
 root@localhost ~ # zfs list
 NAME             USED  AVAIL  REFER  MOUNTPOINT
@@ -441,12 +640,15 @@ For example: - wait for 300 seconds for port 22 to become available &amp;amp; co
       when: ansible_os_family == &amp;quot;Redhat&amp;quot;
       yum: name=* state=latest
 
+
     - name: Upgrade all packages in Debian-based machines
       when: ansible_os_family == &amp;quot;Debian&amp;quot;
       apt: upgrade=dist update_cache=yes
 
+
     - name: Reboot server
       command: /sbin/reboot
+
 
     - name: Wait for the server to finish rebooting
       sudo: no
@@ -646,6 +848,7 @@ Signature Algorithm: sha1WithRSAEncryption
             CA Issuers - URI:http://pki.google.com/GIAG2.crt
             OCSP - URI:http://clients1.google.com/ocsp
 
+
         X509v3 Subject Key Identifier:
             A3:9E:4E:88:E8:51:57:6C:96:02:04:AD:C7:C8:9C:06:7C:BF:BF:41
         X509v3 Basic Constraints: critical
@@ -653,13 +856,17 @@ Signature Algorithm: sha1WithRSAEncryption
         X509v3 Authority Key Identifier:
             keyid:4A:DD:06:16:1B:BC:F6:68:B5:76:F5:81:B6:BB:62:1A:BA:5A:81:2F
 
+
         X509v3 Certificate Policies:
             Policy: 1.3.6.1.4.1.11129.2.5.1
 
+
         X509v3 CRL Distribution Points:
+
 
             Full Name:
               URI:http://pki.google.com/GIAG2.crl
+
 
 Signature Algorithm: sha1WithRSAEncryption
      39:25:0e:01:8c:a3:5e:14:37:82:c4:a3:dc:d4:16:d7:c3:6b:

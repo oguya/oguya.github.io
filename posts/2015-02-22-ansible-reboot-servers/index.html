@@ -149,12 +149,15 @@ For example: - wait for 300 seconds for port 22 to become available &amp; contai
       when: ansible_os_family == &quot;Redhat&quot;
       yum: name=* state=latest
 
+
     - name: Upgrade all packages in Debian-based machines
       when: ansible_os_family == &quot;Debian&quot;
       apt: upgrade=dist update_cache=yes
 
+
     - name: Reboot server
       command: /sbin/reboot
+
 
     - name: Wait for the server to finish rebooting
       sudo: no

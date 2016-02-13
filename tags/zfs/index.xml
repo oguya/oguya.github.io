@@ -52,6 +52,7 @@ state: ONLINE
 action: The pool can be imported using its name or numeric identifier.
 config:
 
+
     tank                                                ONLINE
       raidz1-0                                          ONLINE
         ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
@@ -74,6 +75,7 @@ config:
   scan: scrub canceled on Tue Oct 27 08:15:07 2015
 config:
 
+
         NAME                                                STATE     READ WRITE CKSUM
         tank                                                ONLINE       0     0     0
           raidz1-0                                          ONLINE       0     0     0
@@ -84,9 +86,11 @@ config:
             11742341043733316809                            ONLINE       0     0     0
 errors: No known data errors
 
+
 root@localhost ~ # zpool list
 NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
 tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
+
 
 root@localhost ~ # zfs list
 NAME             USED  AVAIL  REFER  MOUNTPOINT
