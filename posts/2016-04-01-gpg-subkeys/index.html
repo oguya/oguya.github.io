@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta property="og:title" content=" GPG Subkeys &middot;  James Oguya" />
+  
+  <meta property="og:site_name" content="James Oguya" />
+  <meta property="og:url" content="https://oguya.ch/posts/2016-04-01-gpg-subkeys/" />
+  
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:article:published_time" content="2016-04-01T00:00:00Z" />
+  
+  <meta property="og:article:tag" content="gpg" />
+  
+  <meta property="og:article:tag" content="openpgp" />
+  
+  <meta property="og:article:tag" content="linux" />
+  
+  
+
+  <title>
+     GPG Subkeys &middot;  James Oguya
+  </title>
+
+  <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/main.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/github.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css">
+  <link rel="shortcut icon" href="https://oguya.ch/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://oguya.ch/images/apple-touch-icon.png" />
+  
+</head>
+<body>
+    <header class="global-header"  style="background-image:url( /images/bg.jpg )">
+    <section class="header-text">
+      <h1><a href="https://oguya.ch/">James Oguya</a></h1>
+      
+      <div class="tag-line">
+        Linux nuggets
+      </div>
+      
+      <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+  <a href="https://keybase.io/oguya" target="_blank">
+    <i class="fa fa-key"></i>
+  </a>
+  
+</div>
+
+      
+      <a href="https://oguya.ch/" class="btn-header btn-back hidden-xs">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        &nbsp;Home
+      </a>
+      
+      
+    </section>
+  </header>
+  <main class="container">
+
+
+<article>
+  <header>
+    <h1 class="text-primary">GPG Subkeys</h1>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2016-04-01T00:00:00Z">
+          Apr 1, 2016
+        </time>
+      </div>
+      <div class="pull-right">
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/gpg">#gpg</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/openpgp">#openpgp</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
+        
+      </div>
+    </div>
+  </header>
+  <section>
+    
+
+<p>OpenPGP supports subkeys which are like the normal keys, except they&rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.</p>
+
+<p>When using subkeys, you&rsquo;ll only use the master keypair under the following circumstances:</p>
+
+<ul>
+<li>creating a new subkey</li>
+<li>changing the preferences on a UID</li>
+<li>revoking an existing UID or subkey</li>
+<li>signing a key or revoking an existing signature</li>
+<li>creating a new UID or marking an existing UID as primary</li>
+<li>changing the expiration date on a master key or any of its subkeys</li>
+</ul>
+
+<p>The procedure for creating GPG subkey is as simple as follows:</p>
+
+<ol>
+<li>Create a regular GPG keypair. By default GPG creates one signing subkey(your identity) and one encryption subkey.</li>
+<li>Use <code>gpg</code> to add an additional signing subkey to your keypair. This new subkey is linked to the first signing key. So we have three subkeys.</li>
+<li>Store your master keypair in a safe place, for its loss will be catastrophic.</li>
+<li>Use <code>gpg</code> to remove the original signing subkey, leaving on the new signing subkey &amp; the encryption subkey.</li>
+</ol>
+
+<h3 id="create-a-regular-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695">Create a regular GPG Keypair</h3>
+
+<ul>
+<li><p>Use <code>gpg2 --gen-key</code> command to create a new GPG keypair. It&rsquo;s always a good idea to set your key to expire within a year or less and use 4096 key length instead of the default 2048:</p>
+
+<pre><code>$ gpg2 --gen-key
+gpg (GnuPG) 2.0.29; Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+
+Please select what kind of key you want:
+   (1) RSA and RSA (default)
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+Your selection? 1
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 4096
+Requested keysize is 4096 bits
+...
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2016-12-10
+pub   4096R/48CCEEDF 2015-12-11 [expires: 2016-12-10]
+      Key fingerprint = EE73 1886 CA3D 89BD 34C1  F7E4 66B3 AC6C 48CC EEDF
+uid       [ultimate] John Doe &lt;jdoe@doeworks.ch&gt;
+sub   4096R/8E93D277 2015-12-11 [expires: 2016-12-10]
+</code></pre></li>
+
+<li><p>We&rsquo;ve successfully created a GPG keypair with the ID <code>48CCEEDF</code>:</p>
+
+<pre><code>$ gpg2 --list-keys 48CCEEDF
+pub   4096R/48CCEEDF 2015-12-11 [expires: 2016-12-10]
+uid       [ultimate] John Doe &lt;jdoe@doeworks.ch&gt;
+sub   4096R/8E93D277 2015-12-11 [expires: 2016-12-10]
+</code></pre></li>
+</ul>
+
+<h3 id="create-a-signing-subkey:a38aeb31d7dcb79095cecdecd5338695">Create a Signing Subkey</h3>
+
+<ul>
+<li><p>Using the <code>gpg2--edit-key</code> command, at the <code>gpg&gt;</code> prompt, use the <code>addkey</code> command to create a subkey:</p>
+
+<pre><code>$ gpg2 --edit-key 48CCEEDF
+...
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+[ultimate] (1). John Doe &lt;jdoe@doeworks.ch&gt;
+
+
+gpg&gt; addkey
+Key is protected.
+...
+Please select what kind of key you want:
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+   (5) Elgamal (encrypt only)
+   (6) RSA (encrypt only)
+Your selection? 4
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 4096
+Requested keysize is 4096 bits
+...
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
+[ultimate] (1). John Doe &lt;jdoe@doeworks.ch&gt;
+
+
+gpg&gt; save
+</code></pre></li>
+
+<li><p>This creates for us a new subkey with the key ID <code>A85EA103</code>.</p></li>
+</ul>
+
+<h3 id="create-a-revocation-certificate:a38aeb31d7dcb79095cecdecd5338695">Create a Revocation Certificate</h3>
+
+<ul>
+<li><p>If your master keypair is lost or stolen, a revocation certificate will come in handy in telling people to ignore the stolen/lost key.</p>
+
+<pre><code>$ gpg2 --output 48CCEEDF-revocation-cert.asc --gen-revoke 48CCEEDF
+
+
+sec  4096R/48CCEEDF 2015-12-11 John Doe &lt;jdoe@doeworks.ch&gt;
+
+
+Create a revocation certificate for this key? (y/N) y
+Please select the reason for the revocation:
+  0 = No reason specified
+  1 = Key has been compromised
+  2 = Key is superseded
+  3 = Key is no longer used
+  Q = Cancel
+(Probably you want to select 1 here)
+Your decision? 1
+Enter an optional description; end it with an empty line:
+&gt;
+Reason for revocation: Key has been compromised
+(No description given)
+Is this okay? (y/N) y
+
+
+You need a passphrase to unlock the secret key for
+user: &quot;John Doe &lt;jdoe@doeworks.ch&gt;&quot;
+4096-bit RSA key, ID 48CCEEDF, created 2015-12-11
+</code></pre></li>
+</ul>
+
+<h3 id="export-the-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695">Export the GPG keypair</h3>
+
+<ul>
+<li><p>Now that we&rsquo;ve created the master keypair—public, private keys &amp; revocation certificate—and used it to create a subkey, we should export it &amp; back it up somewhere safe:</p>
+
+<pre><code>$ gpg2 --export-secret-keys --armor 48CCEEDF &gt; 48CCEEDF-private.gpg
+$ gpg2 --armor --export 48CCEEDF &gt; 48CCEEDF-public.gpg
+</code></pre></li>
+
+<li><p>We can also export the subkey for use on other laptops/workstations:</p>
+
+<pre><code>$ gpg2 --armor --export-secret-subkeys A85EA103 &gt; A85EA103-private-subkey.gpg
+</code></pre></li>
+
+<li><p>Now that we&rsquo;ve exported the master keypair &amp; kept it somewhere safe, we can delete this local copy:</p>
+
+<pre><code>$ gpg2 --delete-secret-keys 48CCEEDF
+</code></pre></li>
+</ul>
+
+<h3 id="using-gpg-subkey:a38aeb31d7dcb79095cecdecd5338695">Using GPG subkey</h3>
+
+<ul>
+<li><p>You can import your subkey in your other laptop/workstation &amp; use for daily tasks. Don&rsquo;t forget to shred the secret file once you&rsquo;re done with importing it!</p>
+
+<pre><code>$ gpg2 --import A85EA103-private-subkey.gpg
+$ shred --remove A85EA103-private-subkey.gpg
+</code></pre></li>
+
+<li><p>You can verify that the subkey was successfully imported by listing all private keys:</p>
+
+<pre><code>$ gpg2 --list-secret-keys
+/home/jdoe/.gnupg/secring.gpg
+------------------------------
+sec#  4096R/48CCEEDF 2015-12-11 [expires: 2016-12-10]
+uid                  John Doe &lt;jdoe@doeworks.ch&gt;
+ssb   4096R/8E93D277 2015-12-11
+ssb   4096R/A85EA103 2015-12-11
+</code></pre></li>
+
+<li><p>You can notice that there&rsquo;s a line that begins with <code>sec#</code> instead of <code>sec</code>, the pound(#) sign means the signing master key is not this keyring.</p></li>
+</ul>
+
+<h3 id="lost-compromised-subkey:a38aeb31d7dcb79095cecdecd5338695">Lost/Compromised Subkey</h3>
+
+<ul>
+<li><p>In case of emergency whereby your subkey is lost &amp; or compromised, get your master keypair, import it &amp; revoke your subkey:</p>
+
+<pre><code>$ gpg2 --import 48CCEEDF-public.gpg 48CCEEDF-private.gpg
+gpg: key 48CCEEDF: public key &quot;John Doe &lt;jdoe@doeworks.ch&gt;&quot; imported
+gpg: key 48CCEEDF: secret key imported
+gpg: key 48CCEEDF: &quot;John Doe &lt;jdoe@doeworks.ch&gt;&quot; not changed
+gpg: Total number processed: 2
+gpg:               imported: 1  (RSA: 1)
+gpg:              unchanged: 1
+gpg:       secret keys read: 1
+gpg:   secret keys imported: 1
+</code></pre></li>
+
+<li><p>Using <code>gpg2 --edit-key</code>, select the compromised key—in this case, key 2—&amp; revoke it:</p>
+
+<pre><code>$ gpg2 --edit-key 48CCEEDF
+...
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
+[ultimate] (1). John Doe &lt;jdoe@doeworks.ch&gt;
+
+
+gpg&gt; key 2
+
+
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+sub* 4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
+[ultimate] (1). John Doe &lt;jdoe@doeworks.ch&gt;
+
+
+gpg&gt; revkey
+Do you really want to revoke this subkey? (y/N) y
+Please select the reason for the revocation:
+  0 = No reason specified
+  1 = Key has been compromised
+  2 = Key is superseded
+  3 = Key is no longer used
+  Q = Cancel
+Your decision? 1
+...
+gpg&gt; save
+</code></pre></li>
+
+<li><p>Finally, you have to distribute your key to a keyserver:</p>
+
+<pre><code>$ gpg --keyserver hkp://keys.gnupg.net --send-key 48CCEEDF
+</code></pre></li>
+</ul>
+
+<h3 id="further-reading:a38aeb31d7dcb79095cecdecd5338695">Further Reading</h3>
+
+<ol>
+<li><a href="https://www.gnupg.org/gph/en/manual.html">GNU Privacy Guard(GPG) Handbook</a></li>
+<li><a href="https://wiki.debian.org/Subkeys">GPG Subkeys</a></li>
+<li><a href="https://help.ubuntu.com/community/GnuPrivacyGuardHowto">GPG How-to</a></li>
+</ol>
+
+  </section>
+  <footer>
+    
+    <hr/>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = 'oguya';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+    <section class="author-info row">
+      <div class="author-avatar col-md-2">
+        
+      </div>
+      <div class="author-meta col-md-6">
+        
+        
+      </div>
+      
+      <div class="author-contact col-md-4">
+        <a href="mailto:oguyajames@gmail.com">
+          <i class="fa fa-envelope-o" aria-hidden="true"></i>
+          &nbsp;Contact me
+        </a>
+      </div>
+      
+    </section>
+    <ul class="pager">
+      
+      <li class="previous"><a href="https://oguya.ch/posts/2016-02-13-mysql-replication/"><span aria-hidden="true">&larr;</span> Older</a></li>
+      
+      
+      <li class="next disabled"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+  </main>
+  <footer class="container global-footer">
+    <div class="copyright-note pull-left">
+      
+    </div>
+    <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+  <a href="https://keybase.io/oguya" target="_blank">
+    <i class="fa fa-key"></i>
+  </a>
+  
+</div>
+
+  </footer>
+
+  <script src="https://oguya.ch/js/highlight.pack.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+  
+</body>
+</html>
+

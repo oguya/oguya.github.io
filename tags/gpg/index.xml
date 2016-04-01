@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gpg on James Oguya</title>
+    <link>https://oguya.ch/tags/gpg/</link>
+    <description>Recent content in Gpg on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 01 Apr 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/gpg/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GPG Subkeys</title>
+      <link>https://oguya.ch/posts/2016-04-01-gpg-subkeys/</link>
+      <pubDate>Fri, 01 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2016-04-01-gpg-subkeys/</guid>
+      <description>
+
+&lt;p&gt;OpenPGP supports subkeys which are like the normal keys, except they&amp;rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.&lt;/p&gt;
+
+&lt;p&gt;When using subkeys, you&amp;rsquo;ll only use the master keypair under the following circumstances:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;creating a new subkey&lt;/li&gt;
+&lt;li&gt;changing the preferences on a UID&lt;/li&gt;
+&lt;li&gt;revoking an existing UID or subkey&lt;/li&gt;
+&lt;li&gt;signing a key or revoking an existing signature&lt;/li&gt;
+&lt;li&gt;creating a new UID or marking an existing UID as primary&lt;/li&gt;
+&lt;li&gt;changing the expiration date on a master key or any of its subkeys&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The procedure for creating GPG subkey is as simple as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create a regular GPG keypair. By default GPG creates one signing subkey(your identity) and one encryption subkey.&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;gpg&lt;/code&gt; to add an additional signing subkey to your keypair. This new subkey is linked to the first signing key. So we have three subkeys.&lt;/li&gt;
+&lt;li&gt;Store your master keypair in a safe place, for its loss will be catastrophic.&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;gpg&lt;/code&gt; to remove the original signing subkey, leaving on the new signing subkey &amp;amp; the encryption subkey.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;create-a-regular-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a regular GPG Keypair&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Use &lt;code&gt;gpg2 --gen-key&lt;/code&gt; command to create a new GPG keypair. It&amp;rsquo;s always a good idea to set your key to expire within a year or less and use 4096 key length instead of the default 2048:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --gen-key
+gpg (GnuPG) 2.0.29; Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+
+Please select what kind of key you want:
+   (1) RSA and RSA (default)
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+Your selection? 1
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 4096
+Requested keysize is 4096 bits
+...
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2016-12-10
+pub   4096R/48CCEEDF 2015-12-11 [expires: 2016-12-10]
+      Key fingerprint = EE73 1886 CA3D 89BD 34C1  F7E4 66B3 AC6C 48CC EEDF
+uid       [ultimate] John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+sub   4096R/8E93D277 2015-12-11 [expires: 2016-12-10]
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;We&amp;rsquo;ve successfully created a GPG keypair with the ID &lt;code&gt;48CCEEDF&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --list-keys 48CCEEDF
+pub   4096R/48CCEEDF 2015-12-11 [expires: 2016-12-10]
+uid       [ultimate] John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+sub   4096R/8E93D277 2015-12-11 [expires: 2016-12-10]
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;create-a-signing-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a Signing Subkey&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Using the &lt;code&gt;gpg2--edit-key&lt;/code&gt; command, at the &lt;code&gt;gpg&amp;gt;&lt;/code&gt; prompt, use the &lt;code&gt;addkey&lt;/code&gt; command to create a subkey:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --edit-key 48CCEEDF
+...
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+[ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
+
+gpg&amp;gt; addkey
+Key is protected.
+...
+Please select what kind of key you want:
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+   (5) Elgamal (encrypt only)
+   (6) RSA (encrypt only)
+Your selection? 4
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 4096
+Requested keysize is 4096 bits
+...
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
+[ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
+
+gpg&amp;gt; save
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;This creates for us a new subkey with the key ID &lt;code&gt;A85EA103&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;create-a-revocation-certificate:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a Revocation Certificate&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;If your master keypair is lost or stolen, a revocation certificate will come in handy in telling people to ignore the stolen/lost key.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --output 48CCEEDF-revocation-cert.asc --gen-revoke 48CCEEDF
+
+
+sec  4096R/48CCEEDF 2015-12-11 John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
+
+Create a revocation certificate for this key? (y/N) y
+Please select the reason for the revocation:
+  0 = No reason specified
+  1 = Key has been compromised
+  2 = Key is superseded
+  3 = Key is no longer used
+  Q = Cancel
+(Probably you want to select 1 here)
+Your decision? 1
+Enter an optional description; end it with an empty line:
+&amp;gt;
+Reason for revocation: Key has been compromised
+(No description given)
+Is this okay? (y/N) y
+
+
+You need a passphrase to unlock the secret key for
+user: &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot;
+4096-bit RSA key, ID 48CCEEDF, created 2015-12-11
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;export-the-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Export the GPG keypair&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Now that we&amp;rsquo;ve created the master keypair—public, private keys &amp;amp; revocation certificate—and used it to create a subkey, we should export it &amp;amp; back it up somewhere safe:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --export-secret-keys --armor 48CCEEDF &amp;gt; 48CCEEDF-private.gpg
+$ gpg2 --armor --export 48CCEEDF &amp;gt; 48CCEEDF-public.gpg
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;We can also export the subkey for use on other laptops/workstations:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --armor --export-secret-subkeys A85EA103 &amp;gt; A85EA103-private-subkey.gpg
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Now that we&amp;rsquo;ve exported the master keypair &amp;amp; kept it somewhere safe, we can delete this local copy:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --delete-secret-keys 48CCEEDF
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;using-gpg-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Using GPG subkey&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;You can import your subkey in your other laptop/workstation &amp;amp; use for daily tasks. Don&amp;rsquo;t forget to shred the secret file once you&amp;rsquo;re done with importing it!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --import A85EA103-private-subkey.gpg
+$ shred --remove A85EA103-private-subkey.gpg
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;You can verify that the subkey was successfully imported by listing all private keys:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --list-secret-keys
+/home/jdoe/.gnupg/secring.gpg
+------------------------------
+sec#  4096R/48CCEEDF 2015-12-11 [expires: 2016-12-10]
+uid                  John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+ssb   4096R/8E93D277 2015-12-11
+ssb   4096R/A85EA103 2015-12-11
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;You can notice that there&amp;rsquo;s a line that begins with &lt;code&gt;sec#&lt;/code&gt; instead of &lt;code&gt;sec&lt;/code&gt;, the pound(#) sign means the signing master key is not this keyring.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;lost-compromised-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Lost/Compromised Subkey&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;In case of emergency whereby your subkey is lost &amp;amp; or compromised, get your master keypair, import it &amp;amp; revoke your subkey:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --import 48CCEEDF-public.gpg 48CCEEDF-private.gpg
+gpg: key 48CCEEDF: public key &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot; imported
+gpg: key 48CCEEDF: secret key imported
+gpg: key 48CCEEDF: &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot; not changed
+gpg: Total number processed: 2
+gpg:               imported: 1  (RSA: 1)
+gpg:              unchanged: 1
+gpg:       secret keys read: 1
+gpg:   secret keys imported: 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Using &lt;code&gt;gpg2 --edit-key&lt;/code&gt;, select the compromised key—in this case, key 2—&amp;amp; revoke it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg2 --edit-key 48CCEEDF
+...
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
+[ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
+
+gpg&amp;gt; key 2
+
+
+pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
+                     trust: ultimate      validity: ultimate
+sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
+sub* 4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
+[ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
+
+gpg&amp;gt; revkey
+Do you really want to revoke this subkey? (y/N) y
+Please select the reason for the revocation:
+  0 = No reason specified
+  1 = Key has been compromised
+  2 = Key is superseded
+  3 = Key is no longer used
+  Q = Cancel
+Your decision? 1
+...
+gpg&amp;gt; save
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Finally, you have to distribute your key to a keyserver:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gpg --keyserver hkp://keys.gnupg.net --send-key 48CCEEDF
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;further-reading:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.gnupg.org/gph/en/manual.html&#34;&gt;GNU Privacy Guard(GPG) Handbook&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://wiki.debian.org/Subkeys&#34;&gt;GPG Subkeys&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://help.ubuntu.com/community/GnuPrivacyGuardHowto&#34;&gt;GPG How-to&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
