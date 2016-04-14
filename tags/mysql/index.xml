@@ -6,8 +6,102 @@
     <description>Recent content in Mysql on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 Feb 2016 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 13 Apr 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Safely Rotating MySQL Slow Query Logs</title>
+      <link>https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/</link>
+      <pubDate>Wed, 13 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/</guid>
+      <description>
+
+&lt;p&gt;MySQL slow query log consists of SQL statements that took more than &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time&#34;&gt;long_query_time&lt;/a&gt; seconds to complete execution &amp;amp; required atleast &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit&#34;&gt;min_examined_row_limit&lt;/a&gt; to be examined. By default, administrative queries &amp;amp; those that don&amp;rsquo;t use indexes for lookups are not logged.&lt;/p&gt;
+
+&lt;p&gt;Two common techniques used by &lt;a href=&#34;http://linux.die.net/man/8/logrotate&#34;&gt;Logrotate&lt;/a&gt; are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;copytruncate&lt;/strong&gt;: Instead of moving the old log file &amp;amp; optionally creating a new one, logrotate truncates the original log file in place after creating a copy.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;nocopytruncate&lt;/strong&gt;: Do not truncate the original log file in place after creating a copy.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Truncating log files can block MySQL because the OS serializes access to the inode during the truncate operation. Therefore, it is recommended to temporarily stop slow query logging, flush slow logs, rename
+the old log file &amp;amp; finally enable slow query logging.&lt;/p&gt;
+
+&lt;p&gt;Flushing logs might take a considerable amount of time, therefore, to avoid filling slow log buffer, it&amp;rsquo;s advisable to temporarily disable MySQL slow query logging &amp;amp; re-enabling it once the rotation is complete.&lt;/p&gt;
+
+&lt;h2 id=&#34;manual-rotation:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Manual Rotation&lt;/h2&gt;
+
+&lt;p&gt;To manually rotate slow query logs, we&amp;rsquo;ll temporarily disable slow query logging, flush slow logs, rename the original file &amp;amp; finally re-enable slow query logging.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;get the path to slow query log file&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; show variables like &#39;%slow_query%&#39;;
++---------------------+-------------------------------+
+| Variable_name       | Value                         |
++---------------------+-------------------------------+
+| slow_query_log      | ON                            |
+| slow_query_log_file | /var/lib/mysql/mysql-slow.log |
++---------------------+-------------------------------+
+2 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;temporarily disable slow query logging&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; set global slow_query_log=off;
+Query OK, 0 rows affected (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;flush only slow logs&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; flush slow logs;
+Query OK, 0 rows affected (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;rename the old log file and or compress it&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@db01:~# mv /var/lib/mysql/mysql-slow.log /var/lib/mysql/mysql-slow-$(date +%Y-%m-%d).log
+root@db01:~# gzip -c /var/lib/mysql/mysql-slow-$(date +%Y-%m-%d).log &amp;gt; /var/lib/mysql/mysql-slow-$(date +%Y-%m-%d).log.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;finally, re-enable slow query logging&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;MariaDB [(none)]&amp;gt; set global slow_query_log=on;
+Query OK, 0 rows affected (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;using-logrotate:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Using Logrotate&lt;/h2&gt;
+
+&lt;p&gt;Instead of manual rotation, you can use a lograte config file to acheive the same effect by using logrotate: &lt;code&gt;/etc/logrotate.d/mysql-slow-logs&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/var/lib/mysql/mysql-slow.log {
+    size 1G
+    dateext
+    compress
+    missingok
+    rotate 52
+    notifempty
+    delaycompress
+    sharedscripts
+    nocopytruncate
+    create 660 mysql mysql
+    postrotate
+        /usr/bin/mysql -e &#39;select @@global.slow_query_log into @sq_log_save; set global slow_query_log=off; select sleep(5); FLUSH SLOW LOGS; select sleep(10); set global slow_query_log=@sq_log_save;&#39;
+    endscript
+    rotate 150
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;further-reading:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Further Reading&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/slow-query-log.html&#34;&gt;MySQL Slow Query Log&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>MySQL Replication: What is it? How does it work? How can I set it up?</title>

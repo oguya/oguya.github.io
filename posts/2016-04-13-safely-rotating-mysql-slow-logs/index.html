@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head prefix="og: http://ogp.me/ns#">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta property="og:title" content=" Safely Rotating MySQL Slow Query Logs &middot;  James Oguya" />
+  
+  <meta property="og:site_name" content="James Oguya" />
+  <meta property="og:url" content="https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/" />
+  
+  
+  <meta property="og:type" content="article" />
+  
+  <meta property="og:article:published_time" content="2016-04-13T00:00:00Z" />
+  
+  <meta property="og:article:tag" content="mysql" />
+  
+  <meta property="og:article:tag" content="mariadb" />
+  
+  <meta property="og:article:tag" content="linux" />
+  
+  
+
+  <title>
+     Safely Rotating MySQL Slow Query Logs &middot;  James Oguya
+  </title>
+
+  <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/main.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://oguya.ch/css/github.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400" type="text/css">
+  <link rel="shortcut icon" href="https://oguya.ch/images/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://oguya.ch/images/apple-touch-icon.png" />
+  
+</head>
+<body>
+    <header class="global-header"  style="background-image:url( /images/bg.jpg )">
+    <section class="header-text">
+      <h1><a href="https://oguya.ch/">James Oguya</a></h1>
+      
+      <div class="tag-line">
+        Linux nuggets
+      </div>
+      
+      <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+  <a href="https://keybase.io/oguya" target="_blank">
+    <i class="fa fa-key"></i>
+  </a>
+  
+</div>
+
+      
+      <a href="https://oguya.ch/" class="btn-header btn-back hidden-xs">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>
+        &nbsp;Home
+      </a>
+      
+      
+    </section>
+  </header>
+  <main class="container">
+
+
+<article>
+  <header>
+    <h1 class="text-primary">Safely Rotating MySQL Slow Query Logs</h1>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2016-04-13T00:00:00Z">
+          Apr 13, 2016
+        </time>
+      </div>
+      <div class="pull-right">
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/mysql">#mysql</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/mariadb">#mariadb</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
+        
+      </div>
+    </div>
+  </header>
+  <section>
+    
+
+<p>MySQL slow query log consists of SQL statements that took more than <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time">long_query_time</a> seconds to complete execution &amp; required atleast <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit">min_examined_row_limit</a> to be examined. By default, administrative queries &amp; those that don&rsquo;t use indexes for lookups are not logged.</p>
+
+<p>Two common techniques used by <a href="http://linux.die.net/man/8/logrotate">Logrotate</a> are:</p>
+
+<ul>
+<li><strong>copytruncate</strong>: Instead of moving the old log file &amp; optionally creating a new one, logrotate truncates the original log file in place after creating a copy.</li>
+<li><strong>nocopytruncate</strong>: Do not truncate the original log file in place after creating a copy.</li>
+</ul>
+
+<p>Truncating log files can block MySQL because the OS serializes access to the inode during the truncate operation. Therefore, it is recommended to temporarily stop slow query logging, flush slow logs, rename
+the old log file &amp; finally enable slow query logging.</p>
+
+<p>Flushing logs might take a considerable amount of time, therefore, to avoid filling slow log buffer, it&rsquo;s advisable to temporarily disable MySQL slow query logging &amp; re-enabling it once the rotation is complete.</p>
+
+<h2 id="manual-rotation:163f2bd26ab5a28203dfc878adf4c8d2">Manual Rotation</h2>
+
+<p>To manually rotate slow query logs, we&rsquo;ll temporarily disable slow query logging, flush slow logs, rename the original file &amp; finally re-enable slow query logging.</p>
+
+<ul>
+<li><p>get the path to slow query log file</p>
+
+<pre><code>MariaDB [(none)]&gt; show variables like '%slow_query%';
++---------------------+-------------------------------+
+| Variable_name       | Value                         |
++---------------------+-------------------------------+
+| slow_query_log      | ON                            |
+| slow_query_log_file | /var/lib/mysql/mysql-slow.log |
++---------------------+-------------------------------+
+2 rows in set (0.00 sec)
+</code></pre></li>
+
+<li><p>temporarily disable slow query logging</p>
+
+<pre><code>MariaDB [(none)]&gt; set global slow_query_log=off;
+Query OK, 0 rows affected (0.00 sec)
+</code></pre></li>
+
+<li><p>flush only slow logs</p>
+
+<pre><code>MariaDB [(none)]&gt; flush slow logs;
+Query OK, 0 rows affected (0.00 sec)
+</code></pre></li>
+
+<li><p>rename the old log file and or compress it</p>
+
+<pre><code>root@db01:~# mv /var/lib/mysql/mysql-slow.log /var/lib/mysql/mysql-slow-$(date +%Y-%m-%d).log
+root@db01:~# gzip -c /var/lib/mysql/mysql-slow-$(date +%Y-%m-%d).log &gt; /var/lib/mysql/mysql-slow-$(date +%Y-%m-%d).log.gz
+</code></pre></li>
+
+<li><p>finally, re-enable slow query logging</p>
+
+<pre><code>MariaDB [(none)]&gt; set global slow_query_log=on;
+Query OK, 0 rows affected (0.00 sec)
+</code></pre></li>
+</ul>
+
+<h2 id="using-logrotate:163f2bd26ab5a28203dfc878adf4c8d2">Using Logrotate</h2>
+
+<p>Instead of manual rotation, you can use a lograte config file to acheive the same effect by using logrotate: <code>/etc/logrotate.d/mysql-slow-logs</code></p>
+
+<pre><code>/var/lib/mysql/mysql-slow.log {
+    size 1G
+    dateext
+    compress
+    missingok
+    rotate 52
+    notifempty
+    delaycompress
+    sharedscripts
+    nocopytruncate
+    create 660 mysql mysql
+    postrotate
+        /usr/bin/mysql -e 'select @@global.slow_query_log into @sq_log_save; set global slow_query_log=off; select sleep(5); FLUSH SLOW LOGS; select sleep(10); set global slow_query_log=@sq_log_save;'
+    endscript
+    rotate 150
+}
+</code></pre>
+
+<h3 id="further-reading:163f2bd26ab5a28203dfc878adf4c8d2">Further Reading</h3>
+
+<ol>
+<li><a href="https://dev.mysql.com/doc/refman/5.5/en/slow-query-log.html">MySQL Slow Query Log</a></li>
+</ol>
+
+  </section>
+  <footer>
+    
+    <hr/>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = 'oguya';
+      (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    
+    <section class="author-info row">
+      <div class="author-avatar col-md-2">
+        
+      </div>
+      <div class="author-meta col-md-6">
+        
+        
+      </div>
+      
+      <div class="author-contact col-md-4">
+        <a href="mailto:oguyajames@gmail.com">
+          <i class="fa fa-envelope-o" aria-hidden="true"></i>
+          &nbsp;Contact me
+        </a>
+      </div>
+      
+    </section>
+    <ul class="pager">
+      
+      <li class="previous"><a href="https://oguya.ch/posts/2016-04-01-gpg-subkeys/"><span aria-hidden="true">&larr;</span> Older</a></li>
+      
+      
+      <li class="next disabled"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      
+    </ul>
+  </footer>
+</article>
+
+  </main>
+  <footer class="container global-footer">
+    <div class="copyright-note pull-left">
+      
+    </div>
+    <div class="sns-links hidden-print">
+  
+  <a href="mailto:oguyajames@gmail.com">
+    <i class="fa fa-envelope"></i>
+  </a>
+  
+  
+  <a href="https://twitter.com/oguyajames" target="_blank">
+    <i class="fa fa-twitter"></i>
+  </a>
+  
+  
+  
+  <a href="https://plus.google.com/+JamesOguya" target="_blank">
+    <i class="fa fa-google"></i>
+  </a>
+  
+  
+  
+  <a href="https://github.com/oguya" target="_blank">
+    <i class="fa fa-github"></i>
+  </a>
+  
+  
+  
+  
+  <a href="https://keybase.io/oguya" target="_blank">
+    <i class="fa fa-key"></i>
+  </a>
+  
+</div>
+
+  </footer>
+
+  <script src="https://oguya.ch/js/highlight.pack.js"></script>
+  <script>
+    hljs.initHighlightingOnLoad();
+  </script>
+  
+  
+</body>
+</html>
+
