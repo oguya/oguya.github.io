@@ -26,10 +26,9 @@
 &lt;li&gt;&lt;strong&gt;nocopytruncate&lt;/strong&gt;: Do not truncate the original log file in place after creating a copy.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Truncating log files can block MySQL because the OS serializes access to the inode during the truncate operation. Therefore, it is recommended to temporarily stop slow query logging, flush slow logs, rename
-the old log file &amp;amp; finally enable slow query logging.&lt;/p&gt;
+&lt;p&gt;Truncating log files can block MySQL because the OS serializes access to the inode during the truncate operation. Therefore, it is recommended to temporarily stop slow query logging, flush slow logs, rename the old log file &amp;amp; finally re-enable slow query logging.&lt;/p&gt;
 
-&lt;p&gt;Flushing logs might take a considerable amount of time, therefore, to avoid filling slow log buffer, it&amp;rsquo;s advisable to temporarily disable MySQL slow query logging &amp;amp; re-enabling it once the rotation is complete.&lt;/p&gt;
+&lt;p&gt;Flushing logs might take a considerable amount of time, so, to avoid filling slow log buffer, it&amp;rsquo;s advisable to temporarily disable MySQL slow query logging &amp;amp; re-enabling it once the rotation is complete.&lt;/p&gt;
 
 &lt;h2 id=&#34;manual-rotation:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Manual Rotation&lt;/h2&gt;
 
@@ -82,7 +81,7 @@ Query OK, 0 rows affected (0.00 sec)
     dateext
     compress
     missingok
-    rotate 52
+    rotate 20
     notifempty
     delaycompress
     sharedscripts
@@ -95,10 +94,30 @@ Query OK, 0 rows affected (0.00 sec)
 }
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;More info. about each config. directive:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;size 1G&lt;/code&gt;: Rotate a log file only if it&amp;rsquo;s bigger than 1Gb&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateext&lt;/code&gt;: archive old log files by adding a date extension using the format YYYYMMDD instead of using a number.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;compress&lt;/code&gt;: compress old log files using gzip(default compression program)
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;delaycompress&lt;/code&gt;: postpone compression of the previous log file until the next rotation cylce&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;missingok&lt;/code&gt;: if a log file is missing, don&amp;rsquo;t issue an error message&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;rotate 20&lt;/code&gt;: keep 20 log files before deleting old ones&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;notifempty&lt;/code&gt;: don&amp;rsquo;t rotate empty log files&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sharedscripts&lt;/code&gt;: run &lt;code&gt;prerotate&lt;/code&gt; &amp;amp; &lt;code&gt;postrotate&lt;/code&gt; scripts only once, no matter how many logs match the wildcard pattern&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;nocopytruncate&lt;/code&gt;: don&amp;rsquo;t truncate the original log file in place after creating a copy&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;create 660 mysql mysql&lt;/code&gt;: after rotation, create a new log file owned by mysql with permissions mode 660&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;postrotate&lt;/code&gt;: script executed after rotation is done&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h3 id=&#34;further-reading:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/slow-query-log.html&#34;&gt;MySQL Slow Query Log&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://linux.die.net/man/8/logrotate&#34;&gt;logrotate man page&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>

@@ -49,6 +49,7 @@ gpg (GnuPG) 2.0.29; Copyright (C) 2015 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
+
 Please select what kind of key you want:
    (1) RSA and RSA (default)
    (2) DSA and Elgamal
@@ -90,6 +91,7 @@ pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
 sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
+
 gpg&amp;gt; addkey
 Key is protected.
 ...
@@ -109,6 +111,7 @@ sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
+
 gpg&amp;gt; save
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
@@ -122,7 +125,9 @@ gpg&amp;gt; save
 
 &lt;pre&gt;&lt;code&gt;$ gpg2 --output 48CCEEDF-revocation-cert.asc --gen-revoke 48CCEEDF
 
+
 sec  4096R/48CCEEDF 2015-12-11 John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
 
 Create a revocation certificate for this key? (y/N) y
 Please select the reason for the revocation:
@@ -138,6 +143,7 @@ Enter an optional description; end it with an empty line:
 Reason for revocation: Key has been compromised
 (No description given)
 Is this okay? (y/N) y
+
 
 You need a passphrase to unlock the secret key for
 user: &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot;
@@ -214,13 +220,16 @@ sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
+
 gpg&amp;gt; key 2
+
 
 pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
                      trust: ultimate      validity: ultimate
 sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub* 4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
 
 gpg&amp;gt; revkey
 Do you really want to revoke this subkey? (y/N) y

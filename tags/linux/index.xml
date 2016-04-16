@@ -26,10 +26,9 @@
 &lt;li&gt;&lt;strong&gt;nocopytruncate&lt;/strong&gt;: Do not truncate the original log file in place after creating a copy.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Truncating log files can block MySQL because the OS serializes access to the inode during the truncate operation. Therefore, it is recommended to temporarily stop slow query logging, flush slow logs, rename
-the old log file &amp;amp; finally enable slow query logging.&lt;/p&gt;
+&lt;p&gt;Truncating log files can block MySQL because the OS serializes access to the inode during the truncate operation. Therefore, it is recommended to temporarily stop slow query logging, flush slow logs, rename the old log file &amp;amp; finally re-enable slow query logging.&lt;/p&gt;
 
-&lt;p&gt;Flushing logs might take a considerable amount of time, therefore, to avoid filling slow log buffer, it&amp;rsquo;s advisable to temporarily disable MySQL slow query logging &amp;amp; re-enabling it once the rotation is complete.&lt;/p&gt;
+&lt;p&gt;Flushing logs might take a considerable amount of time, so, to avoid filling slow log buffer, it&amp;rsquo;s advisable to temporarily disable MySQL slow query logging &amp;amp; re-enabling it once the rotation is complete.&lt;/p&gt;
 
 &lt;h2 id=&#34;manual-rotation:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Manual Rotation&lt;/h2&gt;
 
@@ -82,7 +81,7 @@ Query OK, 0 rows affected (0.00 sec)
     dateext
     compress
     missingok
-    rotate 52
+    rotate 20
     notifempty
     delaycompress
     sharedscripts
@@ -95,10 +94,30 @@ Query OK, 0 rows affected (0.00 sec)
 }
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;More info. about each config. directive:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;size 1G&lt;/code&gt;: Rotate a log file only if it&amp;rsquo;s bigger than 1Gb&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateext&lt;/code&gt;: archive old log files by adding a date extension using the format YYYYMMDD instead of using a number.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;compress&lt;/code&gt;: compress old log files using gzip(default compression program)
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;delaycompress&lt;/code&gt;: postpone compression of the previous log file until the next rotation cylce&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;missingok&lt;/code&gt;: if a log file is missing, don&amp;rsquo;t issue an error message&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;rotate 20&lt;/code&gt;: keep 20 log files before deleting old ones&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;notifempty&lt;/code&gt;: don&amp;rsquo;t rotate empty log files&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sharedscripts&lt;/code&gt;: run &lt;code&gt;prerotate&lt;/code&gt; &amp;amp; &lt;code&gt;postrotate&lt;/code&gt; scripts only once, no matter how many logs match the wildcard pattern&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;nocopytruncate&lt;/code&gt;: don&amp;rsquo;t truncate the original log file in place after creating a copy&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;create 660 mysql mysql&lt;/code&gt;: after rotation, create a new log file owned by mysql with permissions mode 660&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;postrotate&lt;/code&gt;: script executed after rotation is done&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h3 id=&#34;further-reading:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/slow-query-log.html&#34;&gt;MySQL Slow Query Log&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://linux.die.net/man/8/logrotate&#34;&gt;logrotate man page&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
     </item>
@@ -143,6 +162,7 @@ gpg (GnuPG) 2.0.29; Copyright (C) 2015 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
+
 Please select what kind of key you want:
    (1) RSA and RSA (default)
    (2) DSA and Elgamal
@@ -184,6 +204,7 @@ pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
 sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
+
 gpg&amp;gt; addkey
 Key is protected.
 ...
@@ -203,6 +224,7 @@ sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
+
 gpg&amp;gt; save
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
@@ -216,7 +238,9 @@ gpg&amp;gt; save
 
 &lt;pre&gt;&lt;code&gt;$ gpg2 --output 48CCEEDF-revocation-cert.asc --gen-revoke 48CCEEDF
 
+
 sec  4096R/48CCEEDF 2015-12-11 John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
 
 Create a revocation certificate for this key? (y/N) y
 Please select the reason for the revocation:
@@ -232,6 +256,7 @@ Enter an optional description; end it with an empty line:
 Reason for revocation: Key has been compromised
 (No description given)
 Is this okay? (y/N) y
+
 
 You need a passphrase to unlock the secret key for
 user: &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot;
@@ -308,13 +333,16 @@ sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
+
 gpg&amp;gt; key 2
+
 
 pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
                      trust: ultimate      validity: ultimate
 sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub* 4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
+
 
 gpg&amp;gt; revkey
 Do you really want to revoke this subkey? (y/N) y
@@ -621,6 +649,7 @@ state: ONLINE
 action: The pool can be imported using its name or numeric identifier.
 config:
 
+
     tank                                                ONLINE
       raidz1-0                                          ONLINE
         ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
@@ -643,6 +672,7 @@ config:
   scan: scrub canceled on Tue Oct 27 08:15:07 2015
 config:
 
+
         NAME                                                STATE     READ WRITE CKSUM
         tank                                                ONLINE       0     0     0
           raidz1-0                                          ONLINE       0     0     0
@@ -653,9 +683,11 @@ config:
             11742341043733316809                            ONLINE       0     0     0
 errors: No known data errors
 
+
 root@localhost ~ # zpool list
 NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
 tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
+
 
 root@localhost ~ # zfs list
 NAME             USED  AVAIL  REFER  MOUNTPOINT
@@ -972,12 +1004,15 @@ For example: - wait for 300 seconds for port 22 to become available &amp;amp; co
       when: ansible_os_family == &amp;quot;Redhat&amp;quot;
       yum: name=* state=latest
 
+
     - name: Upgrade all packages in Debian-based machines
       when: ansible_os_family == &amp;quot;Debian&amp;quot;
       apt: upgrade=dist update_cache=yes
 
+
     - name: Reboot server
       command: /sbin/reboot
+
 
     - name: Wait for the server to finish rebooting
       sudo: no
@@ -1177,6 +1212,7 @@ Signature Algorithm: sha1WithRSAEncryption
             CA Issuers - URI:http://pki.google.com/GIAG2.crt
             OCSP - URI:http://clients1.google.com/ocsp
 
+
         X509v3 Subject Key Identifier:
             A3:9E:4E:88:E8:51:57:6C:96:02:04:AD:C7:C8:9C:06:7C:BF:BF:41
         X509v3 Basic Constraints: critical
@@ -1184,13 +1220,17 @@ Signature Algorithm: sha1WithRSAEncryption
         X509v3 Authority Key Identifier:
             keyid:4A:DD:06:16:1B:BC:F6:68:B5:76:F5:81:B6:BB:62:1A:BA:5A:81:2F
 
+
         X509v3 Certificate Policies:
             Policy: 1.3.6.1.4.1.11129.2.5.1
 
+
         X509v3 CRL Distribution Points:
+
 
             Full Name:
               URI:http://pki.google.com/GIAG2.crl
+
 
 Signature Algorithm: sha1WithRSAEncryption
      39:25:0e:01:8c:a3:5e:14:37:82:c4:a3:dc:d4:16:d7:c3:6b:
