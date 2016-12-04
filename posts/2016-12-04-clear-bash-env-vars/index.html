@@ -3,24 +3,26 @@
 <head prefix="og: http://ogp.me/ns#">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <meta property="og:title" content=" Recovering ZFS Pool &middot;  James Oguya" />
+  <meta property="og:title" content=" Temporarily Clearing Bash Environment Variables &middot;  James Oguya" />
   
   <meta property="og:site_name" content="James Oguya" />
-  <meta property="og:url" content="https://oguya.ch/posts/2015-12-03-recover-zfs-pool/" />
+  <meta property="og:url" content="https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/" />
   
   
   <meta property="og:type" content="article" />
   
-  <meta property="og:article:published_time" content="2015-12-03T00:00:00Z" />
+  <meta property="og:article:published_time" content="2016-12-04T00:00:00Z" />
   
-  <meta property="og:article:tag" content="zfs" />
+  <meta property="og:article:tag" content="bash" />
+  
+  <meta property="og:article:tag" content="shell" />
   
   <meta property="og:article:tag" content="linux" />
   
   
 
   <title>
-     Recovering ZFS Pool &middot;  James Oguya
+     Temporarily Clearing Bash Environment Variables &middot;  James Oguya
   </title>
 
   <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
@@ -87,17 +89,19 @@
 
 <article>
   <header>
-    <h1 class="text-primary">Recovering ZFS Pool</h1>
+    <h1 class="text-primary">Temporarily Clearing Bash Environment Variables</h1>
     <div class="post-meta clearfix">
       <div class="post-date pull-left">
         Posted on
-        <time datetime="2015-12-03T00:00:00Z">
-          Dec 3, 2015
+        <time datetime="2016-12-04T00:00:00Z">
+          Dec 4, 2016
         </time>
       </div>
       <div class="pull-right">
         
-        <span class="post-tag small"><a href="https://oguya.ch//tags/zfs">#zfs</a></span>
+        <span class="post-tag small"><a href="https://oguya.ch//tags/bash">#bash</a></span>
+        
+        <span class="post-tag small"><a href="https://oguya.ch//tags/shell">#shell</a></span>
         
         <span class="post-tag small"><a href="https://oguya.ch//tags/linux">#linux</a></span>
         
@@ -107,82 +111,52 @@
   <section>
     
 
-<p>Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.</p>
+<p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!</p>
 
-<p>So the other day I was upgrading my workstation from <a href="/linux/2015/12/02/upgrading-fedora/">Fedora 22 to Fedora 23</a> and after the upgrade my ZFS pool disappeared! Oh BTW, I&rsquo;m using <a href="http://zfsonlinux.org/">ZoL(ZFS on Linux)</a>.</p>
+<h2 id="displaying-current-environment-variables:f3ac36d46c8496fefde2b6675806584f">Displaying Current Environment Variables</h2>
 
-<h2 id="troubleshooting:b5b68720ff71dd30d4c990d98e9a02b9">Troubleshooting</h2>
+<p>From the terminal, <code>env</code> or <code>printenv</code> will show you your current environment variables. For example:</p>
 
-<p>Normally the command <code>zpool status</code> would display detailed health status for the specified pool. But, if your pool is missing then you&rsquo;ll get something like:</p>
-
-<pre><code class="language-sh">root@localhost ~ # zpool list
-no pools available
-root@localhost ~ # zpool status
-no pools available
+<pre><code>$ env
+XDG_VTNR=2
+CUDA_INC_PATH=/usr/include/cuda
+XDG_SESSION_ID=4
+HOSTNAME=vast
+PYENV_ROOT=/home/james/.pyenv
+ANDROID_HOME=/home/james/src/android-sdk-linux
+XDG_MENU_PREFIX=gnome-
+SHELL=/bin/bash
 </code></pre>
 
-<p>Scary, right??</p>
+<h2 id="temporarily-clearing-bash-environment-variables:f3ac36d46c8496fefde2b6675806584f">Temporarily Clearing Bash Environment Variables&rdquo;</h2>
 
-<h2 id="quick-fix:b5b68720ff71dd30d4c990d98e9a02b9">Quick Fix</h2>
-
-<p>Using <code>zpool import</code> we&rsquo;ll list all pools available &amp; then import them.</p>
-
-<blockquote>
-<p>zpool import [-d dir | -c cachefile] [-D]</br>
-Lists  pools available to import. If the -d option is not specified, this command searches for devices in &ldquo;/dev&rdquo;.</p>
-</blockquote>
+<p>Now, to run a program/script without any environment variable(s), prefix your command with <code>env -i</code>.</p>
 
 <ul>
-<li><p>List all pools</p>
+<li><p>The syntax is as follows:</p>
 
-<pre><code class="language-sh">root@localhost ~ # zpool import
-pool: tank
- id: 11742341043733316809
-state: ONLINE
-action: The pool can be imported using its name or numeric identifier.
-config:
-
-    tank                                                ONLINE
-      raidz1-0                                          ONLINE
-        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
-        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE
-        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE
-        ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE
-        11742341043733316809                            ONLINE
+<pre><code>$ env -i /path/to/your/program arg1 arg2 ...
 </code></pre></li>
 
-<li><p>Finally, import your pool, in this case, tank</p>
+<li><p>For example:</p>
 
-<pre><code class="language-sh">root@localhost ~ # zpool import tank
+<pre><code>$ env -i ls -l
+</code></pre></li>
+</ul>
+
+<p>The <code>-i</code> option tells <code>env</code> command to completely ignore the environment</p>
+
+<p>To set an environment variable, just initialize the variable with a value immediately after the <code>env</code> command.</p>
+
+<ul>
+<li><p>The syntax is as follows:</p>
+
+<pre><code>env var=value /path/to/your/program arg1 arg2 ...
 </code></pre></li>
 
-<li><p>All is well after all! No data lost :)</p>
+<li><p>For example:</p>
 
-<pre><code>root@localhost ~ # zpool status
-  pool: tank
- state: ONLINE
-  scan: scrub canceled on Tue Oct 27 08:15:07 2015
-config:
-
-        NAME                                                STATE     READ WRITE CKSUM
-        tank                                                ONLINE       0     0     0
-          raidz1-0                                          ONLINE       0     0     0
-            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE       0     0     0
-            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part2  ONLINE       0     0     0
-            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part3  ONLINE       0     0     0
-            ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part4  ONLINE       0     0     0
-            11742341043733316809                            ONLINE       0     0     0
-errors: No known data errors
-
-root@localhost ~ # zpool list
-NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
-tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
-
-root@localhost ~ # zfs list
-NAME             USED  AVAIL  REFER  MOUNTPOINT
-tank             123G  1.77T   166K  /mnt/zpool/tank
-tank/backups     117G   383G   117G  /mnt/zpool/tank/backups
-tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
+<pre><code>$ env CUDA_INC_PATH=/tmp/src/cuda /usr/bin/nvidia-smi
 </code></pre></li>
 </ul>
 
@@ -220,10 +194,10 @@ tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
     </section>
     <ul class="pager">
       
-      <li class="previous"><a href="https://oguya.ch/posts/2015-12-02-upgrading-fedora/"><span aria-hidden="true">&larr;</span> Older</a></li>
+      <li class="previous"><a href="https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/"><span aria-hidden="true">&larr;</span> Older</a></li>
       
       
-      <li class="next"><a href="https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      <li class="next disabled"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
       
     </ul>
   </footer>

@@ -84,6 +84,35 @@
   
   <article>
   <header>
+    <h2><a href="https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/">Temporarily Clearing Bash Environment Variables</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2016-12-04T00:00:00Z">
+          Dec 4, 2016
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!</p>
+
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
+
+  
+  
+  <hr/>
+  
+  <article>
+  <header>
     <h2><a href="https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/">Safely Rotating MySQL Slow Query Logs</a></h2>
     <div class="post-meta clearfix">
       <div class="post-date pull-left">
@@ -191,35 +220,6 @@
   <footer>
     <ul class="pager">
       <li class="next"><a href="https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/">Read more <span aria-hidden="true">&raquo;</span></a></li>
-    </ul>
-  </footer>
-  
-</article>
-
-  
-  
-  <hr/>
-  
-  <article>
-  <header>
-    <h2><a href="https://oguya.ch/posts/2015-12-03-recover-zfs-pool/">Recovering ZFS Pool</a></h2>
-    <div class="post-meta clearfix">
-      <div class="post-date pull-left">
-        Posted on
-        <time datetime="2015-12-03T00:00:00Z">
-          Dec 3, 2015
-        </time>
-      </div>
-    </div>
-  </header>
-  <div>
-    <p>Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.</p>
-
-  </div>
-  
-  <footer>
-    <ul class="pager">
-      <li class="next"><a href="https://oguya.ch/posts/2015-12-03-recover-zfs-pool/">Read more <span aria-hidden="true">&raquo;</span></a></li>
     </ul>
   </footer>
   

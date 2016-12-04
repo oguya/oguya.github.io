@@ -6,8 +6,67 @@
     <description>Recent content in Posts on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 13 Apr 2016 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 04 Dec 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Temporarily Clearing Bash Environment Variables</title>
+      <link>https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/</link>
+      <pubDate>Sun, 04 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/</guid>
+      <description>
+
+&lt;p&gt;At times I&amp;rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running &lt;code&gt;bash -l&lt;/code&gt; doesn&amp;rsquo;t really help because it just starts a new bash shell login with the same environment variables from your &lt;code&gt;~/.bashrc&lt;/code&gt; or &lt;code&gt;profile.d&lt;/code&gt; system-wide settings. Well, the other day I discovered prefixing your program/script with &lt;code&gt;env&lt;/code&gt; temporarily clears your environment variables so that your script just runs with totally no variables!&lt;/p&gt;
+
+&lt;h2 id=&#34;displaying-current-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Displaying Current Environment Variables&lt;/h2&gt;
+
+&lt;p&gt;From the terminal, &lt;code&gt;env&lt;/code&gt; or &lt;code&gt;printenv&lt;/code&gt; will show you your current environment variables. For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env
+XDG_VTNR=2
+CUDA_INC_PATH=/usr/include/cuda
+XDG_SESSION_ID=4
+HOSTNAME=vast
+PYENV_ROOT=/home/james/.pyenv
+ANDROID_HOME=/home/james/src/android-sdk-linux
+XDG_MENU_PREFIX=gnome-
+SHELL=/bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;temporarily-clearing-bash-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Temporarily Clearing Bash Environment Variables&amp;rdquo;&lt;/h2&gt;
+
+&lt;p&gt;Now, to run a program/script without any environment variable(s), prefix your command with &lt;code&gt;env -i&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The syntax is as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env -i /path/to/your/program arg1 arg2 ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env -i ls -l
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;code&gt;-i&lt;/code&gt; option tells &lt;code&gt;env&lt;/code&gt; command to completely ignore the environment&lt;/p&gt;
+
+&lt;p&gt;To set an environment variable, just initialize the variable with a value immediately after the &lt;code&gt;env&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The syntax is as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;env var=value /path/to/your/program arg1 arg2 ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env CUDA_INC_PATH=/tmp/src/cuda /usr/bin/nvidia-smi
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Safely Rotating MySQL Slow Query Logs</title>
@@ -162,7 +221,6 @@ gpg (GnuPG) 2.0.29; Copyright (C) 2015 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
-
 Please select what kind of key you want:
    (1) RSA and RSA (default)
    (2) DSA and Elgamal
@@ -204,7 +262,6 @@ pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
 sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
-
 gpg&amp;gt; addkey
 Key is protected.
 ...
@@ -224,7 +281,6 @@ sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
-
 gpg&amp;gt; save
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
@@ -238,9 +294,7 @@ gpg&amp;gt; save
 
 &lt;pre&gt;&lt;code&gt;$ gpg2 --output 48CCEEDF-revocation-cert.asc --gen-revoke 48CCEEDF
 
-
 sec  4096R/48CCEEDF 2015-12-11 John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
-
 
 Create a revocation certificate for this key? (y/N) y
 Please select the reason for the revocation:
@@ -256,7 +310,6 @@ Enter an optional description; end it with an empty line:
 Reason for revocation: Key has been compromised
 (No description given)
 Is this okay? (y/N) y
-
 
 You need a passphrase to unlock the secret key for
 user: &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot;
@@ -333,16 +386,13 @@ sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub  4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
 
-
 gpg&amp;gt; key 2
-
 
 pub  4096R/48CCEEDF  created: 2015-12-11  expires: 2016-12-10  usage: SC
                      trust: ultimate      validity: ultimate
 sub  4096R/8E93D277  created: 2015-12-11  expires: 2016-12-10  usage: E
 sub* 4096R/A85EA103  created: 2015-12-11  expires: 2016-12-10  usage: S
 [ultimate] (1). John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;
-
 
 gpg&amp;gt; revkey
 Do you really want to revoke this subkey? (y/N) y
@@ -649,7 +699,6 @@ state: ONLINE
 action: The pool can be imported using its name or numeric identifier.
 config:
 
-
     tank                                                ONLINE
       raidz1-0                                          ONLINE
         ata-WDC_WD30EFRX-68EUZN0_WD-WMC4N0824448-part1  ONLINE
@@ -672,7 +721,6 @@ config:
   scan: scrub canceled on Tue Oct 27 08:15:07 2015
 config:
 
-
         NAME                                                STATE     READ WRITE CKSUM
         tank                                                ONLINE       0     0     0
           raidz1-0                                          ONLINE       0     0     0
@@ -683,11 +731,9 @@ config:
             11742341043733316809                            ONLINE       0     0     0
 errors: No known data errors
 
-
 root@localhost ~ # zpool list
 NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
 tank  2.44T   143G  2.30T         -     5%     5%  1.07x  ONLINE  -
-
 
 root@localhost ~ # zfs list
 NAME             USED  AVAIL  REFER  MOUNTPOINT
@@ -1077,15 +1123,12 @@ For example: - wait for 300 seconds for port 22 to become available &amp;amp; co
       when: ansible_os_family == &amp;quot;Redhat&amp;quot;
       yum: name=* state=latest
 
-
     - name: Upgrade all packages in Debian-based machines
       when: ansible_os_family == &amp;quot;Debian&amp;quot;
       apt: upgrade=dist update_cache=yes
 
-
     - name: Reboot server
       command: /sbin/reboot
-
 
     - name: Wait for the server to finish rebooting
       sudo: no
@@ -1353,7 +1396,6 @@ Signature Algorithm: sha1WithRSAEncryption
             CA Issuers - URI:http://pki.google.com/GIAG2.crt
             OCSP - URI:http://clients1.google.com/ocsp
 
-
         X509v3 Subject Key Identifier:
             A3:9E:4E:88:E8:51:57:6C:96:02:04:AD:C7:C8:9C:06:7C:BF:BF:41
         X509v3 Basic Constraints: critical
@@ -1361,17 +1403,13 @@ Signature Algorithm: sha1WithRSAEncryption
         X509v3 Authority Key Identifier:
             keyid:4A:DD:06:16:1B:BC:F6:68:B5:76:F5:81:B6:BB:62:1A:BA:5A:81:2F
 
-
         X509v3 Certificate Policies:
             Policy: 1.3.6.1.4.1.11129.2.5.1
 
-
         X509v3 CRL Distribution Points:
-
 
             Full Name:
               URI:http://pki.google.com/GIAG2.crl
-
 
 Signature Algorithm: sha1WithRSAEncryption
      39:25:0e:01:8c:a3:5e:14:37:82:c4:a3:dc:d4:16:d7:c3:6b:

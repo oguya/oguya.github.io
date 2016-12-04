@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bash on James Oguya</title>
+    <link>https://oguya.ch/tags/bash/</link>
+    <description>Recent content in Bash on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 04 Dec 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://oguya.ch/tags/bash/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Temporarily Clearing Bash Environment Variables</title>
+      <link>https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/</link>
+      <pubDate>Sun, 04 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/</guid>
+      <description>
+
+&lt;p&gt;At times I&amp;rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running &lt;code&gt;bash -l&lt;/code&gt; doesn&amp;rsquo;t really help because it just starts a new bash shell login with the same environment variables from your &lt;code&gt;~/.bashrc&lt;/code&gt; or &lt;code&gt;profile.d&lt;/code&gt; system-wide settings. Well, the other day I discovered prefixing your program/script with &lt;code&gt;env&lt;/code&gt; temporarily clears your environment variables so that your script just runs with totally no variables!&lt;/p&gt;
+
+&lt;h2 id=&#34;displaying-current-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Displaying Current Environment Variables&lt;/h2&gt;
+
+&lt;p&gt;From the terminal, &lt;code&gt;env&lt;/code&gt; or &lt;code&gt;printenv&lt;/code&gt; will show you your current environment variables. For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env
+XDG_VTNR=2
+CUDA_INC_PATH=/usr/include/cuda
+XDG_SESSION_ID=4
+HOSTNAME=vast
+PYENV_ROOT=/home/james/.pyenv
+ANDROID_HOME=/home/james/src/android-sdk-linux
+XDG_MENU_PREFIX=gnome-
+SHELL=/bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;temporarily-clearing-bash-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Temporarily Clearing Bash Environment Variables&amp;rdquo;&lt;/h2&gt;
+
+&lt;p&gt;Now, to run a program/script without any environment variable(s), prefix your command with &lt;code&gt;env -i&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The syntax is as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env -i /path/to/your/program arg1 arg2 ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env -i ls -l
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;code&gt;-i&lt;/code&gt; option tells &lt;code&gt;env&lt;/code&gt; command to completely ignore the environment&lt;/p&gt;
+
+&lt;p&gt;To set an environment variable, just initialize the variable with a value immediately after the &lt;code&gt;env&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The syntax is as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;env var=value /path/to/your/program arg1 arg2 ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ env CUDA_INC_PATH=/tmp/src/cuda /usr/bin/nvidia-smi
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
