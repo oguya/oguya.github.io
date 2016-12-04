@@ -34,7 +34,7 @@ XDG_MENU_PREFIX=gnome-
 SHELL=/bin/bash
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;temporarily-clearing-bash-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Temporarily Clearing Bash Environment Variables&amp;rdquo;&lt;/h2&gt;
+&lt;h2 id=&#34;temporarily-clearing-bash-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Temporarily Clearing Bash Environment Variables&lt;/h2&gt;
 
 &lt;p&gt;Now, to run a program/script without any environment variable(s), prefix your command with &lt;code&gt;env -i&lt;/code&gt;.&lt;/p&gt;
 
