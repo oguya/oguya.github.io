@@ -2,12 +2,253 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>James Oguya</title>
-    <link>https://oguya.ch/</link>
+    <link>https://oguya.ch/index.xml</link>
     <description>Recent content on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 04 Dec 2016 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 18 Mar 2017 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Building R on RedHat Linux 6</title>
+      <link>https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/</link>
+      <pubDate>Sat, 18 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/</guid>
+      <description>&lt;p&gt;Newer versions of R(&amp;gt;=3.3.x) will not build without newer bzip2, zlib, libcurl &amp;amp; pcre. These dependencies are not available on older version of RHEL &amp;amp; CentOS i.e. anything below RHEL &amp;amp; CentOS 7. This blog post is a step-by-step journal of what I encountered when trying to compile &amp;amp; install R v3.3.2 on a CentOS 6 host.
+&lt;/p&gt;
+
+&lt;p&gt;New versions of R have removed several dependencies including compression libraries that used to be shipped together thus making the compilation process much easier. Instead of providing these dependencies R assumes that they are installed in the build host. On a CentOS 7, this is not a problem, because it already has newer versions of R dependencies, but the opposite is the case with older version of RHEL &amp;amp; CentOS.&lt;/p&gt;
+
+&lt;p&gt;Since I&amp;rsquo;m using an older version of CentOS, CentOS 6, I prefer using &lt;a href=&#34;https://www.softwarecollections.org/en/&#34;&gt;Software Collections&lt;/a&gt; when building stuff because it provides a bit newer versions of build tools e.g. &lt;code&gt;cc&lt;/code&gt;, &lt;code&gt;gcc&lt;/code&gt;, e.t.c.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Enable &lt;code&gt;[devtoolset-3](https://www.softwarecollections.org/en/scls/rhscl/devtoolset-3/)&lt;/code&gt;;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ scl enable devtoolset-3 bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Download R &amp;amp; build it without any dependencies;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd src
+$ mkdir -p ~/apps/R/3.3.2
+$ wget -qO- https://cran.r-project.org/src/base/R-3/R-3.3.2.tar.gz | tar zxv
+$ cd R-3.3.2/
+$ ./configure --prefix=$HOME/apps/R/3.3.2 --enable-R-static-lib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;2.1 It fails with the following error about missing newer version of zlib&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    checking for XDR support... yes
+    checking if zlib version &amp;gt;= 1.2.5... no
+    checking whether zlib support suffices... configure: error: zlib library and headers are required
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download zlib v1.2.8, compile &amp;amp; install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ mkdir -p ~/apps/zlib/1.2.8
+$ wget -qO- &amp;ldquo;&lt;a href=&#34;https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib-1.2.8.tar.gz&amp;quot;&#34;&gt;https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib-1.2.8.tar.gz&amp;quot;&lt;/a&gt; | tar zvx
+$ cd zlib-1.2.8/
+$ ./configure &amp;ndash;prefix=$HOME/apps/zlib/1.2.8
+$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create environment variables which will be used when building R&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/zlib/1.2.8/lib
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include&amp;rdquo;
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;4.1 Re-configure R once more, this time round it should fix the missing zlib library error&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;4.2 It fails with the following error about missing bzip&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    checking bzlib.h usability... yes
+    checking bzlib.h presence... yes
+    checking for bzlib.h... yes
+    checking if bzip2 version &amp;gt;= 1.0.6... no
+    checking whether bzip2 support suffices... configure: error: bzip2 library and headers are required
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download bzip2 v1.0.6, compile and install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ mkdir -p $HOME/apps/bzip/1.0.6
+$ wget -qO- &lt;a href=&#34;http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz&#34;&gt;http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz&lt;/a&gt; | tar xzv
+$ cd bzip2-1.0.6/
+$ make -f Makefile-libbz2_so
+$ make clean
+$ make
+$ make -n install PREFIX=$HOME/apps/bzip/1.0.6/
+$ make install PREFIX=$HOME/apps/bzip/1.0.6/&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;NOTE&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Building bzip2 requires extra steps since it is not built with the standard GNU auto tools.
+I wouldn&amp;rsquo;t have built it without help from this site: &lt;a href=&#34;http://www.linuxfromscratch.org/lfs/view/development/chapter06/bzip2.html&#34;&gt;http://www.linuxfromscratch.org/lfs/view/development/chapter06/bzip2.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Try building R once more&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;6.1 Export new shell environment variables to be used in the build process; this includes bzip2 binaries and libraries installed in the previous step:&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/bzip/1.0.6/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/bzip/1.0.6/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib/&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;6.2 Build R&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;6.3 Configure fails with the following error about liblzma.&lt;/p&gt;
+
+&lt;p&gt;checking lzma.h usability&amp;hellip; yes
+checking lzma.h presence&amp;hellip; yes
+checking for lzma.h&amp;hellip; yes
+checking if lzma version &amp;gt;= 5.0.3&amp;hellip; no
+configure: error: &amp;ldquo;liblzma library and headers are required&amp;rdquo;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;We can use &lt;code&gt;xz&lt;/code&gt; instead of &lt;code&gt;liblzma&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ wget -qO- &lt;a href=&#34;http://tukaani.org/xz/xz-5.2.2.tar.gz&#34;&gt;http://tukaani.org/xz/xz-5.2.2.tar.gz&lt;/a&gt; | tar xzv
+$ cd xz-5.2.2/
+$ mkdir -p $HOME/apps/xz/5.2.2
+$ ./configure &amp;ndash;prefix=$HOME/apps/xz/5.2.2
+$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Configure R once again&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;8.1 export shell environment variables to contain binaries and libraries from &lt;code&gt;xz&lt;/code&gt; installed in the previous step&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/xz/5.2.2/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/xz/5.2.2/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib -L$HOME/apps/xz/5.2.2/lib&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include -I$HOME/apps/xz/5.2.2/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;8.2 Build R&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;8.3 Configure fails with the following error about prce&lt;/p&gt;
+
+&lt;p&gt;checking for pcre.h&amp;hellip; yes
+checking pcre/pcre.h usability&amp;hellip; no
+checking pcre/pcre.h presence&amp;hellip; no
+checking for pcre/pcre.h&amp;hellip; no
+checking if PCRE version &amp;gt;= 8.10, &amp;lt; 10.0 and has UTF-8 support&amp;hellip; no
+checking whether PCRE support suffices&amp;hellip; configure: error: pcre &amp;gt;= 8.10 library and headers are required&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download pcre v8.35, compile and install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ wget -qO- &lt;a href=&#34;http://downloads.sourceforge.net/pcre/pcre-8.35.tar.bz2&#34;&gt;http://downloads.sourceforge.net/pcre/pcre-8.35.tar.bz2&lt;/a&gt; | tar xjv
+$ cd pcre-8.35/
+$ mkdir -p $HOME/apps/pcre/8.35
+$ ./configure &amp;ndash;prefix=$HOME/apps/pcre/8.35 &amp;ndash;enable-unicode-properties &amp;ndash;enable-pcre16 &amp;ndash;enable-pcre32 &amp;ndash;enable-pcregrep-libz &amp;ndash;enable-pcregrep-libbz2 &amp;ndash;enable-pcretest-libreadline &amp;ndash;enable-static
+$ make -j4
+$ make check
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Configure R once again&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;10.1 Export shell environment variables to contain binaries and libraries from pcre installed in the previous step&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/pcre/8.35/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/pcre/8.35/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib -L$HOME/apps/xz/5.2.2/lib -L$HOME/apps/pcre/8.35/lib&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include -I$HOME/apps/xz/5.2.2/include -I$HOME/apps/pcre/8.35/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;10.2 Build R&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;10.3 configure fails with the following error about missing libcurl&lt;/p&gt;
+
+&lt;p&gt;checking for curl-config&amp;hellip; /usr/bin/curl-config
+checking libcurl version &amp;hellip; 7.19.7
+checking curl/curl.h usability&amp;hellip; yes
+checking curl/curl.h presence&amp;hellip; yes
+checking for curl/curl.h&amp;hellip; yes
+checking if libcurl is version 7 and &amp;gt;= 7.28.0&amp;hellip; no
+configure: error: libcurl &amp;gt;= 7.28.0 library and headers are required with support for https&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download libcurl v7.47, compile and install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ wget -qO- &lt;a href=&#34;https://curl.haxx.se/download/curl-7.47.1.tar.gz&#34;&gt;https://curl.haxx.se/download/curl-7.47.1.tar.gz&lt;/a&gt; | tar xvz
+$ cd curl-7.47.1
+$ mkdir -p $HOME/apps/curl/7.47.1/
+$ ./configure &amp;ndash;prefix=$HOME/apps/curl/7.47.1
+$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Configure R once again&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;12.1 Export new environment variables to contain binaries and libraries from libcurl installed in the previous step&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/curl/7.47.1/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/curl/7.47.1/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib -L$HOME/apps/xz/5.2.2/lib -L$HOME/apps/pcre/8.35/lib -L$HOME/apps/curl/7.47.1/lib&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include -I$HOME/apps/xz/5.2.2/include -I$HOME/apps/pcre/8.35/include -I$HOME/apps/curl/7.47.1/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;12.2 Try building R once again&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib &amp;ndash;enable-memory-profiling &amp;ndash;enable-R-profiling&lt;/p&gt;
+
+&lt;p&gt;12.3 Finally! It worked! Now finish up the installation&lt;/p&gt;
+
+&lt;p&gt;$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Putting all these steps together&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;install R/3.3.2
+$ cd /tmp/
+$ wget -qO- &lt;a href=&#34;https://cran.r-project.org/src/base/R-3/R-3.3.2.tar.gz&#34;&gt;https://cran.r-project.org/src/base/R-3/R-3.3.2.tar.gz&lt;/a&gt; | tar zxv
+$ cd R-3.3.2/
+$ scl enable devtoolset-2 bash
+$ sudo mkdir /export/apps/R/3.3.2
+$ sudo chown -R joguya:joguya /export/apps/R/3.3.2
+$ ./configure &amp;ndash;enable-R-static-lib &amp;ndash;prefix=/export/apps/R/3.3.2
+$ make -j4
+$ make install
+$ sudo chown -R root:root /export/apps/R/3.3.2&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
     
     <item>
       <title>Temporarily Clearing Bash Environment Variables</title>
@@ -15,11 +256,10 @@
       <pubDate>Sun, 04 Dec 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/</guid>
-      <description>
+      <description>&lt;p&gt;At times I&amp;rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running &lt;code&gt;bash -l&lt;/code&gt; doesn&amp;rsquo;t really help because it just starts a new bash shell login with the same environment variables from your &lt;code&gt;~/.bashrc&lt;/code&gt; or &lt;code&gt;profile.d&lt;/code&gt; system-wide settings. Well, the other day I discovered prefixing your program/script with &lt;code&gt;env&lt;/code&gt; temporarily clears your environment variables so that your script just runs with totally no variables!
+&lt;/p&gt;
 
-&lt;p&gt;At times I&amp;rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running &lt;code&gt;bash -l&lt;/code&gt; doesn&amp;rsquo;t really help because it just starts a new bash shell login with the same environment variables from your &lt;code&gt;~/.bashrc&lt;/code&gt; or &lt;code&gt;profile.d&lt;/code&gt; system-wide settings. Well, the other day I discovered prefixing your program/script with &lt;code&gt;env&lt;/code&gt; temporarily clears your environment variables so that your script just runs with totally no variables!&lt;/p&gt;
-
-&lt;h2 id=&#34;displaying-current-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Displaying Current Environment Variables&lt;/h2&gt;
+&lt;h2 id=&#34;displaying-current-environment-variables&#34;&gt;Displaying Current Environment Variables&lt;/h2&gt;
 
 &lt;p&gt;From the terminal, &lt;code&gt;env&lt;/code&gt; or &lt;code&gt;printenv&lt;/code&gt; will show you your current environment variables. For example:&lt;/p&gt;
 
@@ -34,7 +274,7 @@ XDG_MENU_PREFIX=gnome-
 SHELL=/bin/bash
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;temporarily-clearing-bash-environment-variables:f3ac36d46c8496fefde2b6675806584f&#34;&gt;Temporarily Clearing Bash Environment Variables&lt;/h2&gt;
+&lt;h2 id=&#34;temporarily-clearing-bash-environment-variables&#34;&gt;Temporarily Clearing Bash Environment Variables&lt;/h2&gt;
 
 &lt;p&gt;Now, to run a program/script without any environment variable(s), prefix your command with &lt;code&gt;env -i&lt;/code&gt;.&lt;/p&gt;
 
@@ -64,8 +304,7 @@ SHELL=/bin/bash
 
 &lt;pre&gt;&lt;code&gt;$ env CUDA_INC_PATH=/tmp/src/cuda /usr/bin/nvidia-smi
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;/ul&gt;</description>
     </item>
     
     <item>
@@ -74,9 +313,8 @@ SHELL=/bin/bash
       <pubDate>Wed, 13 Apr 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/</guid>
-      <description>
-
-&lt;p&gt;MySQL slow query log consists of SQL statements that took more than &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time&#34;&gt;long_query_time&lt;/a&gt; seconds to complete execution &amp;amp; required atleast &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit&#34;&gt;min_examined_row_limit&lt;/a&gt; to be examined. By default, administrative queries &amp;amp; those that don&amp;rsquo;t use indexes for lookups are not logged.&lt;/p&gt;
+      <description>&lt;p&gt;MySQL slow query log consists of SQL statements that took more than &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time&#34;&gt;long_query_time&lt;/a&gt; seconds to complete execution &amp;amp; required atleast &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit&#34;&gt;min_examined_row_limit&lt;/a&gt; to be examined. By default, administrative queries &amp;amp; those that don&amp;rsquo;t use indexes for lookups are not logged.
+&lt;/p&gt;
 
 &lt;p&gt;Two common techniques used by &lt;a href=&#34;http://linux.die.net/man/8/logrotate&#34;&gt;Logrotate&lt;/a&gt; are:&lt;/p&gt;
 
@@ -89,7 +327,7 @@ SHELL=/bin/bash
 
 &lt;p&gt;Flushing logs might take a considerable amount of time, so, to avoid filling slow log buffer, it&amp;rsquo;s advisable to temporarily disable MySQL slow query logging &amp;amp; re-enabling it once the rotation is complete.&lt;/p&gt;
 
-&lt;h2 id=&#34;manual-rotation:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Manual Rotation&lt;/h2&gt;
+&lt;h2 id=&#34;manual-rotation&#34;&gt;Manual Rotation&lt;/h2&gt;
 
 &lt;p&gt;To manually rotate slow query logs, we&amp;rsquo;ll temporarily disable slow query logging, flush slow logs, rename the original file &amp;amp; finally re-enable slow query logging.&lt;/p&gt;
 
@@ -131,7 +369,7 @@ Query OK, 0 rows affected (0.00 sec)
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;using-logrotate:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Using Logrotate&lt;/h2&gt;
+&lt;h2 id=&#34;using-logrotate&#34;&gt;Using Logrotate&lt;/h2&gt;
 
 &lt;p&gt;Instead of manual rotation, you can use a lograte config file to acheive the same effect by using logrotate: &lt;code&gt;/etc/logrotate.d/mysql-slow-logs&lt;/code&gt;&lt;/p&gt;
 
@@ -172,13 +410,12 @@ Query OK, 0 rows affected (0.00 sec)
 &lt;li&gt;&lt;code&gt;postrotate&lt;/code&gt;: script executed after rotation is done&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;further-reading:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/slow-query-log.html&#34;&gt;MySQL Slow Query Log&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://linux.die.net/man/8/logrotate&#34;&gt;logrotate man page&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -187,9 +424,8 @@ Query OK, 0 rows affected (0.00 sec)
       <pubDate>Fri, 01 Apr 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-04-01-gpg-subkeys/</guid>
-      <description>
-
-&lt;p&gt;OpenPGP supports subkeys which are like the normal keys, except they&amp;rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.&lt;/p&gt;
+      <description>&lt;p&gt;OpenPGP supports subkeys which are like the normal keys, except they&amp;rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.
+&lt;/p&gt;
 
 &lt;p&gt;When using subkeys, you&amp;rsquo;ll only use the master keypair under the following circumstances:&lt;/p&gt;
 
@@ -211,7 +447,7 @@ Query OK, 0 rows affected (0.00 sec)
 &lt;li&gt;Use &lt;code&gt;gpg&lt;/code&gt; to remove the original signing subkey, leaving on the new signing subkey &amp;amp; the encryption subkey.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;create-a-regular-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a regular GPG Keypair&lt;/h3&gt;
+&lt;h3 id=&#34;create-a-regular-gpg-keypair&#34;&gt;Create a regular GPG Keypair&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Use &lt;code&gt;gpg2 --gen-key&lt;/code&gt; command to create a new GPG keypair. It&amp;rsquo;s always a good idea to set your key to expire within a year or less and use 4096 key length instead of the default 2048:&lt;/p&gt;
@@ -250,7 +486,7 @@ sub   4096R/8E93D277 2015-12-11 [expires: 2016-12-10]
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;create-a-signing-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a Signing Subkey&lt;/h3&gt;
+&lt;h3 id=&#34;create-a-signing-subkey&#34;&gt;Create a Signing Subkey&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Using the &lt;code&gt;gpg2--edit-key&lt;/code&gt; command, at the &lt;code&gt;gpg&amp;gt;&lt;/code&gt; prompt, use the &lt;code&gt;addkey&lt;/code&gt; command to create a subkey:&lt;/p&gt;
@@ -287,7 +523,7 @@ gpg&amp;gt; save
 &lt;li&gt;&lt;p&gt;This creates for us a new subkey with the key ID &lt;code&gt;A85EA103&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;create-a-revocation-certificate:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a Revocation Certificate&lt;/h3&gt;
+&lt;h3 id=&#34;create-a-revocation-certificate&#34;&gt;Create a Revocation Certificate&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;If your master keypair is lost or stolen, a revocation certificate will come in handy in telling people to ignore the stolen/lost key.&lt;/p&gt;
@@ -317,7 +553,7 @@ user: &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;export-the-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Export the GPG keypair&lt;/h3&gt;
+&lt;h3 id=&#34;export-the-gpg-keypair&#34;&gt;Export the GPG keypair&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Now that we&amp;rsquo;ve created the master keypair—public, private keys &amp;amp; revocation certificate—and used it to create a subkey, we should export it &amp;amp; back it up somewhere safe:&lt;/p&gt;
@@ -337,7 +573,7 @@ $ gpg2 --armor --export 48CCEEDF &amp;gt; 48CCEEDF-public.gpg
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;using-gpg-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Using GPG subkey&lt;/h3&gt;
+&lt;h3 id=&#34;using-gpg-subkey&#34;&gt;Using GPG subkey&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;You can import your subkey in your other laptop/workstation &amp;amp; use for daily tasks. Don&amp;rsquo;t forget to shred the secret file once you&amp;rsquo;re done with importing it!&lt;/p&gt;
@@ -360,7 +596,7 @@ ssb   4096R/A85EA103 2015-12-11
 &lt;li&gt;&lt;p&gt;You can notice that there&amp;rsquo;s a line that begins with &lt;code&gt;sec#&lt;/code&gt; instead of &lt;code&gt;sec&lt;/code&gt;, the pound(#) sign means the signing master key is not this keyring.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;lost-compromised-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Lost/Compromised Subkey&lt;/h3&gt;
+&lt;h3 id=&#34;lost-compromised-subkey&#34;&gt;Lost/Compromised Subkey&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;In case of emergency whereby your subkey is lost &amp;amp; or compromised, get your master keypair, import it &amp;amp; revoke your subkey:&lt;/p&gt;
@@ -413,14 +649,13 @@ gpg&amp;gt; save
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;further-reading:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.gnupg.org/gph/en/manual.html&#34;&gt;GNU Privacy Guard(GPG) Handbook&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://wiki.debian.org/Subkeys&#34;&gt;GPG Subkeys&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://help.ubuntu.com/community/GnuPrivacyGuardHowto&#34;&gt;GPG How-to&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -429,13 +664,12 @@ gpg&amp;gt; save
       <pubDate>Sat, 13 Feb 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-02-13-mysql-replication/</guid>
-      <description>
+      <description>&lt;h2 id=&#34;what-is-it&#34;&gt;What is it?&lt;/h2&gt;
 
-&lt;h2 id=&#34;what-is-it:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;What is it?&lt;/h2&gt;
+&lt;p&gt;MySQL replication allows you to &amp;lsquo;mirror&amp;rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.
+&lt;/p&gt;
 
-&lt;p&gt;MySQL replication allows you to &amp;lsquo;mirror&amp;rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.&lt;/p&gt;
-
-&lt;h2 id=&#34;how-does-it-work:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;How does it work?&lt;/h2&gt;
+&lt;h2 id=&#34;how-does-it-work&#34;&gt;How does it work?&lt;/h2&gt;
 
 &lt;p&gt;Replication relies heavily on &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/binary-log.html&#34;&gt;binary logs&lt;/a&gt;. If binary logging is enabled, all updates—data manipulation &amp;amp; data definition—to a database are written to binary log as a binary log event. A slave server can then read it&amp;rsquo;s master&amp;rsquo;s binary log to access data for replication. The slave writes master&amp;rsquo;s binary log events in a &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/slave-logs-relaylog.html&#34;&gt;relay log&lt;/a&gt; file.&lt;/p&gt;
 
@@ -450,11 +684,11 @@ gpg&amp;gt; save
 &lt;li&gt;Data distribution: replication can be used to create a local copy of data on a remote master.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;how-can-i-set-it-up:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;How can I set it up?&lt;/h2&gt;
+&lt;h2 id=&#34;how-can-i-set-it-up&#34;&gt;How can I set it up?&lt;/h2&gt;
 
 &lt;p&gt;Having 2 servers—&lt;code&gt;db01&lt;/code&gt; as the master and &lt;code&gt;db02&lt;/code&gt; as the slave—both running Ubuntu 14.04, we&amp;rsquo;ll setup replication on &lt;a href=&#34;https://mariadb.com/&#34;&gt;MariaDB&lt;/a&gt;—a fork of MySQL:&lt;/p&gt;
 
-&lt;h3 id=&#34;on-both-servers:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On both servers&lt;/h3&gt;
+&lt;h3 id=&#34;on-both-servers&#34;&gt;On both servers&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;add mariadb repo &amp;amp; install &lt;a href=&#34;https://mariadb.com/kb/en/mariadb/what-is-mariadb-100/&#34;&gt;mariadb-server-10.0&lt;/a&gt;&lt;/p&gt;
@@ -467,7 +701,7 @@ gpg&amp;gt; save
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;on-db01-master-server:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On db01—master server&lt;/h3&gt;
+&lt;h3 id=&#34;on-db01-master-server&#34;&gt;On db01—master server&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;set mysql to bind to a non-localhost IP address, otherwise remote slave connections will fail:&lt;/p&gt;
@@ -520,7 +754,7 @@ flush privileges;
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;on-db02-slave:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On db02—slave&lt;/h3&gt;
+&lt;h3 id=&#34;on-db02-slave&#34;&gt;On db02—slave&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Give db02 a unique &lt;code&gt;server_id&lt;/code&gt; too. To avoid data inconsistencies between the master &amp;amp; slave, verify binlog checksums when reading events from the relay log by setting &lt;code&gt;slave_sql_verify_checksum&lt;/code&gt; to 1. Restart mysql for config changes to take effect: &lt;code&gt;/etc/mysql/conf.d/slave-replication.cnf&lt;/code&gt;&lt;/p&gt;
@@ -599,14 +833,14 @@ Master_SSL_Verify_Server_Cert: No
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;extras:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;Extras&lt;/h2&gt;
+&lt;h2 id=&#34;extras&#34;&gt;Extras&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Don&amp;rsquo;t mix &amp;amp; match server names &amp;amp; IP addresses: I prefer adding hostnames &amp;amp; their respective IP addresses to &lt;code&gt;/etc/hosts&lt;/code&gt; which gives me some sort of flexibility in changing IP address &amp;amp; it&amp;rsquo;s more readable. To be on the safe side, either use only hostnames or IP addresses.&lt;/li&gt;
 &lt;li&gt;Replication is not a complete backup solution: Remember that all updates—data manipulation &amp;amp; definition—to a database are written as binlog events to a binary log, which is then replicated to a slave. Therefore, if you drop a database or truncate a table on master, the same will be done on the slave too! Replication, to some extent, can assist in protection against hardware failure on the master, but not against data loss—intentional or unintentional—on the master.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;further-reading:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;Further Reading&lt;/h2&gt;
+&lt;h2 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/binary-log.html&#34;&gt;MySQL Binary Log&lt;/a&gt;&lt;/li&gt;
@@ -614,8 +848,7 @@ Master_SSL_Verify_Server_Cert: No
 &lt;li&gt;&lt;a href=&#34;https://mariadb.com/kb/en/mariadb/what-is-mariadb-100/&#34;&gt;MariaDB 10.0 Server&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/change-master-to.html&#34;&gt;MySQL &lt;code&gt;CHANGE MASTER TO&lt;/code&gt; Command&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/show-slave-status.html&#34;&gt;MySQL &lt;code&gt;SHOW SLAVE STATUS&lt;/code&gt; Command&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -624,9 +857,8 @@ Master_SSL_Verify_Server_Cert: No
       <pubDate>Thu, 07 Jan 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/</guid>
-      <description>
-
-&lt;p&gt;MySQL binary log contains records of all changes to a databases—both data &amp;amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp;amp; DELETE  with the exception of SELECT &amp;amp; SHOW which have no effect on the data.&lt;/p&gt;
+      <description>&lt;p&gt;MySQL binary log contains records of all changes to a databases—both data &amp;amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp;amp; DELETE  with the exception of SELECT &amp;amp; SHOW which have no effect on the data.
+&lt;/p&gt;
 
 &lt;p&gt;The purpose of binary log is to allow replication whereby data is sent from a one server(master) to another one(slave) as well assisting in certain data recovery operations. Binary logs are stored in binary format, therefore, you have to use &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/mysqlbinlog.html&#34;&gt;mysqlbinlog utility&lt;/a&gt; to view its contents.&lt;/p&gt;
 
@@ -648,12 +880,11 @@ MariaDB [(none)]&amp;gt; show variables like &#39;log_bin&#39;;
 &lt;pre&gt;&lt;code&gt;log_bin = mysql-bin
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;further-reading:84caf2ead6bf7a20486f54a742a06acb&#34;&gt;Further Reading&lt;/h2&gt;
+&lt;h2 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/binary-log.html&#34;&gt;MySQL Binary Log&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -662,13 +893,12 @@ MariaDB [(none)]&amp;gt; show variables like &#39;log_bin&#39;;
       <pubDate>Thu, 03 Dec 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-12-03-recover-zfs-pool/</guid>
-      <description>
-
-&lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.&lt;/p&gt;
+      <description>&lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.
+&lt;/p&gt;
 
 &lt;p&gt;So the other day I was upgrading my workstation from &lt;a href=&#34;https://oguya.ch/linux/2015/12/02/upgrading-fedora/&#34;&gt;Fedora 22 to Fedora 23&lt;/a&gt; and after the upgrade my ZFS pool disappeared! Oh BTW, I&amp;rsquo;m using &lt;a href=&#34;http://zfsonlinux.org/&#34;&gt;ZoL(ZFS on Linux)&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;troubleshooting:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Troubleshooting&lt;/h2&gt;
+&lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
 
 &lt;p&gt;Normally the command &lt;code&gt;zpool status&lt;/code&gt; would display detailed health status for the specified pool. But, if your pool is missing then you&amp;rsquo;ll get something like:&lt;/p&gt;
 
@@ -680,7 +910,7 @@ no pools available
 
 &lt;p&gt;Scary, right??&lt;/p&gt;
 
-&lt;h2 id=&#34;quick-fix:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Quick Fix&lt;/h2&gt;
+&lt;h2 id=&#34;quick-fix&#34;&gt;Quick Fix&lt;/h2&gt;
 
 &lt;p&gt;Using &lt;code&gt;zpool import&lt;/code&gt; we&amp;rsquo;ll list all pools available &amp;amp; then import them.&lt;/p&gt;
 
@@ -741,8 +971,7 @@ tank             123G  1.77T   166K  /mnt/zpool/tank
 tank/backups     117G   383G   117G  /mnt/zpool/tank/backups
 tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;/ul&gt;</description>
     </item>
     
     <item>
@@ -751,9 +980,8 @@ tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
       <pubDate>Wed, 02 Dec 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-12-02-upgrading-fedora/</guid>
-      <description>
-
-&lt;p&gt;This is a short &amp;amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF&lt;/p&gt;
+      <description>&lt;p&gt;This is a short &amp;amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF
+&lt;/p&gt;
 
 &lt;p&gt;Live Fedora upgrades using &lt;a href=&#34;https://fedoraproject.org/wiki/Dnf&#34;&gt;dnf&lt;/a&gt; or &lt;a href=&#34;https://fedoraproject.org/wiki/Yum&#34;&gt;yum&lt;/a&gt; usually works well with typical installations but that doesn&amp;rsquo;t mean you won&amp;rsquo;t experience errors during the process.
 In this guide, I&amp;rsquo;ll break the entire process into 3 stages:&lt;/p&gt;
@@ -764,7 +992,7 @@ In this guide, I&amp;rsquo;ll break the entire process into 3 stages:&lt;/p&gt;
 &lt;li&gt;Post-upgrade&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;pre-upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Pre-upgrade&lt;/h2&gt;
+&lt;h2 id=&#34;pre-upgrade&#34;&gt;Pre-upgrade&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Backup your Data:&lt;/strong&gt;&lt;/br&gt;
@@ -778,7 +1006,7 @@ Upgrade your Fedora 22 packages &amp;amp; reboot before you can start the upgrad
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Upgrade&lt;/h2&gt;
+&lt;h2 id=&#34;upgrade&#34;&gt;Upgrade&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Import Fedora 23 GPG Key, clean dnf local cache &amp;amp; finally start the upgrade.&lt;/p&gt;
@@ -790,7 +1018,7 @@ Upgrade your Fedora 22 packages &amp;amp; reboot before you can start the upgrad
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;post-upgrade:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Post-Upgrade&lt;/h2&gt;
+&lt;h2 id=&#34;post-upgrade&#34;&gt;Post-Upgrade&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;After the upgrade, invoke SELinux to autorelabel all files/dirs and finally reboot. Autorelabling will occur during the next boot process.&lt;/p&gt;
@@ -800,7 +1028,7 @@ Upgrade your Fedora 22 packages &amp;amp; reboot before you can start the upgrad
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;gotchas:5e84819426a6d9e3b528ab90c0ae6f19&#34;&gt;Gotchas!!!&lt;/h2&gt;
+&lt;h2 id=&#34;gotchas&#34;&gt;Gotchas!!!&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;During the upgrade I bumped into a couple of errors related to missing dependencies.&lt;/p&gt;
@@ -818,8 +1046,7 @@ package libxml2-python-2.9.3-1.fc22.x86_64 requires libxml2 = 2.9.3-1.fc22, but 
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Another thing to note is that DNF upgrades are heavily dependent on your network. So it&amp;rsquo;s always a good idea to use local mirrors to speed up the upgrade process.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;/ul&gt;</description>
     </item>
     
     <item>
@@ -828,9 +1055,8 @@ package libxml2-python-2.9.3-1.fc22.x86_64 requires libxml2 = 2.9.3-1.fc22, but 
       <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-09-01-systemd-mount-partition/</guid>
-      <description>
-
-&lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.&lt;/p&gt;
+      <description>&lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.
+&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.freedesktop.org/wiki/Software/systemd&#34;&gt;Systemd&lt;/a&gt; is gradually becoming the de facto init system &amp;amp; service manager replacing the old sysV init scripts &amp;amp; upstart. Recently, I discovered you can mount partitions using &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.mount.html&#34;&gt;systemd.mount&lt;/a&gt; by writing your own &lt;code&gt;.mount&lt;/code&gt; &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.unit.html&#34;&gt;systemd unit file&lt;/a&gt;.&lt;/p&gt;
 
@@ -901,7 +1127,7 @@ Aug 31 08:09:15 localhost systemd[1]: Mounting Mount System Backups Directory...
 Aug 31 08:09:15 localhost systemd[1]: Mounted Mount System Backups Directory.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;gotchas:f752833558d6cf2c1eaf1c52459bee7c&#34;&gt;Gotchas!!&lt;/h3&gt;
+&lt;h3 id=&#34;gotchas&#34;&gt;Gotchas!!&lt;/h3&gt;
 
 &lt;p&gt;After a reboot, I noticed the unit wasn&amp;rsquo;t started &amp;amp; as result the mount point dir. was empty. The unit file was missing an &lt;code&gt;[Install]&lt;/code&gt; section which contains installation information such as unit dependencies(&lt;code&gt;WantedBy=, RequiredBy=&lt;/code&gt;), aliases(&lt;code&gt;Alias=&lt;/code&gt;), additional units(&lt;code&gt;Also=&lt;/code&gt;), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a &lt;code&gt;multi-user.target&lt;/code&gt;. Oh, did you know you can change runlevel using &lt;code&gt;systemctl isolate $RUN_LEVEL.target&lt;/code&gt;? &lt;a href=&#34;https://wiki.archlinux.org/index.php/Systemd#Targets_table&#34;&gt;Read more&lt;/a&gt; about systemd runlevels/targets.&lt;/p&gt;
 
@@ -923,8 +1149,7 @@ WantedBy=multi-user.target
 &lt;p&gt;As always, enable the unit to start automatically during boot.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;systemctl enable mnt-backups.mount
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;/code&gt;&lt;/pre&gt;</description>
     </item>
     
     <item>
@@ -933,11 +1158,10 @@ WantedBy=multi-user.target
       <pubDate>Sun, 16 Aug 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-08-16-ansible-cis-benchmarks-ubuntu/</guid>
-      <description>
+      <description>&lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.
+&lt;/p&gt;
 
-&lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.&lt;/p&gt;
-
-&lt;h2 id=&#34;cis-security-benchmarks:1d544af00710297388d9db1e73b06b16&#34;&gt;CIS Security Benchmarks&lt;/h2&gt;
+&lt;h2 id=&#34;cis-security-benchmarks&#34;&gt;CIS Security Benchmarks&lt;/h2&gt;
 
 &lt;p&gt;The CIS(Center for Internet Security)&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; Security Benchmarks program provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. Resources include secure configuration benchmarks, automated configuration assessment tools and content, security metrics and security software product certifications.
 CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; for analyzing &amp;amp; monitoring security benchmarks.&lt;/p&gt;
@@ -980,24 +1204,23 @@ CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmar
 &lt;li&gt;Compliance with &lt;em&gt;Not Scored&lt;/em&gt; recommendations will not increase the final benchmark score&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;putting-it-all-together-with-ansible:1d544af00710297388d9db1e73b06b16&#34;&gt;Putting it all together with Ansible&lt;/h2&gt;
+&lt;h2 id=&#34;putting-it-all-together-with-ansible&#34;&gt;Putting it all together with Ansible&lt;/h2&gt;
 
 &lt;p&gt;After carefully reading the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt;, I created an Ansible playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitLab&lt;/a&gt; that would allow users to audit &amp;amp; configure their systems to meet at most all of the CIS Security benchmarks.&lt;/p&gt;
 
 &lt;p&gt;Please, please, please have at the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt; before running this playbook &amp;amp; always do a dry run first using &lt;a href=&#34;http://docs.ansible.com/playbooks_checkmode.html&#34;&gt;Ansible&amp;rsquo;s Check Mode&lt;/a&gt; so as to see what to expect.&lt;/p&gt;
 
-&lt;h2 id=&#34;contribution:1d544af00710297388d9db1e73b06b16&#34;&gt;Contribution&lt;/h2&gt;
+&lt;h2 id=&#34;contribution&#34;&gt;Contribution&lt;/h2&gt;
 
 &lt;p&gt;As always, &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/pulls&#34;&gt;Pull requests&lt;/a&gt; and &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/issues&#34;&gt;Github issues&lt;/a&gt; are all welcome!&lt;/p&gt;
 
-&lt;h3 id=&#34;further-reading:1d544af00710297388d9db1e73b06b16&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;About CIS Security Benchmarks&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;CIS-CAT Benchmark Assessment Tool&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;CIS Ubuntu 14.04 Benchmarks Ansible Playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://gitlab.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitLab&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -1006,11 +1229,10 @@ CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmar
       <pubDate>Tue, 09 Jun 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-06-09-clear-ram-buffer-swap/</guid>
-      <description>
+      <description>&lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.
+&lt;/p&gt;
 
-&lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.&lt;/p&gt;
-
-&lt;h3 id=&#34;clear-cache:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Cache&lt;/h3&gt;
+&lt;h3 id=&#34;clear-cache&#34;&gt;Clear Cache&lt;/h3&gt;
 
 &lt;p&gt;There are 3 options to clear cache without interrupting any processes or services:&lt;/p&gt;
 
@@ -1031,7 +1253,7 @@ CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmar
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;clear-swap-space:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Swap Space&lt;/h3&gt;
+&lt;h3 id=&#34;clear-swap-space&#34;&gt;Clear Swap Space&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Clearing swap space is as easy as disabling &amp;amp; re-enabling the devices/files used for swaping.&lt;/p&gt;
@@ -1040,12 +1262,11 @@ CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmar
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;further-reading:c91088b87599ce10b0f880403bdac834&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://unix.stackexchange.com/questions/4402/what-is-a-superblock-inode-dentry-and-a-file/4403#4403&#34;&gt;What is a Superblock, Inode, Dentry and a File?&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -1055,7 +1276,8 @@ CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmar
       
       <guid>https://oguya.ch/posts/2015-06-06-yum-dnf-keep-old-packages/</guid>
       <description>&lt;p&gt;When you upgrade packages on RedHat based systems, the newer package replaces the older one except for &lt;em&gt;install only&lt;/em&gt; packages e.g. kernel packages.
-Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.&lt;/p&gt;
+Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.
+&lt;/p&gt;
 
 &lt;p&gt;Once you have more than 3 versions, yum &amp;amp; dnf will clean the older versions of the &lt;em&gt;install only&lt;/em&gt; package(s). To retain more than 3 versions, set &lt;code&gt;installonly_limit&lt;/code&gt;  in &lt;code&gt;/etc/yum.conf&lt;/code&gt; or &lt;code&gt;/etc/dnf/dnf.conf&lt;/code&gt; to a number that you want, e.g. keep 5 versions:&lt;/p&gt;
 
@@ -1065,8 +1287,7 @@ Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions�
 &lt;p&gt;To keep all older kernel packages forever, set &lt;code&gt;installonly_limit&lt;/code&gt; to &lt;strong&gt;0&lt;/strong&gt; i.e. never remove older versions of &lt;em&gt;install only&lt;/em&gt; packages.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;installonly_limit=0
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;/code&gt;&lt;/pre&gt;</description>
     </item>
     
     <item>
@@ -1075,15 +1296,14 @@ Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions�
       <pubDate>Sun, 22 Feb 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-02-22-ansible-reboot-servers/</guid>
-      <description>
-
-&lt;p&gt;Ansible provides useful tools which we can use to for various purposes. In this blog post, we&amp;rsquo;ll talk about rebooting servers using ansible &amp;amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.&lt;/p&gt;
+      <description>&lt;p&gt;Ansible provides useful tools which we can use to for various purposes. In this blog post, we&amp;rsquo;ll talk about rebooting servers using ansible &amp;amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.
+&lt;/p&gt;
 
 &lt;p&gt;Of late, I&amp;rsquo;ve seen a lot of guys asking questions about rebooting nodes/servers &amp;amp; temporarily pausing the playbook for a given amount of time before continuing with the execution of the playbook. In some cases, you&amp;rsquo;d want to set some kernel parameters which take effect at boot time or perform major upgrades which might require a reboot before configuring the server/node.&lt;/p&gt;
 
 &lt;p&gt;Using ansible&amp;rsquo;s &lt;code&gt;wait_for&lt;/code&gt; module&lt;a href=&#34;http://docs.ansible.com/wait_for_module.html&#34;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt;, we can temporarily stop running the playbook while we wait for the server to finish rebooting or for a service to start &amp;amp; bind to a port. We can also use the same module to wait for a port to become available which can be useful in situations where services are not immediately available after their &lt;code&gt;init&lt;/code&gt; scripts finish running - as is the case with Java application server e.g. Tomcat.&lt;/p&gt;
 
-&lt;h3 id=&#34;getting-started:099698e1018d4abe67645cf353ce941b&#34;&gt;Getting Started&lt;/h3&gt;
+&lt;h3 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h3&gt;
 
 &lt;p&gt;Basically, we can break our problem into 4 sections for easier conceptualization:&lt;/p&gt;
 
@@ -1111,7 +1331,7 @@ For example: - wait for 300 seconds for port 22 to become available &amp;amp; co
 &lt;li&gt;&lt;p&gt;Section 4: &lt;strong&gt;Resume the playbook&lt;/strong&gt;: After we&amp;rsquo;ve got a response from port 22, we can resume running the playbook. This step can be optional depending on your needs.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;putting-it-all-together:099698e1018d4abe67645cf353ce941b&#34;&gt;Putting it all together&lt;/h3&gt;
+&lt;h3 id=&#34;putting-it-all-together&#34;&gt;Putting it all together&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;We can merge all the above sections into one playbook as shown below:&lt;/p&gt;
@@ -1136,7 +1356,7 @@ For example: - wait for 300 seconds for port 22 to become available &amp;amp; co
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;stuff-to-note:099698e1018d4abe67645cf353ce941b&#34;&gt;Stuff to note&lt;/h3&gt;
+&lt;h3 id=&#34;stuff-to-note&#34;&gt;Stuff to note&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;I know you might be wondering why we didn&amp;rsquo;t use handlers. Well, &lt;code&gt;notify&lt;/code&gt; tasks&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;&lt;sup&gt;[4]&lt;/sup&gt;&lt;/a&gt; are only executed at the end of the playbook regardless of their location in the
@@ -1146,7 +1366,7 @@ playbook - remember we&amp;rsquo;re interested in rebooting the server &amp;amp;
 &lt;li&gt;&lt;code&gt;yum&lt;/code&gt; module only works on RedHat based OS e.g. Fedora, CentOS &amp;amp; RHEL,and so we&amp;rsquo;ll also use the &lt;code&gt;apt&lt;/code&gt; module for Debian based OS e.g. Ubuntu, Debian e.t.c.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;further-reading:099698e1018d4abe67645cf353ce941b&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/wait_for_module.html&#34;&gt;Ansible wait_for module&lt;/a&gt;&lt;/li&gt;
@@ -1155,8 +1375,7 @@ playbook - remember we&amp;rsquo;re interested in rebooting the server &amp;amp;
 &lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;Ansible Handlers: Running operations on change&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_variables.html#magic-variables-and-how-to-access-information-about-other-hosts&#34;&gt;Playbook built-in variables&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/glossary.html#local-action&#34;&gt;Ansible local_action directives&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -1165,10 +1384,9 @@ playbook - remember we&amp;rsquo;re interested in rebooting the server &amp;amp;
       <pubDate>Thu, 18 Dec 2014 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2014-12-18-ansible-prompt-handlers/</guid>
-      <description>
-
-&lt;p&gt;An awesome feature in  that is not available in &lt;a href=&#34;http://ansible.com&#34;&gt;Ansible&lt;/a&gt; is immediate notification i.e. &lt;code&gt;notifies :immediately&lt;/code&gt;.
-Ansible has notification handlers&lt;sup&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;[1]&lt;/a&gt;&lt;/sup&gt; but they are only triggered at the end of the current playbook unlike Chef&amp;rsquo;s&lt;sup&gt;&lt;a href=&#34;https://docs.chef.io/resource_common.html#notifies-syntax&#34;&gt;[2]&lt;/a&gt;&lt;/sup&gt; which can be  triggered immediately! Moreover, you can configure Chef&amp;rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. &lt;code&gt;:delayed&lt;/code&gt; or immediately i.e. &lt;code&gt;:immediately&lt;/code&gt;.&lt;/p&gt;
+      <description>&lt;p&gt;An awesome feature in  that is not available in &lt;a href=&#34;http://ansible.com&#34;&gt;Ansible&lt;/a&gt; is immediate notification i.e. &lt;code&gt;notifies :immediately&lt;/code&gt;.
+Ansible has notification handlers&lt;sup&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;[1]&lt;/a&gt;&lt;/sup&gt; but they are only triggered at the end of the current playbook unlike Chef&amp;rsquo;s&lt;sup&gt;&lt;a href=&#34;https://docs.chef.io/resource_common.html#notifies-syntax&#34;&gt;[2]&lt;/a&gt;&lt;/sup&gt; which can be  triggered immediately! Moreover, you can configure Chef&amp;rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. &lt;code&gt;:delayed&lt;/code&gt; or immediately i.e. &lt;code&gt;:immediately&lt;/code&gt;.
+&lt;/p&gt;
 
 &lt;p&gt;Now, why I&amp;rsquo;m going into all these boring theories?? Well, when installing tomcat on Ubuntu, dpkg starts it automatically
 once the process is complete. I wanted to stop tomcat7 service, configure it, deploy its webapps &amp;amp; finally start it. So
@@ -1191,7 +1409,7 @@ handlers:
 &lt;p&gt;Unfortunately, this didn&amp;rsquo;t work because notifications trigger tasks in handlers to run at the end of a playbook.
 So I had to come up with a quick fix for this issue.&lt;/p&gt;
 
-&lt;h2 id=&#34;quick-fix:9ae4ed9efeca6e2a238465d7fa3caf24&#34;&gt;Quick Fix&lt;/h2&gt;
+&lt;h2 id=&#34;quick-fix&#34;&gt;Quick Fix&lt;/h2&gt;
 
 &lt;p&gt;This involved registering a variable in task that installs tomcat packages i.e. &lt;code&gt;register: tomcat_installed&lt;/code&gt;,
 then I would run the next task only if the registered variable has changed i.e. &lt;code&gt;when: tomcat_installed|changed&lt;/code&gt;.
@@ -1218,13 +1436,12 @@ I moved the task that stops tomcat7 service from the handler section to the task
 &lt;p&gt;As always, these are my opinions that I don&amp;rsquo;t mind sharing with anyone. Though I&amp;rsquo;m sure there are better solutions to my original
 problem, I think this solution could be useful for other ansible-related problems.&lt;/p&gt;
 
-&lt;h2 id=&#34;further-reading:9ae4ed9efeca6e2a238465d7fa3caf24&#34;&gt;Further Reading&lt;/h2&gt;
+&lt;h2 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change&#34;&gt;Ansible Handlers: Running Operations On Change&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://docs.chef.io/resource_common.html#notifies-syntax&#34;&gt;Chef Notifications&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -1233,9 +1450,8 @@ problem, I think this solution could be useful for other ansible-related problem
       <pubDate>Tue, 18 Nov 2014 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2014-11-18-check-ssl-certs/</guid>
-      <description>
-
-&lt;p&gt;OpenSSL provides several options for implementing SSL &amp;amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&amp;rsquo;ll turn our attention to SSL certificates &amp;amp; the priceless information they contain.&lt;/p&gt;
+      <description>&lt;p&gt;OpenSSL provides several options for implementing SSL &amp;amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&amp;rsquo;ll turn our attention to SSL certificates &amp;amp; the priceless information they contain.
+&lt;/p&gt;
 
 &lt;p&gt;An SSL certificate&lt;sup&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/X.509&#34;&gt;[1]&lt;/a&gt;&lt;/sup&gt; contains a lot of information such as:&lt;/p&gt;
 
@@ -1249,7 +1465,7 @@ problem, I think this solution could be useful for other ansible-related problem
 
 &lt;p&gt;&lt;code&gt;openssl&lt;/code&gt; is a powerful cryptography &amp;amp; SSL/TLS toolkit that is readily available on most linux distros. It provides several options such as &lt;code&gt;s_client&lt;/code&gt;&lt;sup&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/s_client.html&#34;&gt;[2]&lt;/a&gt;&lt;/sup&gt; which allows you to connect to a remote host using SSL/TLS protocols, and &lt;code&gt;x509&lt;/code&gt;&lt;sup&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/x509.html&#34;&gt;[3]&lt;/a&gt;&lt;/sup&gt; which can be used to display certificate information, convert certificates to various forms, sign certificate requests like a &amp;lsquo;mini CA&amp;rsquo; or even edit certificate trust settings. Using &lt;code&gt;openssl&lt;/code&gt;, we&amp;rsquo;ll obtain all the above information from an ssl certificate.&lt;/p&gt;
 
-&lt;h2 id=&#34;show-validity:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show validity&lt;/h2&gt;
+&lt;h2 id=&#34;show-validity&#34;&gt;Show validity&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show the expiry date of an ssl certificate. Both before(&lt;code&gt;-enddate&lt;/code&gt;) and after(&lt;code&gt;-startdate&lt;/code&gt;) dates would give you the validity period of a certificate.&lt;/p&gt;
@@ -1265,7 +1481,7 @@ notAfter=Dec  9 00:00:00 2014 GMT
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-issuer:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show issuer&lt;/h2&gt;
+&lt;h2 id=&#34;show-issuer&#34;&gt;Show issuer&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show who issued the certificate i.e. Certificate Authority(CA):&lt;/p&gt;
@@ -1280,7 +1496,7 @@ issuer= /C=US/O=Google Inc/CN=Google Internet Authority G2
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-subject:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show subject&lt;/h2&gt;
+&lt;h2 id=&#34;show-subject&#34;&gt;Show subject&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show the owner/subject of the certificate:&lt;/p&gt;
@@ -1295,7 +1511,7 @@ subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;all-the-above:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;All the above&lt;/h2&gt;
+&lt;h2 id=&#34;all-the-above&#34;&gt;All the above&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;You can combine &lt;code&gt;-dates&lt;/code&gt;, &lt;code&gt;-issuer&lt;/code&gt; and &lt;code&gt;-subject&lt;/code&gt; options in one command:&lt;/p&gt;
@@ -1313,7 +1529,7 @@ subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-certificate-hash:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show certificate hash&lt;/h2&gt;
+&lt;h2 id=&#34;show-certificate-hash&#34;&gt;Show certificate hash&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show cert&amp;rsquo;s hash:&lt;/p&gt;
@@ -1328,7 +1544,7 @@ a18bd28a
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-md5-fingerprint:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show MD5 fingerprint&lt;/h2&gt;
+&lt;h2 id=&#34;show-md5-fingerprint&#34;&gt;Show MD5 fingerprint&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;print the certificate fingerprint:&lt;/p&gt;
@@ -1343,7 +1559,7 @@ SHA1 Fingerprint=8D:92:BB:69:54:E2:57:43:F3:4A:08:EC:35:96:0D:97:74:F5:66:6A
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-all-information-in-an-ssl-certificate:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show all information in an SSL certificate&lt;/h2&gt;
+&lt;h2 id=&#34;show-all-information-in-an-ssl-certificate&#34;&gt;Show all information in an SSL certificate&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Lets print all the information stored in a certificate:&lt;/p&gt;
@@ -1430,7 +1646,7 @@ Signature Algorithm: sha1WithRSAEncryption
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;conclusion:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;As a sysadmin, or an owner of a certificate, it&amp;rsquo;s a good practice to check the expiry date on your certificate(s) once every 2weeks so that you can plan in advance &amp;amp; renew them before they expire. This helps you avoid situations whereby your clients can&amp;rsquo;t securely connect to your servers because of an expired certificate.&lt;/p&gt;
 
@@ -1439,34 +1655,13 @@ Signature Algorithm: sha1WithRSAEncryption
 &lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;0   9   */14   *   1   echo | openssl s_client -connect $SITE:$PORTt 2&amp;gt; /dev/null | openssl x509 -noout -dates -issuer -subject|  mail -s &amp;quot;Certificate Validity for $SITE&amp;quot; $YOUR_EMAIL
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;further-reading:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/X.509&#34;&gt;A bit of history on X.509&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/s_client.html&#34;&gt;openssl s_client man pages&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/x509.html&#34;&gt;openssl x.509 man pages&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Hello blogging world :)</title>
-      <link>https://oguya.ch/posts/2014-10-13-hello-blogging-world/</link>
-      <pubDate>Mon, 13 Oct 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://oguya.ch/posts/2014-10-13-hello-blogging-world/</guid>
-      <description>&lt;p&gt;so after several months—if not years—of procrastinating whether I should or should not blog, I&amp;rsquo;ve finally decided to leave my comfort zone and face
-my greatest fear—blogging!!&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ve been &amp;lsquo;blogging&amp;rsquo; locally on my laptop &amp;amp; workstation just taking simple notes of problems I&amp;rsquo;ve faced &amp;amp; how I tackled them.
-On few cases, I would place these notes on a private gist on &lt;a href=&#34;https://gist.github.com/oguya&#34;&gt;gist.github.com&lt;/a&gt;, then I would share them with my colleagues.&lt;/p&gt;
-
-&lt;p&gt;I guess it&amp;rsquo;s time to go public &amp;amp; share everything with everyone out there, after all I&amp;rsquo;m a big fan on Free &amp;amp; Open Source Software(FOSS).&lt;/p&gt;
-
-&lt;p&gt;Watch this space for more to come!&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Adios&lt;/em&gt;&lt;/p&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
   </channel>

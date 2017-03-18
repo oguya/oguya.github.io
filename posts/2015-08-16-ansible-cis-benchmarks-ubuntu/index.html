@@ -113,11 +113,10 @@
     </div>
   </header>
   <section>
-    
+    <p>Center for Internet Security(CIS) provides well-defined, unbiased &amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&rsquo;ll talk about these benchmarks &amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.
+</p>
 
-<p>Center for Internet Security(CIS) provides well-defined, unbiased &amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&rsquo;ll talk about these benchmarks &amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.</p>
-
-<h2 id="cis-security-benchmarks:1d544af00710297388d9db1e73b06b16">CIS Security Benchmarks</h2>
+<h2 id="cis-security-benchmarks">CIS Security Benchmarks</h2>
 
 <p>The CIS(Center for Internet Security)<a href="https://benchmarks.cisecurity.org/about/"><sup>[1]</sup></a> Security Benchmarks program provides well-defined, unbiased &amp; consensus-based industry best practices to help organizations assess and improve their security. Resources include secure configuration benchmarks, automated configuration assessment tools and content, security metrics and security software product certifications.
 CIS also provides auditing tools such as CIS-CAT<a href="https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat"><sup>[2]</sup></a> for analyzing &amp; monitoring security benchmarks.</p>
@@ -160,24 +159,23 @@ CIS also provides auditing tools such as CIS-CAT<a href="https://benchmarks.cise
 <li>Compliance with <em>Not Scored</em> recommendations will not increase the final benchmark score</li>
 </ul>
 
-<h2 id="putting-it-all-together-with-ansible:1d544af00710297388d9db1e73b06b16">Putting it all together with Ansible</h2>
+<h2 id="putting-it-all-together-with-ansible">Putting it all together with Ansible</h2>
 
 <p>After carefully reading the <a href="https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100">CIS Ubuntu 14.04 LTS Server Benchmark documentation</a>, I created an Ansible playbook on <a href="https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook">GitHub</a> &amp; <a href="https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook">GitLab</a> that would allow users to audit &amp; configure their systems to meet at most all of the CIS Security benchmarks.</p>
 
 <p>Please, please, please have at the <a href="https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100">CIS Ubuntu 14.04 LTS Server Benchmark documentation</a> before running this playbook &amp; always do a dry run first using <a href="http://docs.ansible.com/playbooks_checkmode.html">Ansible&rsquo;s Check Mode</a> so as to see what to expect.</p>
 
-<h2 id="contribution:1d544af00710297388d9db1e73b06b16">Contribution</h2>
+<h2 id="contribution">Contribution</h2>
 
 <p>As always, <a href="https://github.com/oguya/cis-ubuntu-14-ansible/pulls">Pull requests</a> and <a href="https://github.com/oguya/cis-ubuntu-14-ansible/issues">Github issues</a> are all welcome!</p>
 
-<h3 id="further-reading:1d544af00710297388d9db1e73b06b16">Further Reading</h3>
+<h3 id="further-reading">Further Reading</h3>
 
 <ol>
 <li><a href="https://benchmarks.cisecurity.org/about/">About CIS Security Benchmarks</a></li>
 <li><a href="https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat">CIS-CAT Benchmark Assessment Tool</a></li>
 <li>CIS Ubuntu 14.04 Benchmarks Ansible Playbook on <a href="https://github.com/oguya/cis-ubuntu-14-ansible">GitHub</a> &amp; <a href="https://gitlab.com/oguya/cis-ubuntu-14-ansible">GitLab</a></li>
 </ol>
-
   </section>
   <footer>
     

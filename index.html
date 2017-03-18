@@ -84,6 +84,35 @@
   
   <article>
   <header>
+    <h2><a href="https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/">Building R on RedHat Linux 6</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2017-03-18T00:00:00Z">
+          Mar 18, 2017
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>Newer versions of R(&gt;=3.3.x) will not build without newer bzip2, zlib, libcurl &amp; pcre. These dependencies are not available on older version of RHEL &amp; CentOS i.e. anything below RHEL &amp; CentOS 7. This blog post is a step-by-step journal of what I encountered when trying to compile &amp; install R v3.3.2 on a CentOS 6 host.
+</p>
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
+
+  
+  
+  <hr/>
+  
+  <article>
+  <header>
     <h2><a href="https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/">Temporarily Clearing Bash Environment Variables</a></h2>
     <div class="post-meta clearfix">
       <div class="post-date pull-left">
@@ -95,8 +124,8 @@
     </div>
   </header>
   <div>
-    <p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!</p>
-
+    <p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!
+</p>
   </div>
   
   <footer>
@@ -124,8 +153,8 @@
     </div>
   </header>
   <div>
-    <p>MySQL slow query log consists of SQL statements that took more than <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time">long_query_time</a> seconds to complete execution &amp; required atleast <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit">min_examined_row_limit</a> to be examined. By default, administrative queries &amp; those that don&rsquo;t use indexes for lookups are not logged.</p>
-
+    <p>MySQL slow query log consists of SQL statements that took more than <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time">long_query_time</a> seconds to complete execution &amp; required atleast <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit">min_examined_row_limit</a> to be examined. By default, administrative queries &amp; those that don&rsquo;t use indexes for lookups are not logged.
+</p>
   </div>
   
   <footer>
@@ -153,8 +182,8 @@
     </div>
   </header>
   <div>
-    <p>OpenPGP supports subkeys which are like the normal keys, except they&rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.</p>
-
+    <p>OpenPGP supports subkeys which are like the normal keys, except they&rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.
+</p>
   </div>
   
   <footer>
@@ -182,44 +211,15 @@
     </div>
   </header>
   <div>
-    <h2 id="what-is-it:15ace3cd8e4a9c45c34e2a9e059c7ee0">What is it?</h2>
+    <h2 id="what-is-it">What is it?</h2>
 
-<p>MySQL replication allows you to &lsquo;mirror&rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.</p>
-
+<p>MySQL replication allows you to &lsquo;mirror&rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.
+</p>
   </div>
   
   <footer>
     <ul class="pager">
       <li class="next"><a href="https://oguya.ch/posts/2016-02-13-mysql-replication/">Read more <span aria-hidden="true">&raquo;</span></a></li>
-    </ul>
-  </footer>
-  
-</article>
-
-  
-  
-  <hr/>
-  
-  <article>
-  <header>
-    <h2><a href="https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/">Enabling MySQL Binary Logs</a></h2>
-    <div class="post-meta clearfix">
-      <div class="post-date pull-left">
-        Posted on
-        <time datetime="2016-01-07T00:00:00Z">
-          Jan 7, 2016
-        </time>
-      </div>
-    </div>
-  </header>
-  <div>
-    <p>MySQL binary log contains records of all changes to a databases—both data &amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp; DELETE  with the exception of SELECT &amp; SHOW which have no effect on the data.</p>
-
-  </div>
-  
-  <footer>
-    <ul class="pager">
-      <li class="next"><a href="https://oguya.ch/posts/2016-01-07-enable-mysql-binlog/">Read more <span aria-hidden="true">&raquo;</span></a></li>
     </ul>
   </footer>
   
@@ -232,7 +232,7 @@
   <hr />
 
 
-  <span class="page-number">Page 1 of 3</span>
+  <span class="page-number">Page 1 of 4</span>
 
 <a class="older-posts" href="/page/2/">Older Posts <span aria-hidden="true">&raquo;</span></a>
 

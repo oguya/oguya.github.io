@@ -3,17 +3,17 @@
 <head prefix="og: http://ogp.me/ns#">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-  <meta property="og:title" content=" Bash &middot;  James Oguya" />
+  <meta property="og:title" content=" Build &middot;  James Oguya" />
   
   <meta property="og:site_name" content="James Oguya" />
-  <meta property="og:url" content="https://oguya.ch/tags/bash/" />
+  <meta property="og:url" content="https://oguya.ch/tags/build/" />
   
   
   <meta property="og:type" content="website" />
   
 
   <title>
-     Bash &middot;  James Oguya
+     Build &middot;  James Oguya
   </title>
 
   <link rel="stylesheet" href="https://oguya.ch/css/bootstrap.min.css" />
@@ -73,7 +73,7 @@
       </a>
       
       
-      <a href="https://oguya.ch/tags/bash/index.xml" class="btn-header btn-subscribe hidden-xs">
+      <a href="https://oguya.ch/tags/build/index.xml" class="btn-header btn-subscribe hidden-xs">
         <i class="fa fa-rss" aria-hidden="true"></i>
         &nbsp;Subscribe
       </a>
@@ -83,29 +83,29 @@
   <main class="container">
 
 <section class="article-list">
-  <h1>Bash</h1>
+  <h1>Build</h1>
   
   <hr/>
   <article>
   <header>
-    <h2><a href="https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/">Temporarily Clearing Bash Environment Variables</a></h2>
+    <h2><a href="https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/">Building R on RedHat Linux 6</a></h2>
     <div class="post-meta clearfix">
       <div class="post-date pull-left">
         Posted on
-        <time datetime="2016-12-04T00:00:00Z">
-          Dec 4, 2016
+        <time datetime="2017-03-18T00:00:00Z">
+          Mar 18, 2017
         </time>
       </div>
     </div>
   </header>
   <div>
-    <p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!
+    <p>Newer versions of R(&gt;=3.3.x) will not build without newer bzip2, zlib, libcurl &amp; pcre. These dependencies are not available on older version of RHEL &amp; CentOS i.e. anything below RHEL &amp; CentOS 7. This blog post is a step-by-step journal of what I encountered when trying to compile &amp; install R v3.3.2 on a CentOS 6 host.
 </p>
   </div>
   
   <footer>
     <ul class="pager">
-      <li class="next"><a href="https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/">Read more <span aria-hidden="true">&raquo;</span></a></li>
+      <li class="next"><a href="https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/">Read more <span aria-hidden="true">&raquo;</span></a></li>
     </ul>
   </footer>
   

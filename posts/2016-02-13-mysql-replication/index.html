@@ -109,13 +109,12 @@
     </div>
   </header>
   <section>
-    
+    <h2 id="what-is-it">What is it?</h2>
 
-<h2 id="what-is-it:15ace3cd8e4a9c45c34e2a9e059c7ee0">What is it?</h2>
+<p>MySQL replication allows you to &lsquo;mirror&rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.
+</p>
 
-<p>MySQL replication allows you to &lsquo;mirror&rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.</p>
-
-<h2 id="how-does-it-work:15ace3cd8e4a9c45c34e2a9e059c7ee0">How does it work?</h2>
+<h2 id="how-does-it-work">How does it work?</h2>
 
 <p>Replication relies heavily on <a href="https://dev.mysql.com/doc/refman/5.6/en/binary-log.html">binary logs</a>. If binary logging is enabled, all updates—data manipulation &amp; data definition—to a database are written to binary log as a binary log event. A slave server can then read it&rsquo;s master&rsquo;s binary log to access data for replication. The slave writes master&rsquo;s binary log events in a <a href="https://dev.mysql.com/doc/refman/5.6/en/slave-logs-relaylog.html">relay log</a> file.</p>
 
@@ -130,11 +129,11 @@
 <li>Data distribution: replication can be used to create a local copy of data on a remote master.</li>
 </ul>
 
-<h2 id="how-can-i-set-it-up:15ace3cd8e4a9c45c34e2a9e059c7ee0">How can I set it up?</h2>
+<h2 id="how-can-i-set-it-up">How can I set it up?</h2>
 
 <p>Having 2 servers—<code>db01</code> as the master and <code>db02</code> as the slave—both running Ubuntu 14.04, we&rsquo;ll setup replication on <a href="https://mariadb.com/">MariaDB</a>—a fork of MySQL:</p>
 
-<h3 id="on-both-servers:15ace3cd8e4a9c45c34e2a9e059c7ee0">On both servers</h3>
+<h3 id="on-both-servers">On both servers</h3>
 
 <ul>
 <li><p>add mariadb repo &amp; install <a href="https://mariadb.com/kb/en/mariadb/what-is-mariadb-100/">mariadb-server-10.0</a></p>
@@ -147,7 +146,7 @@
 </code></pre></li>
 </ul>
 
-<h3 id="on-db01-master-server:15ace3cd8e4a9c45c34e2a9e059c7ee0">On db01—master server</h3>
+<h3 id="on-db01-master-server">On db01—master server</h3>
 
 <ul>
 <li><p>set mysql to bind to a non-localhost IP address, otherwise remote slave connections will fail:</p>
@@ -200,7 +199,7 @@ flush privileges;
 </code></pre></li>
 </ul>
 
-<h3 id="on-db02-slave:15ace3cd8e4a9c45c34e2a9e059c7ee0">On db02—slave</h3>
+<h3 id="on-db02-slave">On db02—slave</h3>
 
 <ul>
 <li><p>Give db02 a unique <code>server_id</code> too. To avoid data inconsistencies between the master &amp; slave, verify binlog checksums when reading events from the relay log by setting <code>slave_sql_verify_checksum</code> to 1. Restart mysql for config changes to take effect: <code>/etc/mysql/conf.d/slave-replication.cnf</code></p>
@@ -279,14 +278,14 @@ Master_SSL_Verify_Server_Cert: No
 </code></pre></li>
 </ul>
 
-<h2 id="extras:15ace3cd8e4a9c45c34e2a9e059c7ee0">Extras</h2>
+<h2 id="extras">Extras</h2>
 
 <ol>
 <li>Don&rsquo;t mix &amp; match server names &amp; IP addresses: I prefer adding hostnames &amp; their respective IP addresses to <code>/etc/hosts</code> which gives me some sort of flexibility in changing IP address &amp; it&rsquo;s more readable. To be on the safe side, either use only hostnames or IP addresses.</li>
 <li>Replication is not a complete backup solution: Remember that all updates—data manipulation &amp; definition—to a database are written as binlog events to a binary log, which is then replicated to a slave. Therefore, if you drop a database or truncate a table on master, the same will be done on the slave too! Replication, to some extent, can assist in protection against hardware failure on the master, but not against data loss—intentional or unintentional—on the master.</li>
 </ol>
 
-<h2 id="further-reading:15ace3cd8e4a9c45c34e2a9e059c7ee0">Further Reading</h2>
+<h2 id="further-reading">Further Reading</h2>
 
 <ol>
 <li><a href="https://dev.mysql.com/doc/refman/5.6/en/binary-log.html">MySQL Binary Log</a></li>
@@ -295,7 +294,6 @@ Master_SSL_Verify_Server_Cert: No
 <li><a href="https://dev.mysql.com/doc/refman/5.6/en/change-master-to.html">MySQL <code>CHANGE MASTER TO</code> Command</a></li>
 <li><a href="https://dev.mysql.com/doc/refman/5.6/en/show-slave-status.html">MySQL <code>SHOW SLAVE STATUS</code> Command</a></li>
 </ol>
-
   </section>
   <footer>
     

@@ -118,7 +118,8 @@
   </header>
   <section>
     <p>When you upgrade packages on RedHat based systems, the newer package replaces the older one except for <em>install only</em> packages e.g. kernel packages.
-Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.</p>
+Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.
+</p>
 
 <p>Once you have more than 3 versions, yum &amp; dnf will clean the older versions of the <em>install only</em> package(s). To retain more than 3 versions, set <code>installonly_limit</code>  in <code>/etc/yum.conf</code> or <code>/etc/dnf/dnf.conf</code> to a number that you want, e.g. keep 5 versions:</p>
 
@@ -129,7 +130,6 @@ Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions�
 
 <pre><code class="language-ini">installonly_limit=0
 </code></pre>
-
   </section>
   <footer>
     

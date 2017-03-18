@@ -109,9 +109,8 @@
     </div>
   </header>
   <section>
-    
-
-<p>OpenPGP supports subkeys which are like the normal keys, except they&rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.</p>
+    <p>OpenPGP supports subkeys which are like the normal keys, except they&rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.
+</p>
 
 <p>When using subkeys, you&rsquo;ll only use the master keypair under the following circumstances:</p>
 
@@ -133,7 +132,7 @@
 <li>Use <code>gpg</code> to remove the original signing subkey, leaving on the new signing subkey &amp; the encryption subkey.</li>
 </ol>
 
-<h3 id="create-a-regular-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695">Create a regular GPG Keypair</h3>
+<h3 id="create-a-regular-gpg-keypair">Create a regular GPG Keypair</h3>
 
 <ul>
 <li><p>Use <code>gpg2 --gen-key</code> command to create a new GPG keypair. It&rsquo;s always a good idea to set your key to expire within a year or less and use 4096 key length instead of the default 2048:</p>
@@ -172,7 +171,7 @@ sub   4096R/8E93D277 2015-12-11 [expires: 2016-12-10]
 </code></pre></li>
 </ul>
 
-<h3 id="create-a-signing-subkey:a38aeb31d7dcb79095cecdecd5338695">Create a Signing Subkey</h3>
+<h3 id="create-a-signing-subkey">Create a Signing Subkey</h3>
 
 <ul>
 <li><p>Using the <code>gpg2--edit-key</code> command, at the <code>gpg&gt;</code> prompt, use the <code>addkey</code> command to create a subkey:</p>
@@ -209,7 +208,7 @@ gpg&gt; save
 <li><p>This creates for us a new subkey with the key ID <code>A85EA103</code>.</p></li>
 </ul>
 
-<h3 id="create-a-revocation-certificate:a38aeb31d7dcb79095cecdecd5338695">Create a Revocation Certificate</h3>
+<h3 id="create-a-revocation-certificate">Create a Revocation Certificate</h3>
 
 <ul>
 <li><p>If your master keypair is lost or stolen, a revocation certificate will come in handy in telling people to ignore the stolen/lost key.</p>
@@ -239,7 +238,7 @@ user: &quot;John Doe &lt;jdoe@doeworks.ch&gt;&quot;
 </code></pre></li>
 </ul>
 
-<h3 id="export-the-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695">Export the GPG keypair</h3>
+<h3 id="export-the-gpg-keypair">Export the GPG keypair</h3>
 
 <ul>
 <li><p>Now that we&rsquo;ve created the master keypair—public, private keys &amp; revocation certificate—and used it to create a subkey, we should export it &amp; back it up somewhere safe:</p>
@@ -259,7 +258,7 @@ $ gpg2 --armor --export 48CCEEDF &gt; 48CCEEDF-public.gpg
 </code></pre></li>
 </ul>
 
-<h3 id="using-gpg-subkey:a38aeb31d7dcb79095cecdecd5338695">Using GPG subkey</h3>
+<h3 id="using-gpg-subkey">Using GPG subkey</h3>
 
 <ul>
 <li><p>You can import your subkey in your other laptop/workstation &amp; use for daily tasks. Don&rsquo;t forget to shred the secret file once you&rsquo;re done with importing it!</p>
@@ -282,7 +281,7 @@ ssb   4096R/A85EA103 2015-12-11
 <li><p>You can notice that there&rsquo;s a line that begins with <code>sec#</code> instead of <code>sec</code>, the pound(#) sign means the signing master key is not this keyring.</p></li>
 </ul>
 
-<h3 id="lost-compromised-subkey:a38aeb31d7dcb79095cecdecd5338695">Lost/Compromised Subkey</h3>
+<h3 id="lost-compromised-subkey">Lost/Compromised Subkey</h3>
 
 <ul>
 <li><p>In case of emergency whereby your subkey is lost &amp; or compromised, get your master keypair, import it &amp; revoke your subkey:</p>
@@ -335,14 +334,13 @@ gpg&gt; save
 </code></pre></li>
 </ul>
 
-<h3 id="further-reading:a38aeb31d7dcb79095cecdecd5338695">Further Reading</h3>
+<h3 id="further-reading">Further Reading</h3>
 
 <ol>
 <li><a href="https://www.gnupg.org/gph/en/manual.html">GNU Privacy Guard(GPG) Handbook</a></li>
 <li><a href="https://wiki.debian.org/Subkeys">GPG Subkeys</a></li>
 <li><a href="https://help.ubuntu.com/community/GnuPrivacyGuardHowto">GPG How-to</a></li>
 </ol>
-
   </section>
   <footer>
     

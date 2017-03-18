@@ -2,11 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Systemd on James Oguya</title>
-    <link>https://oguya.ch/tags/systemd/</link>
+    <link>https://oguya.ch/tags/systemd/index.xml</link>
     <description>Recent content in Systemd on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 01 Sep 2015 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/systemd/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,9 +14,8 @@
       <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-09-01-systemd-mount-partition/</guid>
-      <description>
-
-&lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.&lt;/p&gt;
+      <description>&lt;p&gt;Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&amp;rdquo;ll talk about systemd.mount &amp;amp; how you can use it to mount partitions.
+&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.freedesktop.org/wiki/Software/systemd&#34;&gt;Systemd&lt;/a&gt; is gradually becoming the de facto init system &amp;amp; service manager replacing the old sysV init scripts &amp;amp; upstart. Recently, I discovered you can mount partitions using &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.mount.html&#34;&gt;systemd.mount&lt;/a&gt; by writing your own &lt;code&gt;.mount&lt;/code&gt; &lt;a href=&#34;http://www.freedesktop.org/software/systemd/man/systemd.unit.html&#34;&gt;systemd unit file&lt;/a&gt;.&lt;/p&gt;
 
@@ -88,7 +86,7 @@ Aug 31 08:09:15 localhost systemd[1]: Mounting Mount System Backups Directory...
 Aug 31 08:09:15 localhost systemd[1]: Mounted Mount System Backups Directory.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;gotchas:f752833558d6cf2c1eaf1c52459bee7c&#34;&gt;Gotchas!!&lt;/h3&gt;
+&lt;h3 id=&#34;gotchas&#34;&gt;Gotchas!!&lt;/h3&gt;
 
 &lt;p&gt;After a reboot, I noticed the unit wasn&amp;rsquo;t started &amp;amp; as result the mount point dir. was empty. The unit file was missing an &lt;code&gt;[Install]&lt;/code&gt; section which contains installation information such as unit dependencies(&lt;code&gt;WantedBy=, RequiredBy=&lt;/code&gt;), aliases(&lt;code&gt;Alias=&lt;/code&gt;), additional units(&lt;code&gt;Also=&lt;/code&gt;), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a &lt;code&gt;multi-user.target&lt;/code&gt;. Oh, did you know you can change runlevel using &lt;code&gt;systemctl isolate $RUN_LEVEL.target&lt;/code&gt;? &lt;a href=&#34;https://wiki.archlinux.org/index.php/Systemd#Targets_table&#34;&gt;Read more&lt;/a&gt; about systemd runlevels/targets.&lt;/p&gt;
 
@@ -110,8 +108,7 @@ WantedBy=multi-user.target
 &lt;p&gt;As always, enable the unit to start automatically during boot.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;systemctl enable mnt-backups.mount
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;/code&gt;&lt;/pre&gt;</description>
     </item>
     
   </channel>

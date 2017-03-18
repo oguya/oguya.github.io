@@ -105,13 +105,12 @@
     </div>
   </header>
   <section>
-    
-
-<p>Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.</p>
+    <p>Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.
+</p>
 
 <p>So the other day I was upgrading my workstation from <a href="/linux/2015/12/02/upgrading-fedora/">Fedora 22 to Fedora 23</a> and after the upgrade my ZFS pool disappeared! Oh BTW, I&rsquo;m using <a href="http://zfsonlinux.org/">ZoL(ZFS on Linux)</a>.</p>
 
-<h2 id="troubleshooting:b5b68720ff71dd30d4c990d98e9a02b9">Troubleshooting</h2>
+<h2 id="troubleshooting">Troubleshooting</h2>
 
 <p>Normally the command <code>zpool status</code> would display detailed health status for the specified pool. But, if your pool is missing then you&rsquo;ll get something like:</p>
 
@@ -123,7 +122,7 @@ no pools available
 
 <p>Scary, right??</p>
 
-<h2 id="quick-fix:b5b68720ff71dd30d4c990d98e9a02b9">Quick Fix</h2>
+<h2 id="quick-fix">Quick Fix</h2>
 
 <p>Using <code>zpool import</code> we&rsquo;ll list all pools available &amp; then import them.</p>
 
@@ -185,7 +184,6 @@ tank/backups     117G   383G   117G  /mnt/zpool/tank/backups
 tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
 </code></pre></li>
 </ul>
-
   </section>
   <footer>
     

@@ -105,9 +105,8 @@
     </div>
   </header>
   <section>
-    
-
-<p>This is a short &amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF</p>
+    <p>This is a short &amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF
+</p>
 
 <p>Live Fedora upgrades using <a href="https://fedoraproject.org/wiki/Dnf">dnf</a> or <a href="https://fedoraproject.org/wiki/Yum">yum</a> usually works well with typical installations but that doesn&rsquo;t mean you won&rsquo;t experience errors during the process.
 In this guide, I&rsquo;ll break the entire process into 3 stages:</p>
@@ -118,7 +117,7 @@ In this guide, I&rsquo;ll break the entire process into 3 stages:</p>
 <li>Post-upgrade</li>
 </ul>
 
-<h2 id="pre-upgrade:5e84819426a6d9e3b528ab90c0ae6f19">Pre-upgrade</h2>
+<h2 id="pre-upgrade">Pre-upgrade</h2>
 
 <ul>
 <li><p><strong>Backup your Data:</strong></br>
@@ -132,7 +131,7 @@ Upgrade your Fedora 22 packages &amp; reboot before you can start the upgrade, j
 </code></pre></li>
 </ul>
 
-<h2 id="upgrade:5e84819426a6d9e3b528ab90c0ae6f19">Upgrade</h2>
+<h2 id="upgrade">Upgrade</h2>
 
 <ul>
 <li><p>Import Fedora 23 GPG Key, clean dnf local cache &amp; finally start the upgrade.</p>
@@ -144,7 +143,7 @@ Upgrade your Fedora 22 packages &amp; reboot before you can start the upgrade, j
 </code></pre></li>
 </ul>
 
-<h2 id="post-upgrade:5e84819426a6d9e3b528ab90c0ae6f19">Post-Upgrade</h2>
+<h2 id="post-upgrade">Post-Upgrade</h2>
 
 <ul>
 <li><p>After the upgrade, invoke SELinux to autorelabel all files/dirs and finally reboot. Autorelabling will occur during the next boot process.</p>
@@ -154,7 +153,7 @@ Upgrade your Fedora 22 packages &amp; reboot before you can start the upgrade, j
 </code></pre></li>
 </ul>
 
-<h2 id="gotchas:5e84819426a6d9e3b528ab90c0ae6f19">Gotchas!!!</h2>
+<h2 id="gotchas">Gotchas!!!</h2>
 
 <ul>
 <li><p>During the upgrade I bumped into a couple of errors related to missing dependencies.</p>
@@ -173,7 +172,6 @@ package libxml2-python-2.9.3-1.fc22.x86_64 requires libxml2 = 2.9.3-1.fc22, but 
 
 <li><p>Another thing to note is that DNF upgrades are heavily dependent on your network. So it&rsquo;s always a good idea to use local mirrors to speed up the upgrade process.</p></li>
 </ul>
-
   </section>
   <footer>
     

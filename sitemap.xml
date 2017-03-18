@@ -2,9 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://oguya.ch/</loc>
-    <lastmod>2016-12-04T00:00:00+00:00</lastmod>
-    <priority>0</priority>
+    <loc>https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/</loc>
+    <lastmod>2017-03-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -80,6 +79,161 @@
   <url>
     <loc>https://oguya.ch/posts/2014-10-13-hello-blogging-world/</loc>
     <lastmod>2014-10-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/ansible/</loc>
+    <lastmod>2015-08-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/audit/</loc>
+    <lastmod>2015-08-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/bash/</loc>
+    <lastmod>2016-12-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/build/</loc>
+    <lastmod>2017-03-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/cache/</loc>
+    <lastmod>2015-06-09T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/centos/</loc>
+    <lastmod>2015-06-06T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/cis/</loc>
+    <lastmod>2015-08-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/dnf/</loc>
+    <lastmod>2015-06-06T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/fedora/</loc>
+    <lastmod>2015-12-02T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/gpg/</loc>
+    <lastmod>2016-04-01T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/hello-world/</loc>
+    <lastmod>2014-10-13T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/</loc>
+    <lastmod>2017-03-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/linux/</loc>
+    <lastmod>2017-03-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/mariadb/</loc>
+    <lastmod>2016-04-13T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/mysql/</loc>
+    <lastmod>2016-04-13T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/openpgp/</loc>
+    <lastmod>2016-04-01T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/openssl/</loc>
+    <lastmod>2014-11-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/posts/</loc>
+    <lastmod>2017-03-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/r/</loc>
+    <lastmod>2017-03-18T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/shell/</loc>
+    <lastmod>2016-12-04T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/swap/</loc>
+    <lastmod>2015-06-09T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/systemd/</loc>
+    <lastmod>2015-09-01T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/ubuntu/</loc>
+    <lastmod>2015-08-16T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/yum/</loc>
+    <lastmod>2015-06-06T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://oguya.ch/tags/zfs/</loc>
+    <lastmod>2015-12-03T00:00:00+00:00</lastmod>
+    <priority>0</priority>
   </url>
   
 </urlset>

@@ -2,11 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Gpg on James Oguya</title>
-    <link>https://oguya.ch/tags/gpg/</link>
+    <link>https://oguya.ch/tags/gpg/index.xml</link>
     <description>Recent content in Gpg on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 Apr 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/gpg/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,9 +14,8 @@
       <pubDate>Fri, 01 Apr 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-04-01-gpg-subkeys/</guid>
-      <description>
-
-&lt;p&gt;OpenPGP supports subkeys which are like the normal keys, except they&amp;rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.&lt;/p&gt;
+      <description>&lt;p&gt;OpenPGP supports subkeys which are like the normal keys, except they&amp;rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.
+&lt;/p&gt;
 
 &lt;p&gt;When using subkeys, you&amp;rsquo;ll only use the master keypair under the following circumstances:&lt;/p&gt;
 
@@ -39,7 +37,7 @@
 &lt;li&gt;Use &lt;code&gt;gpg&lt;/code&gt; to remove the original signing subkey, leaving on the new signing subkey &amp;amp; the encryption subkey.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;create-a-regular-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a regular GPG Keypair&lt;/h3&gt;
+&lt;h3 id=&#34;create-a-regular-gpg-keypair&#34;&gt;Create a regular GPG Keypair&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Use &lt;code&gt;gpg2 --gen-key&lt;/code&gt; command to create a new GPG keypair. It&amp;rsquo;s always a good idea to set your key to expire within a year or less and use 4096 key length instead of the default 2048:&lt;/p&gt;
@@ -78,7 +76,7 @@ sub   4096R/8E93D277 2015-12-11 [expires: 2016-12-10]
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;create-a-signing-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a Signing Subkey&lt;/h3&gt;
+&lt;h3 id=&#34;create-a-signing-subkey&#34;&gt;Create a Signing Subkey&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Using the &lt;code&gt;gpg2--edit-key&lt;/code&gt; command, at the &lt;code&gt;gpg&amp;gt;&lt;/code&gt; prompt, use the &lt;code&gt;addkey&lt;/code&gt; command to create a subkey:&lt;/p&gt;
@@ -115,7 +113,7 @@ gpg&amp;gt; save
 &lt;li&gt;&lt;p&gt;This creates for us a new subkey with the key ID &lt;code&gt;A85EA103&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;create-a-revocation-certificate:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Create a Revocation Certificate&lt;/h3&gt;
+&lt;h3 id=&#34;create-a-revocation-certificate&#34;&gt;Create a Revocation Certificate&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;If your master keypair is lost or stolen, a revocation certificate will come in handy in telling people to ignore the stolen/lost key.&lt;/p&gt;
@@ -145,7 +143,7 @@ user: &amp;quot;John Doe &amp;lt;jdoe@doeworks.ch&amp;gt;&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;export-the-gpg-keypair:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Export the GPG keypair&lt;/h3&gt;
+&lt;h3 id=&#34;export-the-gpg-keypair&#34;&gt;Export the GPG keypair&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Now that we&amp;rsquo;ve created the master keypair—public, private keys &amp;amp; revocation certificate—and used it to create a subkey, we should export it &amp;amp; back it up somewhere safe:&lt;/p&gt;
@@ -165,7 +163,7 @@ $ gpg2 --armor --export 48CCEEDF &amp;gt; 48CCEEDF-public.gpg
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;using-gpg-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Using GPG subkey&lt;/h3&gt;
+&lt;h3 id=&#34;using-gpg-subkey&#34;&gt;Using GPG subkey&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;You can import your subkey in your other laptop/workstation &amp;amp; use for daily tasks. Don&amp;rsquo;t forget to shred the secret file once you&amp;rsquo;re done with importing it!&lt;/p&gt;
@@ -188,7 +186,7 @@ ssb   4096R/A85EA103 2015-12-11
 &lt;li&gt;&lt;p&gt;You can notice that there&amp;rsquo;s a line that begins with &lt;code&gt;sec#&lt;/code&gt; instead of &lt;code&gt;sec&lt;/code&gt;, the pound(#) sign means the signing master key is not this keyring.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;lost-compromised-subkey:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Lost/Compromised Subkey&lt;/h3&gt;
+&lt;h3 id=&#34;lost-compromised-subkey&#34;&gt;Lost/Compromised Subkey&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;In case of emergency whereby your subkey is lost &amp;amp; or compromised, get your master keypair, import it &amp;amp; revoke your subkey:&lt;/p&gt;
@@ -241,14 +239,13 @@ gpg&amp;gt; save
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;further-reading:a38aeb31d7dcb79095cecdecd5338695&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.gnupg.org/gph/en/manual.html&#34;&gt;GNU Privacy Guard(GPG) Handbook&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://wiki.debian.org/Subkeys&#34;&gt;GPG Subkeys&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://help.ubuntu.com/community/GnuPrivacyGuardHowto&#34;&gt;GPG How-to&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
   </channel>

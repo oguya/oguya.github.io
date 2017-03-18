@@ -109,9 +109,8 @@
     </div>
   </header>
   <section>
-    
-
-<p>MySQL slow query log consists of SQL statements that took more than <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time">long_query_time</a> seconds to complete execution &amp; required atleast <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit">min_examined_row_limit</a> to be examined. By default, administrative queries &amp; those that don&rsquo;t use indexes for lookups are not logged.</p>
+    <p>MySQL slow query log consists of SQL statements that took more than <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time">long_query_time</a> seconds to complete execution &amp; required atleast <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit">min_examined_row_limit</a> to be examined. By default, administrative queries &amp; those that don&rsquo;t use indexes for lookups are not logged.
+</p>
 
 <p>Two common techniques used by <a href="http://linux.die.net/man/8/logrotate">Logrotate</a> are:</p>
 
@@ -124,7 +123,7 @@
 
 <p>Flushing logs might take a considerable amount of time, so, to avoid filling slow log buffer, it&rsquo;s advisable to temporarily disable MySQL slow query logging &amp; re-enabling it once the rotation is complete.</p>
 
-<h2 id="manual-rotation:163f2bd26ab5a28203dfc878adf4c8d2">Manual Rotation</h2>
+<h2 id="manual-rotation">Manual Rotation</h2>
 
 <p>To manually rotate slow query logs, we&rsquo;ll temporarily disable slow query logging, flush slow logs, rename the original file &amp; finally re-enable slow query logging.</p>
 
@@ -166,7 +165,7 @@ Query OK, 0 rows affected (0.00 sec)
 </code></pre></li>
 </ul>
 
-<h2 id="using-logrotate:163f2bd26ab5a28203dfc878adf4c8d2">Using Logrotate</h2>
+<h2 id="using-logrotate">Using Logrotate</h2>
 
 <p>Instead of manual rotation, you can use a lograte config file to acheive the same effect by using logrotate: <code>/etc/logrotate.d/mysql-slow-logs</code></p>
 
@@ -207,13 +206,12 @@ Query OK, 0 rows affected (0.00 sec)
 <li><code>postrotate</code>: script executed after rotation is done</li>
 </ul>
 
-<h3 id="further-reading:163f2bd26ab5a28203dfc878adf4c8d2">Further Reading</h3>
+<h3 id="further-reading">Further Reading</h3>
 
 <ol>
 <li><a href="https://dev.mysql.com/doc/refman/5.5/en/slow-query-log.html">MySQL Slow Query Log</a></li>
 <li><a href="http://linux.die.net/man/8/logrotate">logrotate man page</a></li>
 </ol>
-
   </section>
   <footer>
     

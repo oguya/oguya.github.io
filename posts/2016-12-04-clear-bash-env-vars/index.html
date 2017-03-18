@@ -109,11 +109,10 @@
     </div>
   </header>
   <section>
-    
+    <p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!
+</p>
 
-<p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!</p>
-
-<h2 id="displaying-current-environment-variables:f3ac36d46c8496fefde2b6675806584f">Displaying Current Environment Variables</h2>
+<h2 id="displaying-current-environment-variables">Displaying Current Environment Variables</h2>
 
 <p>From the terminal, <code>env</code> or <code>printenv</code> will show you your current environment variables. For example:</p>
 
@@ -128,7 +127,7 @@ XDG_MENU_PREFIX=gnome-
 SHELL=/bin/bash
 </code></pre>
 
-<h2 id="temporarily-clearing-bash-environment-variables:f3ac36d46c8496fefde2b6675806584f">Temporarily Clearing Bash Environment Variables</h2>
+<h2 id="temporarily-clearing-bash-environment-variables">Temporarily Clearing Bash Environment Variables</h2>
 
 <p>Now, to run a program/script without any environment variable(s), prefix your command with <code>env -i</code>.</p>
 
@@ -159,7 +158,6 @@ SHELL=/bin/bash
 <pre><code>$ env CUDA_INC_PATH=/tmp/src/cuda /usr/bin/nvidia-smi
 </code></pre></li>
 </ul>
-
   </section>
   <footer>
     
@@ -197,7 +195,7 @@ SHELL=/bin/bash
       <li class="previous"><a href="https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/"><span aria-hidden="true">&larr;</span> Older</a></li>
       
       
-      <li class="next disabled"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+      <li class="next"><a href="https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/">Newer <span aria-hidden="true">&rarr;</span></a></li>
       
     </ul>
   </footer>

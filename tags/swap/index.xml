@@ -2,11 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Swap on James Oguya</title>
-    <link>https://oguya.ch/tags/swap/</link>
+    <link>https://oguya.ch/tags/swap/index.xml</link>
     <description>Recent content in Swap on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Jun 2015 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/swap/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,11 +14,10 @@
       <pubDate>Tue, 09 Jun 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-06-09-clear-ram-buffer-swap/</guid>
-      <description>
+      <description>&lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.
+&lt;/p&gt;
 
-&lt;p&gt;GNU Linux has implemented efficient memory management algorithms &amp;amp; tools which gives you the power &amp;amp; flexibility to control both the physical &amp;amp; virtual memory on your system.&lt;/p&gt;
-
-&lt;h3 id=&#34;clear-cache:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Cache&lt;/h3&gt;
+&lt;h3 id=&#34;clear-cache&#34;&gt;Clear Cache&lt;/h3&gt;
 
 &lt;p&gt;There are 3 options to clear cache without interrupting any processes or services:&lt;/p&gt;
 
@@ -40,7 +38,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;clear-swap-space:c91088b87599ce10b0f880403bdac834&#34;&gt;Clear Swap Space&lt;/h3&gt;
+&lt;h3 id=&#34;clear-swap-space&#34;&gt;Clear Swap Space&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Clearing swap space is as easy as disabling &amp;amp; re-enabling the devices/files used for swaping.&lt;/p&gt;
@@ -49,12 +47,11 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;further-reading:c91088b87599ce10b0f880403bdac834&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://unix.stackexchange.com/questions/4402/what-is-a-superblock-inode-dentry-and-a-file/4403#4403&#34;&gt;What is a Superblock, Inode, Dentry and a File?&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
   </channel>

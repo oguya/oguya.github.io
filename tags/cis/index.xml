@@ -2,11 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Cis on James Oguya</title>
-    <link>https://oguya.ch/tags/cis/</link>
+    <link>https://oguya.ch/tags/cis/index.xml</link>
     <description>Recent content in Cis on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 16 Aug 2015 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/cis/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,11 +14,10 @@
       <pubDate>Sun, 16 Aug 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-08-16-ansible-cis-benchmarks-ubuntu/</guid>
-      <description>
+      <description>&lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.
+&lt;/p&gt;
 
-&lt;p&gt;Center for Internet Security(CIS) provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&amp;rsquo;ll talk about these benchmarks &amp;amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.&lt;/p&gt;
-
-&lt;h2 id=&#34;cis-security-benchmarks:1d544af00710297388d9db1e73b06b16&#34;&gt;CIS Security Benchmarks&lt;/h2&gt;
+&lt;h2 id=&#34;cis-security-benchmarks&#34;&gt;CIS Security Benchmarks&lt;/h2&gt;
 
 &lt;p&gt;The CIS(Center for Internet Security)&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;&lt;sup&gt;[1]&lt;/sup&gt;&lt;/a&gt; Security Benchmarks program provides well-defined, unbiased &amp;amp; consensus-based industry best practices to help organizations assess and improve their security. Resources include secure configuration benchmarks, automated configuration assessment tools and content, security metrics and security software product certifications.
 CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;&lt;sup&gt;[2]&lt;/sup&gt;&lt;/a&gt; for analyzing &amp;amp; monitoring security benchmarks.&lt;/p&gt;
@@ -62,24 +60,23 @@ CIS also provides auditing tools such as CIS-CAT&lt;a href=&#34;https://benchmar
 &lt;li&gt;Compliance with &lt;em&gt;Not Scored&lt;/em&gt; recommendations will not increase the final benchmark score&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;putting-it-all-together-with-ansible:1d544af00710297388d9db1e73b06b16&#34;&gt;Putting it all together with Ansible&lt;/h2&gt;
+&lt;h2 id=&#34;putting-it-all-together-with-ansible&#34;&gt;Putting it all together with Ansible&lt;/h2&gt;
 
 &lt;p&gt;After carefully reading the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt;, I created an Ansible playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible#ansible-playbook&#34;&gt;GitLab&lt;/a&gt; that would allow users to audit &amp;amp; configure their systems to meet at most all of the CIS Security benchmarks.&lt;/p&gt;
 
 &lt;p&gt;Please, please, please have at the &lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/show-single/?file=ubuntu1404.100&#34;&gt;CIS Ubuntu 14.04 LTS Server Benchmark documentation&lt;/a&gt; before running this playbook &amp;amp; always do a dry run first using &lt;a href=&#34;http://docs.ansible.com/playbooks_checkmode.html&#34;&gt;Ansible&amp;rsquo;s Check Mode&lt;/a&gt; so as to see what to expect.&lt;/p&gt;
 
-&lt;h2 id=&#34;contribution:1d544af00710297388d9db1e73b06b16&#34;&gt;Contribution&lt;/h2&gt;
+&lt;h2 id=&#34;contribution&#34;&gt;Contribution&lt;/h2&gt;
 
 &lt;p&gt;As always, &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/pulls&#34;&gt;Pull requests&lt;/a&gt; and &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible/issues&#34;&gt;Github issues&lt;/a&gt; are all welcome!&lt;/p&gt;
 
-&lt;h3 id=&#34;further-reading:1d544af00710297388d9db1e73b06b16&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/about/&#34;&gt;About CIS Security Benchmarks&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://benchmarks.cisecurity.org/downloads/audit-tools/index.cfm#cis-cat&#34;&gt;CIS-CAT Benchmark Assessment Tool&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;CIS Ubuntu 14.04 Benchmarks Ansible Playbook on &lt;a href=&#34;https://github.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitHub&lt;/a&gt; &amp;amp; &lt;a href=&#34;https://gitlab.com/oguya/cis-ubuntu-14-ansible&#34;&gt;GitLab&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
   </channel>

@@ -2,11 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Openssl on James Oguya</title>
-    <link>https://oguya.ch/tags/openssl/</link>
+    <link>https://oguya.ch/tags/openssl/index.xml</link>
     <description>Recent content in Openssl on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 18 Nov 2014 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/openssl/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,9 +14,8 @@
       <pubDate>Tue, 18 Nov 2014 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2014-11-18-check-ssl-certs/</guid>
-      <description>
-
-&lt;p&gt;OpenSSL provides several options for implementing SSL &amp;amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&amp;rsquo;ll turn our attention to SSL certificates &amp;amp; the priceless information they contain.&lt;/p&gt;
+      <description>&lt;p&gt;OpenSSL provides several options for implementing SSL &amp;amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&amp;rsquo;ll turn our attention to SSL certificates &amp;amp; the priceless information they contain.
+&lt;/p&gt;
 
 &lt;p&gt;An SSL certificate&lt;sup&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/X.509&#34;&gt;[1]&lt;/a&gt;&lt;/sup&gt; contains a lot of information such as:&lt;/p&gt;
 
@@ -31,7 +29,7 @@
 
 &lt;p&gt;&lt;code&gt;openssl&lt;/code&gt; is a powerful cryptography &amp;amp; SSL/TLS toolkit that is readily available on most linux distros. It provides several options such as &lt;code&gt;s_client&lt;/code&gt;&lt;sup&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/s_client.html&#34;&gt;[2]&lt;/a&gt;&lt;/sup&gt; which allows you to connect to a remote host using SSL/TLS protocols, and &lt;code&gt;x509&lt;/code&gt;&lt;sup&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/x509.html&#34;&gt;[3]&lt;/a&gt;&lt;/sup&gt; which can be used to display certificate information, convert certificates to various forms, sign certificate requests like a &amp;lsquo;mini CA&amp;rsquo; or even edit certificate trust settings. Using &lt;code&gt;openssl&lt;/code&gt;, we&amp;rsquo;ll obtain all the above information from an ssl certificate.&lt;/p&gt;
 
-&lt;h2 id=&#34;show-validity:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show validity&lt;/h2&gt;
+&lt;h2 id=&#34;show-validity&#34;&gt;Show validity&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show the expiry date of an ssl certificate. Both before(&lt;code&gt;-enddate&lt;/code&gt;) and after(&lt;code&gt;-startdate&lt;/code&gt;) dates would give you the validity period of a certificate.&lt;/p&gt;
@@ -47,7 +45,7 @@ notAfter=Dec  9 00:00:00 2014 GMT
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-issuer:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show issuer&lt;/h2&gt;
+&lt;h2 id=&#34;show-issuer&#34;&gt;Show issuer&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show who issued the certificate i.e. Certificate Authority(CA):&lt;/p&gt;
@@ -62,7 +60,7 @@ issuer= /C=US/O=Google Inc/CN=Google Internet Authority G2
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-subject:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show subject&lt;/h2&gt;
+&lt;h2 id=&#34;show-subject&#34;&gt;Show subject&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show the owner/subject of the certificate:&lt;/p&gt;
@@ -77,7 +75,7 @@ subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;all-the-above:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;All the above&lt;/h2&gt;
+&lt;h2 id=&#34;all-the-above&#34;&gt;All the above&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;You can combine &lt;code&gt;-dates&lt;/code&gt;, &lt;code&gt;-issuer&lt;/code&gt; and &lt;code&gt;-subject&lt;/code&gt; options in one command:&lt;/p&gt;
@@ -95,7 +93,7 @@ subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-certificate-hash:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show certificate hash&lt;/h2&gt;
+&lt;h2 id=&#34;show-certificate-hash&#34;&gt;Show certificate hash&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;show cert&amp;rsquo;s hash:&lt;/p&gt;
@@ -110,7 +108,7 @@ a18bd28a
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-md5-fingerprint:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show MD5 fingerprint&lt;/h2&gt;
+&lt;h2 id=&#34;show-md5-fingerprint&#34;&gt;Show MD5 fingerprint&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;print the certificate fingerprint:&lt;/p&gt;
@@ -125,7 +123,7 @@ SHA1 Fingerprint=8D:92:BB:69:54:E2:57:43:F3:4A:08:EC:35:96:0D:97:74:F5:66:6A
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;show-all-information-in-an-ssl-certificate:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Show all information in an SSL certificate&lt;/h2&gt;
+&lt;h2 id=&#34;show-all-information-in-an-ssl-certificate&#34;&gt;Show all information in an SSL certificate&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Lets print all the information stored in a certificate:&lt;/p&gt;
@@ -212,7 +210,7 @@ Signature Algorithm: sha1WithRSAEncryption
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;conclusion:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;As a sysadmin, or an owner of a certificate, it&amp;rsquo;s a good practice to check the expiry date on your certificate(s) once every 2weeks so that you can plan in advance &amp;amp; renew them before they expire. This helps you avoid situations whereby your clients can&amp;rsquo;t securely connect to your servers because of an expired certificate.&lt;/p&gt;
 
@@ -221,14 +219,13 @@ Signature Algorithm: sha1WithRSAEncryption
 &lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;0   9   */14   *   1   echo | openssl s_client -connect $SITE:$PORTt 2&amp;gt; /dev/null | openssl x509 -noout -dates -issuer -subject|  mail -s &amp;quot;Certificate Validity for $SITE&amp;quot; $YOUR_EMAIL
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;further-reading:5b8fc460fda895544ab31e8f7346b2b1&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://en.wikipedia.org/wiki/X.509&#34;&gt;A bit of history on X.509&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/s_client.html&#34;&gt;openssl s_client man pages&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.openssl.org/docs/apps/x509.html&#34;&gt;openssl x.509 man pages&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
   </channel>

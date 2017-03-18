@@ -2,11 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Zfs on James Oguya</title>
-    <link>https://oguya.ch/tags/zfs/</link>
+    <link>https://oguya.ch/tags/zfs/index.xml</link>
     <description>Recent content in Zfs on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Dec 2015 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/zfs/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,13 +14,12 @@
       <pubDate>Thu, 03 Dec 2015 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2015-12-03-recover-zfs-pool/</guid>
-      <description>
-
-&lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.&lt;/p&gt;
+      <description>&lt;p&gt;Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&amp;rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.
+&lt;/p&gt;
 
 &lt;p&gt;So the other day I was upgrading my workstation from &lt;a href=&#34;https://oguya.ch/linux/2015/12/02/upgrading-fedora/&#34;&gt;Fedora 22 to Fedora 23&lt;/a&gt; and after the upgrade my ZFS pool disappeared! Oh BTW, I&amp;rsquo;m using &lt;a href=&#34;http://zfsonlinux.org/&#34;&gt;ZoL(ZFS on Linux)&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;troubleshooting:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Troubleshooting&lt;/h2&gt;
+&lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
 
 &lt;p&gt;Normally the command &lt;code&gt;zpool status&lt;/code&gt; would display detailed health status for the specified pool. But, if your pool is missing then you&amp;rsquo;ll get something like:&lt;/p&gt;
 
@@ -33,7 +31,7 @@ no pools available
 
 &lt;p&gt;Scary, right??&lt;/p&gt;
 
-&lt;h2 id=&#34;quick-fix:b5b68720ff71dd30d4c990d98e9a02b9&#34;&gt;Quick Fix&lt;/h2&gt;
+&lt;h2 id=&#34;quick-fix&#34;&gt;Quick Fix&lt;/h2&gt;
 
 &lt;p&gt;Using &lt;code&gt;zpool import&lt;/code&gt; we&amp;rsquo;ll list all pools available &amp;amp; then import them.&lt;/p&gt;
 
@@ -94,8 +92,7 @@ tank             123G  1.77T   166K  /mnt/zpool/tank
 tank/backups     117G   383G   117G  /mnt/zpool/tank/backups
 tank/deadhorse  4.34G   496G  4.34G  /mnt/zpool/tank/deadhorse
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
+&lt;/ul&gt;</description>
     </item>
     
   </channel>

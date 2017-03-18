@@ -105,9 +105,8 @@
     </div>
   </header>
   <section>
-    
-
-<p>OpenSSL provides several options for implementing SSL &amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&rsquo;ll turn our attention to SSL certificates &amp; the priceless information they contain.</p>
+    <p>OpenSSL provides several options for implementing SSL &amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&rsquo;ll turn our attention to SSL certificates &amp; the priceless information they contain.
+</p>
 
 <p>An SSL certificate<sup><a href="http://en.wikipedia.org/wiki/X.509">[1]</a></sup> contains a lot of information such as:</p>
 
@@ -121,7 +120,7 @@
 
 <p><code>openssl</code> is a powerful cryptography &amp; SSL/TLS toolkit that is readily available on most linux distros. It provides several options such as <code>s_client</code><sup><a href="https://www.openssl.org/docs/apps/s_client.html">[2]</a></sup> which allows you to connect to a remote host using SSL/TLS protocols, and <code>x509</code><sup><a href="https://www.openssl.org/docs/apps/x509.html">[3]</a></sup> which can be used to display certificate information, convert certificates to various forms, sign certificate requests like a &lsquo;mini CA&rsquo; or even edit certificate trust settings. Using <code>openssl</code>, we&rsquo;ll obtain all the above information from an ssl certificate.</p>
 
-<h2 id="show-validity:5b8fc460fda895544ab31e8f7346b2b1">Show validity</h2>
+<h2 id="show-validity">Show validity</h2>
 
 <ul>
 <li><p>show the expiry date of an ssl certificate. Both before(<code>-enddate</code>) and after(<code>-startdate</code>) dates would give you the validity period of a certificate.</p>
@@ -137,7 +136,7 @@ notAfter=Dec  9 00:00:00 2014 GMT
 </code></pre></li>
 </ul>
 
-<h2 id="show-issuer:5b8fc460fda895544ab31e8f7346b2b1">Show issuer</h2>
+<h2 id="show-issuer">Show issuer</h2>
 
 <ul>
 <li><p>show who issued the certificate i.e. Certificate Authority(CA):</p>
@@ -152,7 +151,7 @@ issuer= /C=US/O=Google Inc/CN=Google Internet Authority G2
 </code></pre></li>
 </ul>
 
-<h2 id="show-subject:5b8fc460fda895544ab31e8f7346b2b1">Show subject</h2>
+<h2 id="show-subject">Show subject</h2>
 
 <ul>
 <li><p>show the owner/subject of the certificate:</p>
@@ -167,7 +166,7 @@ subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
 </code></pre></li>
 </ul>
 
-<h2 id="all-the-above:5b8fc460fda895544ab31e8f7346b2b1">All the above</h2>
+<h2 id="all-the-above">All the above</h2>
 
 <ul>
 <li><p>You can combine <code>-dates</code>, <code>-issuer</code> and <code>-subject</code> options in one command:</p>
@@ -185,7 +184,7 @@ subject= /C=US/ST=California/L=Mountain View/O=Google Inc/CN=*.google.com
 </code></pre></li>
 </ul>
 
-<h2 id="show-certificate-hash:5b8fc460fda895544ab31e8f7346b2b1">Show certificate hash</h2>
+<h2 id="show-certificate-hash">Show certificate hash</h2>
 
 <ul>
 <li><p>show cert&rsquo;s hash:</p>
@@ -200,7 +199,7 @@ a18bd28a
 </code></pre></li>
 </ul>
 
-<h2 id="show-md5-fingerprint:5b8fc460fda895544ab31e8f7346b2b1">Show MD5 fingerprint</h2>
+<h2 id="show-md5-fingerprint">Show MD5 fingerprint</h2>
 
 <ul>
 <li><p>print the certificate fingerprint:</p>
@@ -215,7 +214,7 @@ SHA1 Fingerprint=8D:92:BB:69:54:E2:57:43:F3:4A:08:EC:35:96:0D:97:74:F5:66:6A
 </code></pre></li>
 </ul>
 
-<h2 id="show-all-information-in-an-ssl-certificate:5b8fc460fda895544ab31e8f7346b2b1">Show all information in an SSL certificate</h2>
+<h2 id="show-all-information-in-an-ssl-certificate">Show all information in an SSL certificate</h2>
 
 <ul>
 <li><p>Lets print all the information stored in a certificate:</p>
@@ -302,7 +301,7 @@ Signature Algorithm: sha1WithRSAEncryption
 </code></pre></li>
 </ul>
 
-<h2 id="conclusion:5b8fc460fda895544ab31e8f7346b2b1">Conclusion</h2>
+<h2 id="conclusion">Conclusion</h2>
 
 <p>As a sysadmin, or an owner of a certificate, it&rsquo;s a good practice to check the expiry date on your certificate(s) once every 2weeks so that you can plan in advance &amp; renew them before they expire. This helps you avoid situations whereby your clients can&rsquo;t securely connect to your servers because of an expired certificate.</p>
 
@@ -311,14 +310,13 @@ Signature Algorithm: sha1WithRSAEncryption
 <pre><code class="language-sh">0   9   */14   *   1   echo | openssl s_client -connect $SITE:$PORTt 2&gt; /dev/null | openssl x509 -noout -dates -issuer -subject|  mail -s &quot;Certificate Validity for $SITE&quot; $YOUR_EMAIL
 </code></pre>
 
-<h3 id="further-reading:5b8fc460fda895544ab31e8f7346b2b1">Further Reading</h3>
+<h3 id="further-reading">Further Reading</h3>
 
 <ol>
 <li><a href="http://en.wikipedia.org/wiki/X.509">A bit of history on X.509</a></li>
 <li><a href="https://www.openssl.org/docs/apps/s_client.html">openssl s_client man pages</a></li>
 <li><a href="https://www.openssl.org/docs/apps/x509.html">openssl x.509 man pages</a></li>
 </ol>
-
   </section>
   <footer>
     

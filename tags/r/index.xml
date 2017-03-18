@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on James Oguya</title>
+    <link>https://oguya.ch/tags/r/index.xml</link>
+    <description>Recent content in R on James Oguya</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://oguya.ch/tags/r/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Building R on RedHat Linux 6</title>
+      <link>https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/</link>
+      <pubDate>Sat, 18 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/</guid>
+      <description>&lt;p&gt;Newer versions of R(&amp;gt;=3.3.x) will not build without newer bzip2, zlib, libcurl &amp;amp; pcre. These dependencies are not available on older version of RHEL &amp;amp; CentOS i.e. anything below RHEL &amp;amp; CentOS 7. This blog post is a step-by-step journal of what I encountered when trying to compile &amp;amp; install R v3.3.2 on a CentOS 6 host.
+&lt;/p&gt;
+
+&lt;p&gt;New versions of R have removed several dependencies including compression libraries that used to be shipped together thus making the compilation process much easier. Instead of providing these dependencies R assumes that they are installed in the build host. On a CentOS 7, this is not a problem, because it already has newer versions of R dependencies, but the opposite is the case with older version of RHEL &amp;amp; CentOS.&lt;/p&gt;
+
+&lt;p&gt;Since I&amp;rsquo;m using an older version of CentOS, CentOS 6, I prefer using &lt;a href=&#34;https://www.softwarecollections.org/en/&#34;&gt;Software Collections&lt;/a&gt; when building stuff because it provides a bit newer versions of build tools e.g. &lt;code&gt;cc&lt;/code&gt;, &lt;code&gt;gcc&lt;/code&gt;, e.t.c.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Enable &lt;code&gt;[devtoolset-3](https://www.softwarecollections.org/en/scls/rhscl/devtoolset-3/)&lt;/code&gt;;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ scl enable devtoolset-3 bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Download R &amp;amp; build it without any dependencies;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd src
+$ mkdir -p ~/apps/R/3.3.2
+$ wget -qO- https://cran.r-project.org/src/base/R-3/R-3.3.2.tar.gz | tar zxv
+$ cd R-3.3.2/
+$ ./configure --prefix=$HOME/apps/R/3.3.2 --enable-R-static-lib
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;2.1 It fails with the following error about missing newer version of zlib&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    checking for XDR support... yes
+    checking if zlib version &amp;gt;= 1.2.5... no
+    checking whether zlib support suffices... configure: error: zlib library and headers are required
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download zlib v1.2.8, compile &amp;amp; install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ mkdir -p ~/apps/zlib/1.2.8
+$ wget -qO- &amp;ldquo;&lt;a href=&#34;https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib-1.2.8.tar.gz&amp;quot;&#34;&gt;https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib-1.2.8.tar.gz&amp;quot;&lt;/a&gt; | tar zvx
+$ cd zlib-1.2.8/
+$ ./configure &amp;ndash;prefix=$HOME/apps/zlib/1.2.8
+$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create environment variables which will be used when building R&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/zlib/1.2.8/lib
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include&amp;rdquo;
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;4.1 Re-configure R once more, this time round it should fix the missing zlib library error&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;4.2 It fails with the following error about missing bzip&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    checking bzlib.h usability... yes
+    checking bzlib.h presence... yes
+    checking for bzlib.h... yes
+    checking if bzip2 version &amp;gt;= 1.0.6... no
+    checking whether bzip2 support suffices... configure: error: bzip2 library and headers are required
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download bzip2 v1.0.6, compile and install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ mkdir -p $HOME/apps/bzip/1.0.6
+$ wget -qO- &lt;a href=&#34;http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz&#34;&gt;http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz&lt;/a&gt; | tar xzv
+$ cd bzip2-1.0.6/
+$ make -f Makefile-libbz2_so
+$ make clean
+$ make
+$ make -n install PREFIX=$HOME/apps/bzip/1.0.6/
+$ make install PREFIX=$HOME/apps/bzip/1.0.6/&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;NOTE&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Building bzip2 requires extra steps since it is not built with the standard GNU auto tools.
+I wouldn&amp;rsquo;t have built it without help from this site: &lt;a href=&#34;http://www.linuxfromscratch.org/lfs/view/development/chapter06/bzip2.html&#34;&gt;http://www.linuxfromscratch.org/lfs/view/development/chapter06/bzip2.html&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Try building R once more&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;6.1 Export new shell environment variables to be used in the build process; this includes bzip2 binaries and libraries installed in the previous step:&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/bzip/1.0.6/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/bzip/1.0.6/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib/&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;6.2 Build R&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;6.3 Configure fails with the following error about liblzma.&lt;/p&gt;
+
+&lt;p&gt;checking lzma.h usability&amp;hellip; yes
+checking lzma.h presence&amp;hellip; yes
+checking for lzma.h&amp;hellip; yes
+checking if lzma version &amp;gt;= 5.0.3&amp;hellip; no
+configure: error: &amp;ldquo;liblzma library and headers are required&amp;rdquo;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;We can use &lt;code&gt;xz&lt;/code&gt; instead of &lt;code&gt;liblzma&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ wget -qO- &lt;a href=&#34;http://tukaani.org/xz/xz-5.2.2.tar.gz&#34;&gt;http://tukaani.org/xz/xz-5.2.2.tar.gz&lt;/a&gt; | tar xzv
+$ cd xz-5.2.2/
+$ mkdir -p $HOME/apps/xz/5.2.2
+$ ./configure &amp;ndash;prefix=$HOME/apps/xz/5.2.2
+$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Configure R once again&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;8.1 export shell environment variables to contain binaries and libraries from &lt;code&gt;xz&lt;/code&gt; installed in the previous step&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/xz/5.2.2/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/xz/5.2.2/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib -L$HOME/apps/xz/5.2.2/lib&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include -I$HOME/apps/xz/5.2.2/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;8.2 Build R&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;8.3 Configure fails with the following error about prce&lt;/p&gt;
+
+&lt;p&gt;checking for pcre.h&amp;hellip; yes
+checking pcre/pcre.h usability&amp;hellip; no
+checking pcre/pcre.h presence&amp;hellip; no
+checking for pcre/pcre.h&amp;hellip; no
+checking if PCRE version &amp;gt;= 8.10, &amp;lt; 10.0 and has UTF-8 support&amp;hellip; no
+checking whether PCRE support suffices&amp;hellip; configure: error: pcre &amp;gt;= 8.10 library and headers are required&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download pcre v8.35, compile and install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ wget -qO- &lt;a href=&#34;http://downloads.sourceforge.net/pcre/pcre-8.35.tar.bz2&#34;&gt;http://downloads.sourceforge.net/pcre/pcre-8.35.tar.bz2&lt;/a&gt; | tar xjv
+$ cd pcre-8.35/
+$ mkdir -p $HOME/apps/pcre/8.35
+$ ./configure &amp;ndash;prefix=$HOME/apps/pcre/8.35 &amp;ndash;enable-unicode-properties &amp;ndash;enable-pcre16 &amp;ndash;enable-pcre32 &amp;ndash;enable-pcregrep-libz &amp;ndash;enable-pcregrep-libbz2 &amp;ndash;enable-pcretest-libreadline &amp;ndash;enable-static
+$ make -j4
+$ make check
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Configure R once again&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;10.1 Export shell environment variables to contain binaries and libraries from pcre installed in the previous step&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/pcre/8.35/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/pcre/8.35/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib -L$HOME/apps/xz/5.2.2/lib -L$HOME/apps/pcre/8.35/lib&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include -I$HOME/apps/xz/5.2.2/include -I$HOME/apps/pcre/8.35/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;10.2 Build R&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib&lt;/p&gt;
+
+&lt;p&gt;10.3 configure fails with the following error about missing libcurl&lt;/p&gt;
+
+&lt;p&gt;checking for curl-config&amp;hellip; /usr/bin/curl-config
+checking libcurl version &amp;hellip; 7.19.7
+checking curl/curl.h usability&amp;hellip; yes
+checking curl/curl.h presence&amp;hellip; yes
+checking for curl/curl.h&amp;hellip; yes
+checking if libcurl is version 7 and &amp;gt;= 7.28.0&amp;hellip; no
+configure: error: libcurl &amp;gt;= 7.28.0 library and headers are required with support for https&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download libcurl v7.47, compile and install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;$ cd ../
+$ wget -qO- &lt;a href=&#34;https://curl.haxx.se/download/curl-7.47.1.tar.gz&#34;&gt;https://curl.haxx.se/download/curl-7.47.1.tar.gz&lt;/a&gt; | tar xvz
+$ cd curl-7.47.1
+$ mkdir -p $HOME/apps/curl/7.47.1/
+$ ./configure &amp;ndash;prefix=$HOME/apps/curl/7.47.1
+$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Configure R once again&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;12.1 Export new environment variables to contain binaries and libraries from libcurl installed in the previous step&lt;/p&gt;
+
+&lt;p&gt;$ export PATH=$HOME/apps/curl/7.47.1/bin:$PATH
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/apps/curl/7.47.1/lib
+$ export LDFLAGS=&amp;ldquo;-L$HOME/apps/zlib/1.2.8/lib -L$HOME/apps/bzip/1.0.6/lib -L$HOME/apps/xz/5.2.2/lib -L$HOME/apps/pcre/8.35/lib -L$HOME/apps/curl/7.47.1/lib&amp;rdquo;
+$ export CFLAGS=&amp;ldquo;-I$HOME/apps/zlib/1.2.8/include -I$HOME/apps/bzip/1.0.6/include -I$HOME/apps/xz/5.2.2/include -I$HOME/apps/pcre/8.35/include -I$HOME/apps/curl/7.47.1/include&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;12.2 Try building R once again&lt;/p&gt;
+
+&lt;p&gt;$ cd ../R-3.3.2/
+$ ./configure &amp;ndash;prefix=$HOME/apps/R/3.3.2 &amp;ndash;enable-R-static-lib &amp;ndash;enable-memory-profiling &amp;ndash;enable-R-profiling&lt;/p&gt;
+
+&lt;p&gt;12.3 Finally! It worked! Now finish up the installation&lt;/p&gt;
+
+&lt;p&gt;$ make -j4
+$ make install&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Putting all these steps together&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;install R/3.3.2
+$ cd /tmp/
+$ wget -qO- &lt;a href=&#34;https://cran.r-project.org/src/base/R-3/R-3.3.2.tar.gz&#34;&gt;https://cran.r-project.org/src/base/R-3/R-3.3.2.tar.gz&lt;/a&gt; | tar zxv
+$ cd R-3.3.2/
+$ scl enable devtoolset-2 bash
+$ sudo mkdir /export/apps/R/3.3.2
+$ sudo chown -R joguya:joguya /export/apps/R/3.3.2
+$ ./configure &amp;ndash;enable-R-static-lib &amp;ndash;prefix=/export/apps/R/3.3.2
+$ make -j4
+$ make install
+$ sudo chown -R root:root /export/apps/R/3.3.2&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

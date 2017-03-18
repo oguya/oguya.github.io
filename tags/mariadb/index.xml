@@ -2,11 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Mariadb on James Oguya</title>
-    <link>https://oguya.ch/tags/mariadb/</link>
+    <link>https://oguya.ch/tags/mariadb/index.xml</link>
     <description>Recent content in Mariadb on James Oguya</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 13 Apr 2016 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://oguya.ch/tags/mariadb/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,9 +14,8 @@
       <pubDate>Wed, 13 Apr 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-04-13-safely-rotating-mysql-slow-logs/</guid>
-      <description>
-
-&lt;p&gt;MySQL slow query log consists of SQL statements that took more than &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time&#34;&gt;long_query_time&lt;/a&gt; seconds to complete execution &amp;amp; required atleast &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit&#34;&gt;min_examined_row_limit&lt;/a&gt; to be examined. By default, administrative queries &amp;amp; those that don&amp;rsquo;t use indexes for lookups are not logged.&lt;/p&gt;
+      <description>&lt;p&gt;MySQL slow query log consists of SQL statements that took more than &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time&#34;&gt;long_query_time&lt;/a&gt; seconds to complete execution &amp;amp; required atleast &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit&#34;&gt;min_examined_row_limit&lt;/a&gt; to be examined. By default, administrative queries &amp;amp; those that don&amp;rsquo;t use indexes for lookups are not logged.
+&lt;/p&gt;
 
 &lt;p&gt;Two common techniques used by &lt;a href=&#34;http://linux.die.net/man/8/logrotate&#34;&gt;Logrotate&lt;/a&gt; are:&lt;/p&gt;
 
@@ -30,7 +28,7 @@
 
 &lt;p&gt;Flushing logs might take a considerable amount of time, so, to avoid filling slow log buffer, it&amp;rsquo;s advisable to temporarily disable MySQL slow query logging &amp;amp; re-enabling it once the rotation is complete.&lt;/p&gt;
 
-&lt;h2 id=&#34;manual-rotation:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Manual Rotation&lt;/h2&gt;
+&lt;h2 id=&#34;manual-rotation&#34;&gt;Manual Rotation&lt;/h2&gt;
 
 &lt;p&gt;To manually rotate slow query logs, we&amp;rsquo;ll temporarily disable slow query logging, flush slow logs, rename the original file &amp;amp; finally re-enable slow query logging.&lt;/p&gt;
 
@@ -72,7 +70,7 @@ Query OK, 0 rows affected (0.00 sec)
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;using-logrotate:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Using Logrotate&lt;/h2&gt;
+&lt;h2 id=&#34;using-logrotate&#34;&gt;Using Logrotate&lt;/h2&gt;
 
 &lt;p&gt;Instead of manual rotation, you can use a lograte config file to acheive the same effect by using logrotate: &lt;code&gt;/etc/logrotate.d/mysql-slow-logs&lt;/code&gt;&lt;/p&gt;
 
@@ -113,13 +111,12 @@ Query OK, 0 rows affected (0.00 sec)
 &lt;li&gt;&lt;code&gt;postrotate&lt;/code&gt;: script executed after rotation is done&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;further-reading:163f2bd26ab5a28203dfc878adf4c8d2&#34;&gt;Further Reading&lt;/h3&gt;
+&lt;h3 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.5/en/slow-query-log.html&#34;&gt;MySQL Slow Query Log&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://linux.die.net/man/8/logrotate&#34;&gt;logrotate man page&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
     <item>
@@ -128,13 +125,12 @@ Query OK, 0 rows affected (0.00 sec)
       <pubDate>Sat, 13 Feb 2016 00:00:00 +0000</pubDate>
       
       <guid>https://oguya.ch/posts/2016-02-13-mysql-replication/</guid>
-      <description>
+      <description>&lt;h2 id=&#34;what-is-it&#34;&gt;What is it?&lt;/h2&gt;
 
-&lt;h2 id=&#34;what-is-it:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;What is it?&lt;/h2&gt;
+&lt;p&gt;MySQL replication allows you to &amp;lsquo;mirror&amp;rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.
+&lt;/p&gt;
 
-&lt;p&gt;MySQL replication allows you to &amp;lsquo;mirror&amp;rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.&lt;/p&gt;
-
-&lt;h2 id=&#34;how-does-it-work:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;How does it work?&lt;/h2&gt;
+&lt;h2 id=&#34;how-does-it-work&#34;&gt;How does it work?&lt;/h2&gt;
 
 &lt;p&gt;Replication relies heavily on &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/binary-log.html&#34;&gt;binary logs&lt;/a&gt;. If binary logging is enabled, all updates—data manipulation &amp;amp; data definition—to a database are written to binary log as a binary log event. A slave server can then read it&amp;rsquo;s master&amp;rsquo;s binary log to access data for replication. The slave writes master&amp;rsquo;s binary log events in a &lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/slave-logs-relaylog.html&#34;&gt;relay log&lt;/a&gt; file.&lt;/p&gt;
 
@@ -149,11 +145,11 @@ Query OK, 0 rows affected (0.00 sec)
 &lt;li&gt;Data distribution: replication can be used to create a local copy of data on a remote master.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;how-can-i-set-it-up:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;How can I set it up?&lt;/h2&gt;
+&lt;h2 id=&#34;how-can-i-set-it-up&#34;&gt;How can I set it up?&lt;/h2&gt;
 
 &lt;p&gt;Having 2 servers—&lt;code&gt;db01&lt;/code&gt; as the master and &lt;code&gt;db02&lt;/code&gt; as the slave—both running Ubuntu 14.04, we&amp;rsquo;ll setup replication on &lt;a href=&#34;https://mariadb.com/&#34;&gt;MariaDB&lt;/a&gt;—a fork of MySQL:&lt;/p&gt;
 
-&lt;h3 id=&#34;on-both-servers:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On both servers&lt;/h3&gt;
+&lt;h3 id=&#34;on-both-servers&#34;&gt;On both servers&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;add mariadb repo &amp;amp; install &lt;a href=&#34;https://mariadb.com/kb/en/mariadb/what-is-mariadb-100/&#34;&gt;mariadb-server-10.0&lt;/a&gt;&lt;/p&gt;
@@ -166,7 +162,7 @@ Query OK, 0 rows affected (0.00 sec)
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;on-db01-master-server:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On db01—master server&lt;/h3&gt;
+&lt;h3 id=&#34;on-db01-master-server&#34;&gt;On db01—master server&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;set mysql to bind to a non-localhost IP address, otherwise remote slave connections will fail:&lt;/p&gt;
@@ -219,7 +215,7 @@ flush privileges;
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;on-db02-slave:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;On db02—slave&lt;/h3&gt;
+&lt;h3 id=&#34;on-db02-slave&#34;&gt;On db02—slave&lt;/h3&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Give db02 a unique &lt;code&gt;server_id&lt;/code&gt; too. To avoid data inconsistencies between the master &amp;amp; slave, verify binlog checksums when reading events from the relay log by setting &lt;code&gt;slave_sql_verify_checksum&lt;/code&gt; to 1. Restart mysql for config changes to take effect: &lt;code&gt;/etc/mysql/conf.d/slave-replication.cnf&lt;/code&gt;&lt;/p&gt;
@@ -298,14 +294,14 @@ Master_SSL_Verify_Server_Cert: No
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;extras:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;Extras&lt;/h2&gt;
+&lt;h2 id=&#34;extras&#34;&gt;Extras&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Don&amp;rsquo;t mix &amp;amp; match server names &amp;amp; IP addresses: I prefer adding hostnames &amp;amp; their respective IP addresses to &lt;code&gt;/etc/hosts&lt;/code&gt; which gives me some sort of flexibility in changing IP address &amp;amp; it&amp;rsquo;s more readable. To be on the safe side, either use only hostnames or IP addresses.&lt;/li&gt;
 &lt;li&gt;Replication is not a complete backup solution: Remember that all updates—data manipulation &amp;amp; definition—to a database are written as binlog events to a binary log, which is then replicated to a slave. Therefore, if you drop a database or truncate a table on master, the same will be done on the slave too! Replication, to some extent, can assist in protection against hardware failure on the master, but not against data loss—intentional or unintentional—on the master.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;further-reading:15ace3cd8e4a9c45c34e2a9e059c7ee0&#34;&gt;Further Reading&lt;/h2&gt;
+&lt;h2 id=&#34;further-reading&#34;&gt;Further Reading&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/binary-log.html&#34;&gt;MySQL Binary Log&lt;/a&gt;&lt;/li&gt;
@@ -313,8 +309,7 @@ Master_SSL_Verify_Server_Cert: No
 &lt;li&gt;&lt;a href=&#34;https://mariadb.com/kb/en/mariadb/what-is-mariadb-100/&#34;&gt;MariaDB 10.0 Server&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/change-master-to.html&#34;&gt;MySQL &lt;code&gt;CHANGE MASTER TO&lt;/code&gt; Command&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.6/en/show-slave-status.html&#34;&gt;MySQL &lt;code&gt;SHOW SLAVE STATUS&lt;/code&gt; Command&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
+&lt;/ol&gt;</description>
     </item>
     
   </channel>

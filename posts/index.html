@@ -88,6 +88,33 @@
   <hr/>
   <article>
   <header>
+    <h2><a href="https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/">Building R on RedHat Linux 6</a></h2>
+    <div class="post-meta clearfix">
+      <div class="post-date pull-left">
+        Posted on
+        <time datetime="2017-03-18T00:00:00Z">
+          Mar 18, 2017
+        </time>
+      </div>
+    </div>
+  </header>
+  <div>
+    <p>Newer versions of R(&gt;=3.3.x) will not build without newer bzip2, zlib, libcurl &amp; pcre. These dependencies are not available on older version of RHEL &amp; CentOS i.e. anything below RHEL &amp; CentOS 7. This blog post is a step-by-step journal of what I encountered when trying to compile &amp; install R v3.3.2 on a CentOS 6 host.
+</p>
+  </div>
+  
+  <footer>
+    <ul class="pager">
+      <li class="next"><a href="https://oguya.ch/posts/2017-03-18-building-R-on-rhel-6/">Read more <span aria-hidden="true">&raquo;</span></a></li>
+    </ul>
+  </footer>
+  
+</article>
+
+  
+  <hr/>
+  <article>
+  <header>
     <h2><a href="https://oguya.ch/posts/2016-12-04-clear-bash-env-vars/">Temporarily Clearing Bash Environment Variables</a></h2>
     <div class="post-meta clearfix">
       <div class="post-date pull-left">
@@ -99,8 +126,8 @@
     </div>
   </header>
   <div>
-    <p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!</p>
-
+    <p>At times I&rsquo;d just like to run a script or a program without using my current or pre-existing shell environment variables. Running <code>bash -l</code> doesn&rsquo;t really help because it just starts a new bash shell login with the same environment variables from your <code>~/.bashrc</code> or <code>profile.d</code> system-wide settings. Well, the other day I discovered prefixing your program/script with <code>env</code> temporarily clears your environment variables so that your script just runs with totally no variables!
+</p>
   </div>
   
   <footer>
@@ -126,8 +153,8 @@
     </div>
   </header>
   <div>
-    <p>MySQL slow query log consists of SQL statements that took more than <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time">long_query_time</a> seconds to complete execution &amp; required atleast <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit">min_examined_row_limit</a> to be examined. By default, administrative queries &amp; those that don&rsquo;t use indexes for lookups are not logged.</p>
-
+    <p>MySQL slow query log consists of SQL statements that took more than <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_long_query_time">long_query_time</a> seconds to complete execution &amp; required atleast <a href="https://dev.mysql.com/doc/refman/5.6/en/server-system-variables.html#sysvar_min_examined_row_limit">min_examined_row_limit</a> to be examined. By default, administrative queries &amp; those that don&rsquo;t use indexes for lookups are not logged.
+</p>
   </div>
   
   <footer>
@@ -153,8 +180,8 @@
     </div>
   </header>
   <div>
-    <p>OpenPGP supports subkeys which are like the normal keys, except they&rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.</p>
-
+    <p>OpenPGP supports subkeys which are like the normal keys, except they&rsquo;re bound to a master key pair. A subkey can be used for signing or for encryption. The really useful part of subkeys is that they can be revoked independently of the master keys, and also stored separately from them.
+</p>
   </div>
   
   <footer>
@@ -180,10 +207,10 @@
     </div>
   </header>
   <div>
-    <h2 id="what-is-it:15ace3cd8e4a9c45c34e2a9e059c7ee0">What is it?</h2>
+    <h2 id="what-is-it">What is it?</h2>
 
-<p>MySQL replication allows you to &lsquo;mirror&rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.</p>
-
+<p>MySQL replication allows you to &lsquo;mirror&rsquo; databases on one or more servers(master) to one or more servers(slave). You can control what to replicate such as one or more databases, or even tables within a database i.e. selective replication.
+</p>
   </div>
   
   <footer>
@@ -209,8 +236,8 @@
     </div>
   </header>
   <div>
-    <p>MySQL binary log contains records of all changes to a databases—both data &amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp; DELETE  with the exception of SELECT &amp; SHOW which have no effect on the data.</p>
-
+    <p>MySQL binary log contains records of all changes to a databases—both data &amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp; DELETE  with the exception of SELECT &amp; SHOW which have no effect on the data.
+</p>
   </div>
   
   <footer>
@@ -236,8 +263,8 @@
     </div>
   </header>
   <div>
-    <p>Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.</p>
-
+    <p>Once in a while, more so after doing major system upgrades, you might end up losing your ZFS pool due to unknown circumstances. In this post I&rsquo;ll talk about how you can easily recover your pool. Your / partition should NOT be on ZFS pool.
+</p>
   </div>
   
   <footer>
@@ -263,8 +290,8 @@
     </div>
   </header>
   <div>
-    <p>This is a short &amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF</p>
-
+    <p>This is a short &amp; simple guide for upgrading Fedora 22 to Fedora 23 using DNF
+</p>
   </div>
   
   <footer>
@@ -290,8 +317,8 @@
     </div>
   </header>
   <div>
-    <p>Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&rdquo;ll talk about systemd.mount &amp; how you can use it to mount partitions.</p>
-
+    <p>Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&rdquo;ll talk about systemd.mount &amp; how you can use it to mount partitions.
+</p>
   </div>
   
   <footer>
@@ -317,8 +344,8 @@
     </div>
   </header>
   <div>
-    <p>Center for Internet Security(CIS) provides well-defined, unbiased &amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&rsquo;ll talk about these benchmarks &amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.</p>
-
+    <p>Center for Internet Security(CIS) provides well-defined, unbiased &amp; consensus-based industry best practices to help organizations assess and improve their security. In this blog post, we&rsquo;ll talk about these benchmarks &amp; how you can deploy most, if not all, on your Ubuntu 14.04 box.
+</p>
   </div>
   
   <footer>
@@ -344,8 +371,8 @@
     </div>
   </header>
   <div>
-    <p>GNU Linux has implemented efficient memory management algorithms &amp; tools which gives you the power &amp; flexibility to control both the physical &amp; virtual memory on your system.</p>
-
+    <p>GNU Linux has implemented efficient memory management algorithms &amp; tools which gives you the power &amp; flexibility to control both the physical &amp; virtual memory on your system.
+</p>
   </div>
   
   <footer>
@@ -372,8 +399,8 @@
   </header>
   <div>
     <p>When you upgrade packages on RedHat based systems, the newer package replaces the older one except for <em>install only</em> packages e.g. kernel packages.
-Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.</p>
-
+Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions—by default—of the kernel package(s) on the system. This can be useful in cases where you need to use to an older version.
+</p>
   </div>
   
   <footer>
@@ -399,8 +426,8 @@ Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions�
     </div>
   </header>
   <div>
-    <p>Ansible provides useful tools which we can use to for various purposes. In this blog post, we&rsquo;ll talk about rebooting servers using ansible &amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.</p>
-
+    <p>Ansible provides useful tools which we can use to for various purposes. In this blog post, we&rsquo;ll talk about rebooting servers using ansible &amp; pausing the playbook by waiting for a given amount of time for a given service on a given port to start.
+</p>
   </div>
   
   <footer>
@@ -427,8 +454,8 @@ Upgrading kernel package(s) with yum, dnf and even apt leaves 3 older versions�
   </header>
   <div>
     <p>An awesome feature in  that is not available in <a href="http://ansible.com">Ansible</a> is immediate notification i.e. <code>notifies :immediately</code>.
-Ansible has notification handlers<sup><a href="http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change">[1]</a></sup> but they are only triggered at the end of the current playbook unlike Chef&rsquo;s<sup><a href="https://docs.chef.io/resource_common.html#notifies-syntax">[2]</a></sup> which can be  triggered immediately! Moreover, you can configure Chef&rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. <code>:delayed</code> or immediately i.e. <code>:immediately</code>.</p>
-
+Ansible has notification handlers<sup><a href="http://docs.ansible.com/playbooks_intro.html#handlers-running-operations-on-change">[1]</a></sup> but they are only triggered at the end of the current playbook unlike Chef&rsquo;s<sup><a href="https://docs.chef.io/resource_common.html#notifies-syntax">[2]</a></sup> which can be  triggered immediately! Moreover, you can configure Chef&rsquo;s notifications to be triggered at specific times i.e. at the very end of a chef-client run i.e. <code>:delayed</code> or immediately i.e. <code>:immediately</code>.
+</p>
   </div>
   
   <footer>
@@ -454,8 +481,8 @@ Ansible has notification handlers<sup><a href="http://docs.ansible.com/playbooks
     </div>
   </header>
   <div>
-    <p>OpenSSL provides several options for implementing SSL &amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&rsquo;ll turn our attention to SSL certificates &amp; the priceless information they contain.</p>
-
+    <p>OpenSSL provides several options for implementing SSL &amp; TLS network protocols that you can use to securely communicate with a server. In this blog post, we&rsquo;ll turn our attention to SSL certificates &amp; the priceless information they contain.
+</p>
   </div>
   
   <footer>
@@ -482,8 +509,8 @@ Ansible has notification handlers<sup><a href="http://docs.ansible.com/playbooks
   </header>
   <div>
     <p>so after several months—if not years—of procrastinating whether I should or should not blog, I&rsquo;ve finally decided to leave my comfort zone and face
-my greatest fear—blogging!!</p>
-
+my greatest fear—blogging!!
+</p>
   </div>
   
   <footer>

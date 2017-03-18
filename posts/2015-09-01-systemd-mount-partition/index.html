@@ -105,9 +105,8 @@
     </div>
   </header>
   <section>
-    
-
-<p>Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&rdquo;ll talk about systemd.mount &amp; how you can use it to mount partitions.</p>
+    <p>Recently, I discovered you can mount partitions using systemd.mount by writing a mount unit file. In this blog post, we&rdquo;ll talk about systemd.mount &amp; how you can use it to mount partitions.
+</p>
 
 <p><a href="http://www.freedesktop.org/wiki/Software/systemd">Systemd</a> is gradually becoming the de facto init system &amp; service manager replacing the old sysV init scripts &amp; upstart. Recently, I discovered you can mount partitions using <a href="http://www.freedesktop.org/software/systemd/man/systemd.mount.html">systemd.mount</a> by writing your own <code>.mount</code> <a href="http://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd unit file</a>.</p>
 
@@ -178,7 +177,7 @@ Aug 31 08:09:15 localhost systemd[1]: Mounting Mount System Backups Directory...
 Aug 31 08:09:15 localhost systemd[1]: Mounted Mount System Backups Directory.
 </code></pre>
 
-<h3 id="gotchas:f752833558d6cf2c1eaf1c52459bee7c">Gotchas!!</h3>
+<h3 id="gotchas">Gotchas!!</h3>
 
 <p>After a reboot, I noticed the unit wasn&rsquo;t started &amp; as result the mount point dir. was empty. The unit file was missing an <code>[Install]</code> section which contains installation information such as unit dependencies(<code>WantedBy=, RequiredBy=</code>), aliases(<code>Alias=</code>), additional units(<code>Also=</code>), e.t.c for the specified unit. In this case, I set the unit to start in multi-user runlevel a.k.a <code>multi-user.target</code>. Oh, did you know you can change runlevel using <code>systemctl isolate $RUN_LEVEL.target</code>? <a href="https://wiki.archlinux.org/index.php/Systemd#Targets_table">Read more</a> about systemd runlevels/targets.</p>
 
@@ -201,7 +200,6 @@ WantedBy=multi-user.target
 
 <pre><code class="language-sh">systemctl enable mnt-backups.mount
 </code></pre>
-
   </section>
   <footer>
     

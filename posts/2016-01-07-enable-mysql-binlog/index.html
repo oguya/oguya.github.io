@@ -105,9 +105,8 @@
     </div>
   </header>
   <section>
-    
-
-<p>MySQL binary log contains records of all changes to a databases—both data &amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp; DELETE  with the exception of SELECT &amp; SHOW which have no effect on the data.</p>
+    <p>MySQL binary log contains records of all changes to a databases—both data &amp; structure—as well as how long each statement took to execute. It logs SQL statements such as CREATE, ALTER, INSERT, UPDATE &amp; DELETE  with the exception of SELECT &amp; SHOW which have no effect on the data.
+</p>
 
 <p>The purpose of binary log is to allow replication whereby data is sent from a one server(master) to another one(slave) as well assisting in certain data recovery operations. Binary logs are stored in binary format, therefore, you have to use <a href="https://dev.mysql.com/doc/refman/5.5/en/mysqlbinlog.html">mysqlbinlog utility</a> to view its contents.</p>
 
@@ -129,12 +128,11 @@ MariaDB [(none)]&gt; show variables like 'log_bin';
 <pre><code>log_bin = mysql-bin
 </code></pre>
 
-<h2 id="further-reading:84caf2ead6bf7a20486f54a742a06acb">Further Reading</h2>
+<h2 id="further-reading">Further Reading</h2>
 
 <ol>
 <li><a href="https://dev.mysql.com/doc/refman/5.5/en/binary-log.html">MySQL Binary Log</a></li>
 </ol>
-
   </section>
   <footer>
     
